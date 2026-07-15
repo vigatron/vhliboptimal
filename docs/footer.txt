@@ -1,0 +1,7 @@
+/* ========================[  END FILE CONTENT  ]========================
+ * File             : ${fname}
+ * Content size     : ${cntsz}
+ * Date / Time      : ${fdatetime}
+ * MD5              : ${fmd5}
+ * Copyright        : © 2006–2026 Viktor Glebov
+ * ====================================================================== */
