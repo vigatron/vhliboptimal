@@ -1,20 +1,22 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.1 Draft
+ * Revision      : 0.2
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/cmatrix/bitfield.cpp
- * Content size  : 3391
- * Date / Time   : 16-07-2026 02:43:20
- * MD5           : 4f23832c3b3ce3c609ee933ca6d06f71
+ * Content size  : 3717
+ * Date / Time   : 20-07-2026 03:16:52
+ * MD5           : aeed05d48da46a805abfb9c41263b483
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
  * Copyright     : © 2006–2026 Viktor Glebov
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #include "bitfield.hpp"
+
+using namespace vhliboptimal;
 
 /**
  * 
@@ -34,22 +36,37 @@ const std::vector<uint8_t> & BitField::arr() const {
 /**
  * 
  */
-void BitField::Clr(size_t celln) {
+void BitField::ClrCell(int celln) {
     VHBits::BitClr(arrmem, celln);
 }
 
 /**
- * 
+ *
  */
-void BitField::Set(size_t celln) {
-    VHBits::BitSet(arrmem, celln);
+void BitField::ClrCell(const CellsMatrix & cmtx, int cellx, int celly) {
+    int n = cmtx.CellN(cellx, celly);
+    VHBits::BitClr(arrmem, n);
 }
-
 
 /**
  * 
  */
-bool BitField::Get(size_t celln) const {
+void BitField::SetCell(int celln) {
+    VHBits::BitSet(arrmem, celln);
+}
+
+/**
+ *
+ */
+void BitField::SetCell(const CellsMatrix & cmtx, int cellx, int celly) {
+    int n = cmtx.CellN(cellx, celly);
+    VHBits::BitSet(arrmem, n);
+}
+
+/**
+ * 
+ */
+bool BitField::GetCell(int celln) const {
     return VHBits::BitVal(arrmem, celln);
 }
 
@@ -58,7 +75,7 @@ bool BitField::Get(size_t celln) const {
  */
 const int BitField::FindEntryCell(const CellsMatrix & cmtx) const {
     int r = -1;
-    for(uint16_t i=0; i < cmtx.CellsT(); i++) {
+    for(int i=0; i < cmtx.CellsT(); i++) {
         if(VHBits::BitVal(arrmem, i)) {
             return i;
         }
@@ -99,7 +116,7 @@ const int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
 
         // Check limits
         if((crn[i]>=0) && (crn[i]<cmtx.CellsT())) {
-            if(Get(crn[i])) {
+            if(GetCell(crn[i])) {
                 return crn[i];
             }
         }
@@ -112,8 +129,8 @@ const int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
  * @brief Проход по фигуре fldfig : Поиск ответвлений
  */
 const int BitField::FindPath(const CellsMatrix & cmtx, const BitField & fldfig) const {
-    for(uint16_t i=0;i<cmtx.CellsT();i++) {
-        if(fldfig.Get(i)) {
+    for(int i=0;i<cmtx.CellsT();i++) {
+        if(fldfig.GetCell(i)) {
             int r = FindNearest(cmtx, i);
             if(r != -1) {
                 return r;
@@ -126,26 +143,26 @@ const int BitField::FindPath(const CellsMatrix & cmtx, const BitField & fldfig) 
 /**
  * Вычисление длинны учитывая пропуски ( SPACER )
  */
-size_t BitField::ScanSpanLen(const CellsMatrix & cmtx, size_t startcell, int skipmax) const {
+int BitField::ScanSpanLen(const CellsMatrix & cmtx, int startcell, int skipmax) const {
 
     // вычисляем координаты ячейки по номеру
     auto [cx, cy] = cmtx.CellXY(startcell);
 
     // Последняя ячейка в линии
-    uint16_t spc    = skipmax;
-    uint16_t finn   = (cy+1) * cmtx.CellsX() - 1;
-    uint16_t curn   = startcell;
-    uint16_t validn = startcell;
+    int spc    = skipmax;
+    int finn   = (cy+1) * cmtx.CellsX() - 1;
+    int curn   = startcell;
+    int validn = startcell;
 
     while(curn<=finn)
     {
-        if(Get(curn)) {
+        if(GetCell(curn)) {
             validn = curn;
             spc = skipmax;
         }
         else {
-            spc--;
             if(!spc) break;
+            spc--;
         }
         curn++;
     }
@@ -158,13 +175,16 @@ size_t BitField::ScanSpanLen(const CellsMatrix & cmtx, size_t startcell, int ski
  */
 void BitField::ClearSpan(const stspan & span)  {
     for(size_t i=0; i < span.l; i++) {
-        Clr(span.n+i);
+        ClrCell(span.n+i);
     }
 }
+
 /* ========================[  END FILE CONTENT  ]========================
+ * Library          : vhliboptimal
  * File             : src/cmatrix/bitfield.cpp
- * Content size     : 3391
- * Date / Time      : 16-07-2026 02:43:20
- * MD5              : 4f23832c3b3ce3c609ee933ca6d06f71
+ * Revision         : 0.2
+ * Content size     : 3717
+ * Date / Time      : 20-07-2026 03:16:52
+ * MD5              : aeed05d48da46a805abfb9c41263b483
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
