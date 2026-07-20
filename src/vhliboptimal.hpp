@@ -1,13 +1,13 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.3
+ * Revision      : 0.4
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.hpp
  * Content size  : 2231
- * Date / Time   : 20-07-2026 05:40:29
+ * Date / Time   : 20-07-2026 06:32:56
  * MD5           : 8e1c83ac03b203572ae113ee1bac58b5
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -103,9 +103,9 @@ class VHLibOptimal {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.hpp
- * Revision         : 0.3
+ * Revision         : 0.4
  * Content size     : 2231
- * Date / Time      : 20-07-2026 05:40:29
+ * Date / Time      : 20-07-2026 06:32:56
  * MD5              : 8e1c83ac03b203572ae113ee1bac58b5
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

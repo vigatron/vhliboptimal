@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.3
+ * Revision      : 0.4
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/log/vhliboptimallog.cpp
- * Content size  : 5399
- * Date / Time   : 20-07-2026 05:40:29
- * MD5           : 427d6094800ce9c8d4c2c4345ded7abb
+ * Content size  : 5395
+ * Date / Time   : 20-07-2026 06:32:56
+ * MD5           : 9f171c362bfc98f941f9b53a3f58558b
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -198,7 +198,7 @@ void VHLibOptimalLogger::DumpSpan(
     int cs = cmx.CellSize();
     int x1 = cellx * cs;
     int y1 = celly * cs;
-    int x2 = (cellx + spn.l + 1) * cs - 1;
+    int x2 = (cellx + spn.l) * cs - 1;
     int y2 = (celly + 1) * cs - 1;
     std::string msgg = std::format(" sx:sy - ex:ey = {:>5d}:{:>5d}:{:>5d}:{:>5d}",
         x1, y1, x2, y2);
@@ -250,9 +250,9 @@ void VHLibOptimalLogger::DumpFigures(const VHLibOptimal & objlib) {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/log/vhliboptimallog.cpp
- * Revision         : 0.3
- * Content size     : 5399
- * Date / Time      : 20-07-2026 05:40:29
- * MD5              : 427d6094800ce9c8d4c2c4345ded7abb
+ * Revision         : 0.4
+ * Content size     : 5395
+ * Date / Time      : 20-07-2026 06:32:56
+ * MD5              : 9f171c362bfc98f941f9b53a3f58558b
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
