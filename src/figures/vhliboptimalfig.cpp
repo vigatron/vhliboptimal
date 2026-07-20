@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.1 Draft
+ * Revision      : 0.2
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figures/vhliboptimalfig.cpp
- * Content size  : 5691
- * Date / Time   : 16-07-2026 02:43:20
- * MD5           : e109ac57c5edd4dcad9c118cd9688cb4
+ * Content size  : 7183
+ * Date / Time   : 20-07-2026 03:16:52
+ * MD5           : 97aca709556a6ab3ce5daee09a0d1db7
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -16,6 +16,8 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #include "vhliboptimalfig.hpp"
 #include "vhliboptimallog.hpp"
+
+using namespace vhliboptimal;
 
 /**
  * @brief Сканирование битового поля и сохранение участков фигуры
@@ -32,7 +34,7 @@ VHOptimalFigure::VHOptimalFigure(
 
     bool loop = true;
 
-    // Сканируем линии фигуры
+    // Сканируем участоки фигуры
     while(loop) {
 
         // начальная ячейка
@@ -65,34 +67,60 @@ VHOptimalFigure::VHOptimalFigure(
 
         }
 
-        // добавляем линию в список текущей фигуры
-        stspan span = { .n = (uint16_t)curn, .l = (uint16_t)spanlen };
+        stspan span = { .n = (uint32_t)curn, .l = (uint32_t)spanlen };
+
+        // добавляем участок в список текущей фигуры
         arrspans.push_back(span);
 
-        // Удаляем линию из поля
+        // Удаляем участок из поля
         bfld.ClearSpan(span);
     }
 
 }
 
 /**
- * @brief Количество прямоугольников фигуры
- * @return количество участков
+ * @brief Размер фигуры в ячейках
+*/
+const strect & VHOptimalFigure::PosCells() const {
+    return objrect;
+}
+
+/**
+ * @brief Размер фигуры в пикселях
+*/
+const strect VHOptimalFigure::PosAbs(const CellsMatrix & cmtx) const {
+    strect r;
+    int cs = cmtx.CellSize();
+    r.x1 = objrect.x1 * cs;
+    r.y1 = objrect.y1 * cs;
+    r.x2 = objrect.x2 * cs;
+    r.y2 = objrect.y2 * cs;
+    return r;
+}
+
+/**
+ * @brief Все участки фигуры
+ */
+const std::vector<stspan> & VHOptimalFigure::Spans() const {
+    return arrspans;
+}
+
+/**
+ * @brief Количество участков фигуры
 */
 const size_t VHOptimalFigure::SpansCount() const {
     return arrspans.size();
 }
 
 /**
- *
+ * @brief выбраный участок как объект
  */
 const stspan & VHOptimalFigure::Span(int spann) const {
     return arrspans[spann];
 }
 
 /**
- * @brief Прямоугольник n (фигуры fn) в пикселях
- * @return selected region rectangle area
+ * @brief Участок # spann фигуры в пикселях
  */
 strect VHOptimalFigure::SpanRect(int spann, const CellsMatrix & cmtx) const {
 
@@ -114,11 +142,14 @@ strect VHOptimalFigure::SpanRect(int spann, const CellsMatrix & cmtx) const {
 }
 
 /**
- * @brief Размер фигуры
-*/
-const strect & VHOptimalFigure::Position() const {
-    return objrect;
+ * @brief Оптимизация участков фигуры
+ */
+void VHOptimalFigure::Sort(const CellsMatrix & cmtx) {
+    
+    SortSequental(cmtx);
+
 }
+
 
 /**
  * @brief Квадрат расстояния между прямоугольниками ( по начальной точке )
@@ -137,12 +168,40 @@ int VHOptimalFigure::QDistance(
 }
 
 /**
- * @brief Поиск прямоугольника по минимальной дистанции
+ * @brief   Поиск ближайшего участка по стартовой координате и минимальной дистанции
+ *          Учитываем только участка с ненуловей длинной
  */
-int VHOptimalFigure::min_n_by_dist(const stspan & src, int cnt) {
+int VHOptimalFigure::FindClosestSpan(
+    const stspan & span,
+    const std::vector<stspan> & arr,
+    const CellsMatrix & cmtx ) const
+{
 
     int d = -1;
     int n = -1;
+
+    for(int i=0; i < arr.size();i++) {
+
+        // Valid ?
+        if(arr[i].l) {
+
+            // distance ^ 2
+            int dcur = QDistance(span, arr[i], cmtx);
+
+            // Not same ?
+            if(dcur) {
+
+                if(d==-1) {
+                    d = dcur;
+                    n = i;
+                }
+                else if(dcur<d) {
+                    d = dcur;
+                    n = i;
+                }
+            }
+        }
+    }
 
     return n;
 }
@@ -151,39 +210,35 @@ int VHOptimalFigure::min_n_by_dist(const stspan & src, int cnt) {
 /**
  * @brief Для каждой фигуры - сортировка линий
  */
-void VHOptimalFigure::SortFigureParts() {
+void VHOptimalFigure::SortSequental(const CellsMatrix & cmtx) {
 
-}
+    std::vector<stspan> arrAvail = arrspans;
 
-/**
- *
- */
-uint8_t VHOptimalFigure::FindWaterfall(int atpos, int lim, int *poffs, int *pcnt) {
+    std::vector<stspan> arrSorted;
+    arrSorted.reserve(arrspans.size());
 
-    return 1;
-}
+    int idx = 0;
 
-/**
- *
- */
-void VHOptimalFigure::SwapWaterfall(int len) {
+    while(idx != -1) {
+        arrSorted.push_back(arrAvail[idx]);
+        arrAvail[idx].l = 0;
+        const stspan & span = arrAvail[idx];
+        idx = FindClosestSpan(span, arrAvail, cmtx);
+    }
 
-}
+    // Replace with sorted
+    arrspans = arrSorted;
 
-/**
- *
- */
-void VHOptimalFigure::SortWaterfall() {
 }
 
 
 /**
  * @brief Найти крайний левый либо крайний правый ( sideFlag 0-Left/1-Right )
  */
-const int VHOptimalFigure::FindSpanCellLR(const CellsMatrix & cmtx, uint16_t spancy, int sideFlag) const {
+const int VHOptimalFigure::FindSpanByYLR(const CellsMatrix & cmtx, uint16_t spancy, int sideFlag) const {
 
     int r = -1;
-    uint16_t x;
+    uint16_t cellx;
 
     for(int i=0; i < arrspans.size();i++) {
 
@@ -192,11 +247,11 @@ const int VHOptimalFigure::FindSpanCellLR(const CellsMatrix & cmtx, uint16_t spa
 
         if(r == -1) {
             r = i;
-            x = cx;
+            cellx = cx;
         } else {
-            bool cond = !sideFlag ? (cx<x) : (cx>x);
+            bool cond = !sideFlag ? (cx < cellx) : (cx > cellx);
             r = cond ? i : r;
-            x = cond ? cx : x;
+            cellx = cond ? cx : cellx;
         }
     }
 
@@ -211,39 +266,43 @@ const int VHOptimalFigure::FindSpanCellLR(const CellsMatrix & cmtx, uint16_t spa
 /**
  * @brief Обход по контуру
  */
-void VHOptimalFigure::Border(const CellsMatrix & cmtx, SetPosCallback callbackSetPos) {
+void VHOptimalFigure::Border(const CellsMatrix & cmtx, SetPosCallback callbackSetPos) const {
 
     // Empty, exit ...
     if(!arrspans.size()) return;
 
-    uint16_t height = objrect.y2 - objrect.y1 + 1;
-    
+    uint16_t rows = objrect.y2 - objrect.y1 + 1;
+    int cs = cmtx.CellSize();
+
     // Direction DOWN
-    for(int i=0; i < height; i++) {
-        int n = FindSpanCellLR(cmtx, objrect.y1 + i, 0);
+    for(int i=0; i < rows; i++) {
+        int n = FindSpanByYLR(cmtx, objrect.y1 + i, 0);
         auto [cx, cy] = cmtx.CellXY(n);
-        uint16_t x = cx * cmtx.CellSize();
-        uint16_t y = cy * cmtx.CellSize() + (cmtx.CellSize() >> 1);
-        callbackSetPos(x, y);
-        VHLibOptimalLogger::DumpCell("Border-Down:", n, cx, cy, x, y);
+        uint16_t pxlx = cx * cs;
+        uint16_t pxly = cy * cs + (cs >> 1);
+
+        uint8_t cmd = !i ? cmdStart : cmdMove;
+        callbackSetPos(cmd, dirLeft, dirDown, cx, cy, pxlx, pxly);
     }
 
     // Direction UP
-    for(int i=0; i < height; i++) {
-        int n = FindSpanCellLR(cmtx, objrect.y2 - i, 1);
+    for(int i=0; i < rows; i++) {
+        int n = FindSpanByYLR(cmtx, objrect.y2 - i, 1);
         auto [cx, cy] = cmtx.CellXY(n);
-        uint16_t x = cx * cmtx.CellSize() + cmtx.CellSize();
-        uint16_t y = cy * cmtx.CellSize() + ( cmtx.CellSize() >> 1);
-        callbackSetPos(x, y);
-        VHLibOptimalLogger::DumpCell("Border-Up:", n, cx, cy, x, y);
+        uint16_t pxlx = cx * cs + cs;
+        uint16_t pxly = cy * cs + (cs >> 1);
+        uint8_t cmd = (i == rows - 1) ? cmdStop : cmdMove;
+        callbackSetPos(cmd, dirRight, dirUp, cx, cy, pxlx, pxly);
     }
 
 }
 
 /* ========================[  END FILE CONTENT  ]========================
+ * Library          : vhliboptimal
  * File             : src/figures/vhliboptimalfig.cpp
- * Content size     : 5691
- * Date / Time      : 16-07-2026 02:43:20
- * MD5              : e109ac57c5edd4dcad9c118cd9688cb4
+ * Revision         : 0.2
+ * Content size     : 7183
+ * Date / Time      : 20-07-2026 03:16:52
+ * MD5              : 97aca709556a6ab3ce5daee09a0d1db7
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

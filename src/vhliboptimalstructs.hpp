@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.1 Draft
+ * Revision      : 0.2
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimalstructs.hpp
- * Content size  : 1145
- * Date / Time   : 16-07-2026 02:43:20
- * MD5           : c73c8b79274927a0439b6583664da004
+ * Content size  : 1224
+ * Date / Time   : 20-07-2026 03:16:52
+ * MD5           : 8d0e02ae8a121baab80519fe8b96fe4d
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -20,19 +20,21 @@
 
 #include <functional>
 
+namespace vhliboptimal {
+
 // Определяем типы для колбэков
 
 using   GetPixelsCallback   = std::function<std::vector<uint8_t>(uint16_t, uint16_t, uint16_t)>;
-using   SetPosCallback      = std::function<void(uint16_t, uint16_t)>;
+using   SetPosCallback      = std::function<void(uint8_t, uint8_t, uint8_t, uint16_t, uint16_t, uint16_t, uint16_t)>;
 
 
 typedef struct _stspan  {
 
     // cell index
-    uint16_t n;
+    uint32_t n;
 
     // span length
-    uint16_t l;
+    uint32_t l;
 
 } stspan;
 
@@ -40,10 +42,10 @@ typedef struct _stspan  {
 typedef struct _strect  {
 
     // Left-top     corner  sx, sy
-    uint16_t x1,y1;
+    uint16_t x1, y1;
 
     // Right-bottom corner  ex, ey
-    uint16_t x2,y2;
+    uint16_t x2, y2;
 
 } strect;
 
@@ -67,10 +69,14 @@ typedef struct _stConfig {
 
 } stConfig;
 
+};
+
 /* ========================[  END FILE CONTENT  ]========================
+ * Library          : vhliboptimal
  * File             : src/vhliboptimalstructs.hpp
- * Content size     : 1145
- * Date / Time      : 16-07-2026 02:43:20
- * MD5              : c73c8b79274927a0439b6583664da004
+ * Revision         : 0.2
+ * Content size     : 1224
+ * Date / Time      : 20-07-2026 03:16:52
+ * MD5              : 8d0e02ae8a121baab80519fe8b96fe4d
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
