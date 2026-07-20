@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.2
+ * Revision      : 0.3
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimalstructs.hpp
- * Content size  : 1224
- * Date / Time   : 20-07-2026 03:16:52
- * MD5           : 8d0e02ae8a121baab80519fe8b96fe4d
+ * Content size  : 1233
+ * Date / Time   : 20-07-2026 05:40:29
+ * MD5           : 903b6c59491a1b39dc3225efddce1b70
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -24,7 +24,7 @@ namespace vhliboptimal {
 
 // Определяем типы для колбэков
 
-using   GetPixelsCallback   = std::function<std::vector<uint8_t>(uint16_t, uint16_t, uint16_t)>;
+using   GetPixelsCallback   = std::function<const std::vector<uint8_t> & (uint16_t, uint16_t, uint16_t)>;
 using   SetPosCallback      = std::function<void(uint8_t, uint8_t, uint8_t, uint16_t, uint16_t, uint16_t, uint16_t)>;
 
 
@@ -74,9 +74,9 @@ typedef struct _stConfig {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimalstructs.hpp
- * Revision         : 0.2
- * Content size     : 1224
- * Date / Time      : 20-07-2026 03:16:52
- * MD5              : 8d0e02ae8a121baab80519fe8b96fe4d
+ * Revision         : 0.3
+ * Content size     : 1233
+ * Date / Time      : 20-07-2026 05:40:29
+ * MD5              : 903b6c59491a1b39dc3225efddce1b70
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
