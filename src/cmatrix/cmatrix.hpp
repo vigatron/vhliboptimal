@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.2
+ * Revision      : 0.3
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/cmatrix/cmatrix.hpp
- * Content size  : 855
- * Date / Time   : 20-07-2026 03:16:52
- * MD5           : fee073be96383370b77e7ea3a36a3c1b
+ * Content size  : 885
+ * Date / Time   : 20-07-2026 05:40:29
+ * MD5           : 32f2b2a5260edc9a49fc72d882ba334b
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -17,6 +17,8 @@
 #pragma once
 
 #include "vhplatform.hpp"
+
+namespace vhliboptimal {
 
 class CellsMatrix {
 
@@ -40,12 +42,14 @@ class CellsMatrix {
         size_t cellsz;        // Cell size
 };
 
+};
+
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/cmatrix/cmatrix.hpp
- * Revision         : 0.2
- * Content size     : 855
- * Date / Time      : 20-07-2026 03:16:52
- * MD5              : fee073be96383370b77e7ea3a36a3c1b
+ * Revision         : 0.3
+ * Content size     : 885
+ * Date / Time      : 20-07-2026 05:40:29
+ * MD5              : 32f2b2a5260edc9a49fc72d882ba334b
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
