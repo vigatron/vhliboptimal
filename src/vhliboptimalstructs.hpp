@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.4
+ * Revision      : 0.5
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimalstructs.hpp
- * Content size  : 1233
- * Date / Time   : 20-07-2026 06:32:56
- * MD5           : 903b6c59491a1b39dc3225efddce1b70
+ * Content size  : 2331
+ * Date / Time   : 22-07-2026 09:37:27
+ * MD5           : cb49a708b7cb2c6b56a014f664b354eb
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -20,12 +20,49 @@
 
 #include <functional>
 
+
 namespace vhliboptimal {
 
 // Определяем типы для колбэков
 
-using   GetPixelsCallback   = std::function<const std::vector<uint8_t> & (uint16_t, uint16_t, uint16_t)>;
-using   SetPosCallback      = std::function<void(uint8_t, uint8_t, uint8_t, uint16_t, uint16_t, uint16_t, uint16_t)>;
+
+/**
+ * CallbackGetSrcPxls       - Read source image data
+ * 
+ * void *       userData    - User context pointer
+ * uint8_t *    dstptr      - Destination Buffer
+ * uint16_t     bytescnt    - Buffer Size
+ * uint16_t     srcid       - Image ID
+ * uint16_t     srcx        - Image offset X
+ * uint16_t     srcy        - Image offset Y
+ */
+typedef void (*CallbackGetSrcPxls)(void *userData, uint8_t *dstptr, uint16_t bytescnt, uint16_t srcid, uint16_t srcx, uint16_t srcy);
+
+
+/**
+ * CallbackBorder           - Move across figure border
+ * 
+ * void *       userData    - User context pointer
+ * uint8_t      cmd         - Command
+ * uint8_t      dirh        - Direction H
+ * uint8_t      dirv        - Direction V
+ * uint32_t     cellx       - Cell Offset X
+ * uint32_t     celly       - Cell Offset Y
+ * uint16_t     imgx        - Image X
+ * uint16_t     imgy        - Image Y
+ */
+typedef void (*CallbackBorder)(void *userData, uint8_t cmd, uint8_t dirh, uint8_t dirv, uint32_t cellx, uint32_t celly, uint16_t imgx, uint16_t imgy);
+
+
+/**
+ * CallbackContent          - Object Area
+ * 
+ * void *       userData    - User context pointer
+ * uint32_t     cxl         - Left  Cell
+ * uint32_t     cxr         - Right Cell
+ */
+typedef void (*CallbackContent)(void *userData, uint32_t cxl, uint32_t cxr);
+
 
 
 typedef struct _stspan  {
@@ -58,13 +95,14 @@ typedef struct _stConfig {
     // Размер картинки в пикселях, высота
     uint16_t imageHeight;
 
-    // Размер ячейки
-    uint16_t cellsize;
-
     // Максимально допустимое количество пустых ячеек подряд в линии
     uint16_t spccnt;
 
-    // Подсветка цветности ячейки, меньшие значения принимаем за черный
+    // Размер ячейки в пикселях
+    uint8_t cellsize;
+
+    // Подсветка цветности ячейки
+    // меньшие значения принимаем за черный
     uint8_t  minColorVal;
 
 } stConfig;
@@ -74,9 +112,9 @@ typedef struct _stConfig {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimalstructs.hpp
- * Revision         : 0.4
- * Content size     : 1233
- * Date / Time      : 20-07-2026 06:32:56
- * MD5              : 903b6c59491a1b39dc3225efddce1b70
+ * Revision         : 0.5
+ * Content size     : 2331
+ * Date / Time      : 22-07-2026 09:37:27
+ * MD5              : cb49a708b7cb2c6b56a014f664b354eb
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

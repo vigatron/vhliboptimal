@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.4
+ * Revision      : 0.5
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.hpp
- * Content size  : 2231
- * Date / Time   : 20-07-2026 06:32:56
- * MD5           : 8e1c83ac03b203572ae113ee1bac58b5
+ * Content size  : 2728
+ * Date / Time   : 22-07-2026 09:37:27
+ * MD5           : 7f4a14e16a0278d22cb387c57bb8790c
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -39,10 +39,12 @@ class VHLibOptimal {
 
         verr Setup(
             const stConfig &            cfgparams,
-            GetPixelsCallback           callbackGetPixelsHandler,
-            SetPosCallback              callbackSetPosHandler );
+            CallbackGetSrcPxls          funcGetPixels,
+            CallbackBorder              funcBorder,
+            CallbackContent             funcContent
+        );
 
-        verr Run();
+        verr Run(uint16_t srcimgid);
 
         const size_t                    GetObjectsCount     () const;
 
@@ -62,20 +64,29 @@ class VHLibOptimal {
         // Settings
         stConfig                        cfg;
 
-        // Callback: LoadSourceContent Line / Cell Pixels
-        GetPixelsCallback               callbackGetPixels    = nullptr;
+        // Callback: Source Image Content / Get Pixels
+        CallbackGetSrcPxls              callbackGetPixels   = nullptr;
 
-        // Callback: Object Border
-        SetPosCallback                  callbackSetPos       = nullptr;
+        // Callback: Moving across object border
+        CallbackBorder                  callbackBorder      = nullptr;
+
+        // Callback: Moving across object content
+        CallbackContent                 callbackContent     = nullptr;
 
         // 2D Configuration
         CellsMatrix                     cmatrix;
 
+        // Буффер для хранения строки изображения внешнего источника
+        std::vector<uint8_t>            buffLine;
+
         // Битовое поле фрагментов
-        BitField                        bitfieldOrig;
+        BitField                        bitfieldSrc;
+        std::vector<uint8_t>            buffArrSrc;
 
         // Битовое поле выбранного фрагмента
-        BitField                        bitfieldFig;
+        BitField                        bitfieldDst;
+        std::vector<uint8_t>            buffArrDst;
+
 
         // Массив фигур
         std::vector<VHOptimalFigure>    arrFigures;
@@ -86,7 +97,7 @@ class VHLibOptimal {
 
         verr CheckCfgParams();
 
-        verr InitPicture();
+        verr InitialScanImage(uint16_t srcimgid);
 
         bool FindFigure();
 
@@ -94,7 +105,7 @@ class VHLibOptimal {
 
         bool CheckWhiteLevel(const std::vector<uint8_t> & arr, uint8_t whitelevel) const;
 
-        bool IsCellFilled(uint16_t cellx, uint16_t celly, uint8_t whitelevel) const;
+        bool IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t celly, uint8_t whitelevel);
 
 };
 
@@ -103,9 +114,9 @@ class VHLibOptimal {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.hpp
- * Revision         : 0.4
- * Content size     : 2231
- * Date / Time      : 20-07-2026 06:32:56
- * MD5              : 8e1c83ac03b203572ae113ee1bac58b5
+ * Revision         : 0.5
+ * Content size     : 2728
+ * Date / Time      : 22-07-2026 09:37:27
+ * MD5              : 7f4a14e16a0278d22cb387c57bb8790c
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

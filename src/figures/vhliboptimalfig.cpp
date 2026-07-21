@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.4
+ * Revision      : 0.5
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figures/vhliboptimalfig.cpp
- * Content size  : 7183
- * Date / Time   : 20-07-2026 06:32:56
- * MD5           : 97aca709556a6ab3ce5daee09a0d1db7
+ * Content size  : 7839
+ * Date / Time   : 22-07-2026 09:37:27
+ * MD5           : 82925dfa81e864089cd574bc7f027993
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -266,10 +266,12 @@ const int VHOptimalFigure::FindSpanByYLR(const CellsMatrix & cmtx, uint16_t span
 /**
  * @brief Обход по контуру
  */
-void VHOptimalFigure::Border(const CellsMatrix & cmtx, SetPosCallback callbackSetPos) const {
+void VHOptimalFigure::Border(const CellsMatrix & cmtx, CallbackBorder callbackBorder) const {
 
     // Empty, exit ...
     if(!arrspans.size()) return;
+
+    if(callbackBorder == nullptr) return;
 
     uint16_t rows = objrect.y2 - objrect.y1 + 1;
     int cs = cmtx.CellSize();
@@ -279,10 +281,10 @@ void VHOptimalFigure::Border(const CellsMatrix & cmtx, SetPosCallback callbackSe
         int n = FindSpanByYLR(cmtx, objrect.y1 + i, 0);
         auto [cx, cy] = cmtx.CellXY(n);
         uint16_t pxlx = cx * cs;
-        uint16_t pxly = cy * cs + (cs >> 1);
+        uint16_t pxly = cy * cs; // + (cs >> 1);
 
         uint8_t cmd = !i ? cmdStart : cmdMove;
-        callbackSetPos(cmd, dirLeft, dirDown, cx, cy, pxlx, pxly);
+        callbackBorder((void *)this, cmd, dirLeft, dirDown, cx, cy, pxlx, pxly);
     }
 
     // Direction UP
@@ -290,19 +292,42 @@ void VHOptimalFigure::Border(const CellsMatrix & cmtx, SetPosCallback callbackSe
         int n = FindSpanByYLR(cmtx, objrect.y2 - i, 1);
         auto [cx, cy] = cmtx.CellXY(n);
         uint16_t pxlx = cx * cs + cs;
-        uint16_t pxly = cy * cs + (cs >> 1);
+        uint16_t pxly = (cy + 1) * cs - 1; //  + (cs >> 1);
         uint8_t cmd = (i == rows - 1) ? cmdStop : cmdMove;
-        callbackSetPos(cmd, dirRight, dirUp, cx, cy, pxlx, pxly);
+        callbackBorder((void *)this, cmd, dirRight, dirUp, cx, cy, pxlx, pxly);
     }
 
 }
 
+/**
+ * @brief габариты фигуры
+ */
+void VHOptimalFigure::Content(const CellsMatrix & cmtx, CallbackContent callbackContent) const {
+
+    // Empty, exit ...
+    if(!arrspans.size()) return;
+
+    if(callbackContent == nullptr) return;
+
+    uint16_t rows = objrect.y2 - objrect.y1 + 1;
+    int cs = cmtx.CellSize();
+
+    // Direction from Up to DOWN
+    for(int i=0; i < rows; i++) {
+        int nl = FindSpanByYLR(cmtx, objrect.y1 + i, 0);
+        int nr = FindSpanByYLR(cmtx, objrect.y1 + i, 1);
+        callbackContent((void *)this, nl, nr);
+    }
+
+}
+
+
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/figures/vhliboptimalfig.cpp
- * Revision         : 0.4
- * Content size     : 7183
- * Date / Time      : 20-07-2026 06:32:56
- * MD5              : 97aca709556a6ab3ce5daee09a0d1db7
+ * Revision         : 0.5
+ * Content size     : 7839
+ * Date / Time      : 22-07-2026 09:37:27
+ * MD5              : 82925dfa81e864089cd574bc7f027993
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
