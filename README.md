@@ -43,8 +43,7 @@ Unlike heavyweight computer vision libraries such as OpenCV, `vhliboptimal` is l
 
 It excels at processing binary or high-contrast images and gracefully handles small gaps and noise thanks to tunable parameters.  
 
-
-
+---
 
 ## Key Features
 
@@ -55,58 +54,66 @@ It excels at processing binary or high-contrast images and gracefully handles sm
 * Configurable cell size and noise tolerance
 * Real-time contour and content processing via callbacks
 
+
 ---
 
-### History & Evolution
+## History & Evolution
 
-The `vhliboptimal` library has deep roots in real-world embedded computer vision and a long history of practical use under severe resource constraints.
+The `vhliboptimal` library has deep roots in real-world embedded computer vision, evolving from extreme hardware constraints to modern software efficiency.
 
+#### 2006–2012 — The Extreme Embedded Roots (AVR + External SRAM)
+The algorithm originated as a raster-to-vector engine for 8-bit AVR microcontrollers, initially tasked with recognizing character contours and geometric shapes on tiny 128x64 B&W displays. To handle image processing, the system utilized 32KB of external SRAM accessed via a multiplexed bus (74HC573 + ALE). 
+The core engineering challenge was the severe bottleneck of the external memory bus. The grid-based `BitField` architecture was specifically designed here to minimize external bus accesses, keeping the heavy pathfinding logic strictly within the MCU's fast internal RAM.
+* **Legacy Artifact:** A surviving single-header (`.h`) version of this original plain C implementation is preserved as a historical reference at [electrolviv/optimal](https://github.com/electrolviv/optimal).
 
-#### 2012–2017 — Legacy Era (Plain C + FPGA)
-The original algorithm was developed in plain C as a lightweight, header-only library. It was successfully deployed in several commercial products running on highly constrained platforms, including **ARM 32-bit** and **AVR 8-bit** microcontrollers (ATMega, ESP32, STM32).
+#### 2016 — Hardware-Accelerated Era (FPGA + STM32)
+As tasks grew more complex, the algorithm was scaled and integrated into a **dual-camera stereo vision** system based on a Xilinx Spartan-6 FPGA + SDRAM, paired with an STM32F7 microcontroller.
 
-In 2016 the algorithm was integrated into a **stereo camera** system based on a Xilinx Spartan-6 FPGA + SDRAM (166 MHz) paired with an STM32F7 microcontroller (200 MHz).  
+- **Proven Benchmark (2016):** Performance-critical parts in Verilog on Xilinx Spartan-6 processed shape contours from **two synchronized cameras at 60 FPS (VGA 640×480)**. 
+STM32F7 handled higher-level logic. This hybrid solution delivered hard real-time performance with minimal jitter.
 
-This was an extremely optimized hybrid solution:
-- Performance-critical parts were implemented in **Verilog** directly on the FPGA.
-- Control logic and remaining processing ran on the STM32 in plain C.
-- The FPGA and MCU operated in tight parallel cooperation.
+- The STM32 handled control logic and remaining processing in plain C. This tight parallel cooperation proved the algorithm's viability for demanding industrial robotics and automated inspection lines, where software-only solutions like OpenCV were too heavy, slow, or non-deterministic.
 
-Thanks to heavy bit-packing, grid-based scanning, and minimal memory usage, the library demonstrated reliable real-time performance even on 8-bit MCUs with only a few kilobytes of RAM. It proved particularly effective for industrial applications such as robotics, quality control, and automated inspection lines, where full-featured solutions like OpenCV were too heavy or slow.
+#### 2026 — Modern C++ Rewrite for SBCs
 
-#### 2026 — Modern C++ Rewrite
 The library has been completely redesigned and rewritten from the ground up in modern **C++23**.  
 
-This major update brings:
-- A clean object-oriented interface
-- Three flexible C-style callbacks
-- Better code organization and improved safety
-- Full CMake build system support
+The main goal of this update is to adapt the battle-tested algorithm for modern affordable Single Board Computers (such as Raspberry Pi, Orange Pi, and similar), enabling real-time operation with **a single camera and pure software — no FPGA required**.  
 
-Remarkably, on modern processors — even with standard compiler optimizations and AVX2 support — the new software implementation achieves **performance comparable to the 2016 FPGA-based version**.
+Thanks to intelligent grid-based downsampling (`cellsize` 8–16 pixels), the library achieves practical real-time performance of approximately **10–20 FPS on 1080p** for edge-AI, robotics, and automated sorting tasks, while preserving the core philosophy of extreme efficiency that originated on 8-bit microcontrollers nearly 15 years ago.
 
-This evolution reflects the author’s 25+ years of experience in embedded systems, FPGA development, and low-level optimization. The core philosophy — **efficient contour detection without heavy dependencies** — remains unchanged, but the implementation is now much more modern, portable, and developer-friendly.
 
 ---
-
 
 ## 🛠 Technical Specifications
 
-- **Language**: C++23 (with backward compatibility considerations for embedded toolchains)
-- **Platform**: Primarily developed and tested on Linux. The codebase is OS-abstracted through `vhlibplatform`, making it easily portable to Windows, macOS, and bare-metal embedded targets (ARM, AVR, RISC-V, etc.).
+- **Language**: C++23 (Strict requirement. *Note: Legacy C implementations for 8-bit/32-bit MCUs are not part of this codebase.*)
+- **Target Platforms**: 
+  - **Desktop/OS**: Linux (Primary), Windows, macOS.
+  - **Modern SBCs**: Raspberry Pi, Orange Pi, and similar ARM-based boards.
+  - **Modern MCUs**: STM32H7, STM32MP1, and other modern ARM Cortex-M/A cores with C++23 compiler support.
+  - *(Legacy bare-metal targets like AVR or older STM32 families are not supported in this C++23 rewrite).*
+- **Build System**: CMake 3.16+
 - **License**: MIT
 - **Author**: Viktor Glebov (V01G04A81)
-- **Build System**: CMake 3.16+
 
+---
 
 ### Dependencies
-- [`vhlibplatform`](https://github.com/vigatron/vhlibplatform) — a lightweight cross-platform layer providing base primitive types, assertions, error handling, and system abstractions.
+- No heavy third-party dependencies. Requires only [`vhlibplatform`](https://github.com/vigatron/vhlibplatform) — a lightweight cross-platform layer providing base primitive types, assertions, error handling, and system abstractions.
+
+---
+
+### Limitations & Trade-offs
+- **Image Type**: Best suited for binary or high-contrast images (a direct inheritance from its B&W display origins).
+- **Threading**: Currently single-threaded (multi-threading support is planned for future releases).
+- **Resolution vs. Performance**: To achieve real-time FPS on SBCs, the algorithm relies on grid-based downsampling (`cellsize` 8-16px). Fine image details smaller than the configured cell size will be intentionally lost to preserve CPU cycles.
 
 
-### Limitations
-- Best suited for binary or high-contrast images
-- Currently single-threaded (multi-threading support planned)
-- Requires C++23 compliant compiler (or C++20 with some adjustments)
+> **Best Practices for Optimal Results**
+The algorithm was originally proven on pristine, uncompressed RAW video streams. When using modern compressed sources (e.g., MJPEG/MP4 webcams on SBCs), compression artifacts and blurring can degrade contour accuracy.
+Recommendation: For best results, apply a lightweight pre-processing step (e.g., hardware-accelerated thresholding, sharpening, or edge-enhancement) before passing the frame to vhliboptimal, or tune minColorVal and spccnt to be more tolerant of digital noise.
+
 
 ---
 
@@ -261,4 +268,4 @@ int main() {
 }
 ```
 
- * Copyright     : © 20012 – 2026 V01G04A81 / Viktor Glebov
+ * Copyright: © 2012 – 2026 V01G04A81 / Viktor Glebov
