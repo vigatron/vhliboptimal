@@ -4,7 +4,7 @@
 ![CMake](https://img.shields.io/badge/Build-CMake-1f4f9c.svg)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Cross--platform-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/Version-0.5-orange.svg)
+![Version](https://img.shields.io/badge/Version-0.6beta-orange.svg)
 
 ---
 
@@ -12,16 +12,21 @@
 |--------------|-----------------------------------|
 | Project      | VHLibOptimal                      |
 | Description  | C++ library for shape contour detection and image outline recognition |
-| Revision     | 0.5                               |
-| Date         | 2012 - 2026                       |
+| Revision     | 0.6beta                           |
+| Date         | 2006 - 2026                       |
 | Author       | V01G04A81 / Viktor Glebov         |
 | License      | MIT                               |
 | Source code  | [https://github.com/vigatron/vhliboptimal](https://github.com/vigatron/vhliboptimal) |
 
+
+
 ![img](docs/stereocam.jpg)
 
+*Historical reference: The 2016 FPGA-based stereo vision system that proved the algorithm's real-time viability.*
 
-*A high-performance C++23 library for fast shape contour detection and image outline recognition using optimized grid-based scanning.*
+*The modern 2026 version adapts this core logic for single-camera SBC setups.*
+
+***A high-performance C++23 library for fast shape contour detection and image outline recognition using optimized grid-based scanning.***
 
 
 ---
@@ -31,7 +36,7 @@
 
 `vhliboptimal` is a high-performance C++23 library for fast shape contour detection and image outline recognition.  
 
-Originally developed in plain C (2012–2017) for commercial embedded projects on ARM and AVR platforms.  
+Originally developed in plain C (starting in 2006) for commercial embedded projects on ARM and AVR platforms, and later evolved through an FPGA-accelerated era (2016).
 
 It has been completely modernized in 2026 with a clean object-oriented C++23 interface while preserving its efficiency-focused philosophy.  
 
@@ -47,8 +52,9 @@ It excels at processing binary or high-contrast images and gracefully handles sm
 
 ## Key Features
 
-* Zero heavy external dependencies
-* Three flexible C-style callbacks for maximum integration flexibility
+* Zero heavy third-party dependencies (OpenCV, etc.)
+* Built on a lightweight, dedicated platform layer (vhlibplatform)
+* Three raw C-style callbacks for maximum interoperability (C, Python, Rust FFI-friendly) and predictable execution behavior
 * Support for multiple image sources via `srcimgid`
 * Highly optimized grid-based scanning with bit-packing
 * Configurable cell size and noise tolerance
@@ -108,11 +114,13 @@ Thanks to intelligent grid-based downsampling (`cellsize` 8–16 pixels), the li
 - **Image Type**: Best suited for binary or high-contrast images (a direct inheritance from its B&W display origins).
 - **Threading**: Currently single-threaded (multi-threading support is planned for future releases).
 - **Resolution vs. Performance**: To achieve real-time FPS on SBCs, the algorithm relies on grid-based downsampling (`cellsize` 8-16px). Fine image details smaller than the configured cell size will be intentionally lost to preserve CPU cycles.
+- **Memory Profile**: Zero dynamic allocations during the frame processing loop (all memory is pre-allocated inside the context during Setup), making it perfectly safe for both Linux applications and bare-metal RTOS environments on modern MCUs.
 
 
-> **Best Practices for Optimal Results**
-The algorithm was originally proven on pristine, uncompressed RAW video streams. When using modern compressed sources (e.g., MJPEG/MP4 webcams on SBCs), compression artifacts and blurring can degrade contour accuracy.
-Recommendation: For best results, apply a lightweight pre-processing step (e.g., hardware-accelerated thresholding, sharpening, or edge-enhancement) before passing the frame to vhliboptimal, or tune minColorVal and spccnt to be more tolerant of digital noise.
+> **⚠️ Best Practices for Optimal Results**  
+> The algorithm was originally proven on pristine, uncompressed RAW video streams. When using modern compressed sources (e.g., MJPEG/MP4 webcams on SBCs), compression artifacts and blurring can degrade contour accuracy.  
+> 
+> **Recommendation:** For best results, apply a lightweight pre-processing step (e.g., hardware-accelerated thresholding, sharpening, or edge-enhancement) before passing the frame to `vhliboptimal`, or tune `minColorVal` and `spccnt` to be more tolerant of digital noise.  
 
 
 ---
@@ -125,8 +133,9 @@ The library operates completely abstracted from raw graphic decoders or UI frame
 *   **`BitField`**: A packed bit array tracking filled/empty cells. It allows instantaneous pathfinding operations and cell clearing during figure extraction loops.
 *   **`VHOptimalFigure`**: Encapsulates a single extracted shape, containing its bounding box, sorted sequential contours, and analytical span strings.
 
+
 ### Key Data Structures (`src/vhliboptimalstructs.hpp`)
-*   `stConfig` — Scanning parameters (image boundaries, grid cell size, color thresholding tolerance `minColorVal`, and max consecutive empty spaces `spccnt`).
+*   `stConfig` — Scanning parameters (image boundaries, grid cell size, color thresholding tolerance `minColorVal`, and `spccnt` which defines the maximum consecutive empty cells allowed before breaking a span).
 *   `strect` — Bounding box structure representation (`x1, y1` to `x2, y2`).
 *   `stspan` — Horizontal/vertical segments representing the continuous boundaries of a shape.
 
@@ -207,7 +216,7 @@ void MyGetPixels(void* userData, uint8_t* dstptr, uint16_t bytescnt,
 
 // Callback for shape border tracing
 void MyBorderCallback(void* userData, uint8_t cmd, uint8_t dirh, uint8_t dirv,
-                      uint32_t cellx, uint32_t celly, uint16_t imgx, uint16_t imgy) {
+                      uint16_t cellx, uint16_t celly, uint16_t imgx, uint16_t imgy) {
     std::cout << "Border [cmd=" << (int)cmd 
               << ", dir=" << (int)dirh << "/" << (int)dirv 
               << "] cell(" << cellx << "," << celly 
@@ -268,4 +277,4 @@ int main() {
 }
 ```
 
- * Copyright: © 2012 – 2026 V01G04A81 / Viktor Glebov
+© 2006 – 2026 V01G04A81 / Viktor Glebov

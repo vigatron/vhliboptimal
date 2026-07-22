@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.5
+ * Revision      : 0.6beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimalstructs.hpp
- * Content size  : 2331
- * Date / Time   : 22-07-2026 09:37:27
- * MD5           : cb49a708b7cb2c6b56a014f664b354eb
+ * Content size  : 2525
+ * Date / Time   : 22-07-2026 14:54:04
+ * MD5           : 2efb160c5cb45d654b92c9290ca58449
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -30,8 +30,8 @@ namespace vhliboptimal {
  * CallbackGetSrcPxls       - Read source image data
  * 
  * void *       userData    - User context pointer
- * uint8_t *    dstptr      - Destination Buffer
- * uint16_t     bytescnt    - Buffer Size
+ * uint8_t *    dstptr      - Destination buffer to fill (Expected format: 8-bit grayscale, 1 byte per pixel)
+ * uint16_t     bytescnt    - Number of bytes to read (typically equal to image width in pixels)
  * uint16_t     srcid       - Image ID
  * uint16_t     srcx        - Image offset X
  * uint16_t     srcy        - Image offset Y
@@ -43,7 +43,7 @@ typedef void (*CallbackGetSrcPxls)(void *userData, uint8_t *dstptr, uint16_t byt
  * CallbackBorder           - Move across figure border
  * 
  * void *       userData    - User context pointer
- * uint8_t      cmd         - Command
+ * uint8_t      cmd         - Command: `CMD_START` / `CMD_MOVE` / `CMD_STOP` (defined in `vhliboptimalstructs.hpp`)
  * uint8_t      dirh        - Direction H
  * uint8_t      dirv        - Direction V
  * uint32_t     cellx       - Cell Offset X
@@ -51,7 +51,7 @@ typedef void (*CallbackGetSrcPxls)(void *userData, uint8_t *dstptr, uint16_t byt
  * uint16_t     imgx        - Image X
  * uint16_t     imgy        - Image Y
  */
-typedef void (*CallbackBorder)(void *userData, uint8_t cmd, uint8_t dirh, uint8_t dirv, uint32_t cellx, uint32_t celly, uint16_t imgx, uint16_t imgy);
+typedef void (*CallbackBorder)(void *userData, uint8_t cmd, uint8_t dirh, uint8_t dirv, uint16_t cellx, uint16_t celly, uint16_t imgx, uint16_t imgy);
 
 
 /**
@@ -112,9 +112,9 @@ typedef struct _stConfig {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimalstructs.hpp
- * Revision         : 0.5
- * Content size     : 2331
- * Date / Time      : 22-07-2026 09:37:27
- * MD5              : cb49a708b7cb2c6b56a014f664b354eb
+ * Revision         : 0.6beta
+ * Content size     : 2525
+ * Date / Time      : 22-07-2026 14:54:04
+ * MD5              : 2efb160c5cb45d654b92c9290ca58449
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
