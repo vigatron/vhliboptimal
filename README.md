@@ -6,15 +6,27 @@
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![Version](https://img.shields.io/badge/Version-0.5-orange.svg)
 
-A high-performance C++23 library for fast shape contour detection and image outline recognition using optimized grid-based scanning.
+---
+
+| Header       | Description                       |
+|--------------|-----------------------------------|
+| Project      | VHLibOptimal                      |
+| Description  | C++ library for shape contour detection and image outline recognition |
+| Revision     | 0.5                               |
+| Date         | 2012 - 2026                       |
+| Author       | V01G04A81 / Viktor Glebov         |
+| License      | MIT                               |
+| Source code  | [https://github.com/vigatron/vhliboptimal](https://github.com/vigatron/vhliboptimal) |
+
+![img](docs/stereocam.jpg)
+
+
+*A high-performance C++23 library for fast shape contour detection and image outline recognition using optimized grid-based scanning.*
 
 
 ---
 
 ## Project Overview
-
-
-![img](docs/stereocam.jpg)
 
 
 `vhliboptimal` is a high-performance C++23 library for fast shape contour detection and image outline recognition.  
@@ -249,3 +261,4 @@ int main() {
 }
 ```
 
+ * Copyright     : © 20012 – 2026 V01G04A81 / Viktor Glebov
