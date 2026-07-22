@@ -216,7 +216,7 @@ void MyGetPixels(void* userData, uint8_t* dstptr, uint16_t bytescnt,
 
 // Callback for shape border tracing
 void MyBorderCallback(void* userData, uint8_t cmd, uint8_t dirh, uint8_t dirv,
-                      uint32_t cellx, uint32_t celly, uint16_t imgx, uint16_t imgy) {
+                      uint16_t cellx, uint16_t celly, uint16_t imgx, uint16_t imgy) {
     std::cout << "Border [cmd=" << (int)cmd 
               << ", dir=" << (int)dirh << "/" << (int)dirv 
               << "] cell(" << cellx << "," << celly 
