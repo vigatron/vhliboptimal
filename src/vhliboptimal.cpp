@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.4
+ * Revision      : 0.5
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.cpp
- * Content size  : 5875
- * Date / Time   : 20-07-2026 06:32:56
- * MD5           : 54bad2403deb85511f23bf45ab0ee261
+ * Content size  : 6402
+ * Date / Time   : 22-07-2026 09:37:27
+ * MD5           : ab8fa10c7237696cdb5e76c7be822f79
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -24,14 +24,16 @@ VHLibOptimal::VHLibOptimal() {
 }
 
 verr VHLibOptimal::Setup(
-    const stConfig      &   cfgparams,
-    GetPixelsCallback       callbackGetPixelsHandler,
-    SetPosCallback          callbackSetPosHandler )
-{
+    const stConfig      &       cfgparams,
+    CallbackGetSrcPxls          funcGetPixels,
+    CallbackBorder              funcBorder,
+    CallbackContent             funcContent
+) {
 
     // Setup callbacks
-    callbackGetPixels     = callbackGetPixelsHandler;
-    callbackSetPos        = callbackSetPosHandler;
+    callbackGetPixels       = funcGetPixels;
+    callbackBorder          = funcBorder;
+    callbackContent         = funcContent;
 
     // Save initial parameters
     cfg = cfgparams;
@@ -40,18 +42,20 @@ verr VHLibOptimal::Setup(
     return CheckCfgParams();
 }
 
-
 /**
  * @brief Start process
  */
-verr VHLibOptimal::Run(
-) {
+verr VHLibOptimal::Run(uint16_t srcimgid) {
 
     if(vok != CheckCfgParams())
         return verrmsg(ERR_InvalidParams, "VHLibOptimal: Invalid parameters");
 
-    if(vok != InitPicture())
+    buffLine.resize(cfg.cellsize);
+
+    if(vok != InitialScanImage(srcimgid))
         return verrmsg(ERR_PictureInitialization, "VHLibOptimal: InitPicture failed");
+
+    arrFigures.clear();
 
     // Scan objects
     while(FindFigure()) {
@@ -68,19 +72,21 @@ void VHLibOptimal::SetLogLevel(int verbose) {
     loglevel = verbose;
 }
 
-
 /**
  * @brief Initialization: Check parameters
  */
 verr VHLibOptimal::CheckCfgParams() {
 
     // Check callbacks
-    if(!callbackGetPixels || !callbackSetPos)
-        return verrmsg(2, "VHLibOptimal: Invalid callbacks / nullptr");
+    if(!callbackGetPixels || !callbackBorder || !callbackContent)
+        return verrmsg(1, "VHLibOptimal: Invalid callbacks / nullptr");
 
     // Check source
     if(!cfg.imageWidth || !cfg.imageHeight)
-        return verrmsg(1, "VHLibOptimal: Invalid source image");
+        return verrmsg(2, "VHLibOptimal: Invalid settings: source image props");
+
+    if(!cfg.cellsize)
+        return verrmsg(3, "VHLibOptimal: Invalid settings: cell size");
 
     // Initial parameters valid
     return vok;
@@ -89,7 +95,7 @@ verr VHLibOptimal::CheckCfgParams() {
 /**
  * @brief Initialization: Initial Picture scan
  */
-verr VHLibOptimal::InitPicture() {
+verr VHLibOptimal::InitialScanImage(uint16_t srcimgid) {
 
     // Calculate Cells Matrix Geometry
     cmatrix.Setup(cfg.imageWidth, cfg.imageHeight, cfg.cellsize);
@@ -97,26 +103,33 @@ verr VHLibOptimal::InitPicture() {
     if(loglevel)
         VHLibOptimalLogger::PicProps(*this, cmatrix);
 
-    // Setup Original Bitfield ( callback )
-    bitfieldOrig.Setup(cmatrix);
+    uint32_t bitbuffsize = cmatrix.BitMaskSizeBytes();
 
-    // Initial Scan Field
+    // Setup Original Bitfield and allocate memory buffer
+    buffArrSrc.assign(bitbuffsize, 0);
+    bitfieldSrc.Setup(cmatrix, buffArrSrc.data(), bitbuffsize);
+
+    // Setup Destination Bitfield and allocate memory buffer
+    buffArrDst.assign(bitbuffsize, 0);
+    bitfieldDst.Setup(cmatrix, buffArrDst.data(), bitbuffsize);
+
+    // Initial Scan
     for(uint16_t celly=0; celly < cmatrix.CellsY(); celly++) {
         for(uint16_t cellx=0; cellx < cmatrix.CellsX(); cellx++) {
-            if(IsCellFilled(cellx, celly, cfg.minColorVal)) {
+            if(IsCellFilled(srcimgid, cellx, celly, cfg.minColorVal)) {
                 int idx = cmatrix.CellN(cellx,celly);
-                bitfieldOrig.SetCell(idx);
+                bitfieldSrc.SetCell(idx);
             }
         }
     }
 
     // Dump CellsMatrix
     if(loglevel >= LOG_LEVEL_MAX) {
-        VHLibOptimalLogger::DumpCellsHEX( *this, cmatrix, bitfieldOrig.arr(), "Original Bitfield HEX");
+        VHLibOptimalLogger::DumpCellsHEX( *this, cmatrix, buffArrSrc, "Original Bitfield HEX");
     }
     
     if(loglevel >= LOG_LEVEL_EXT) {
-        VHLibOptimalLogger::DumpCellsTXT( *this, cmatrix, bitfieldOrig.arr(), "Original Bitfield TXT");
+        VHLibOptimalLogger::DumpCellsTXT( *this, cmatrix, buffArrSrc, "Original Bitfield TXT");
     }
 
     return vok;
@@ -127,33 +140,27 @@ verr VHLibOptimal::InitPicture() {
  */
 bool VHLibOptimal::FindFigure() {
 
-    // find entry point of figure
-    int entry = bitfieldOrig.FindEntryCell(cmatrix);
-    if(entry < 0) return false;
-
     // Clearing figure before processing
-    bitfieldFig.Setup(cmatrix);
+    std::memset(buffArrDst.data(), 0, buffArrDst.size());
 
-    int celln = entry;
+    // find entry point of figure
+    int celln = bitfieldSrc.FindEntryCell(cmatrix);
+    if(celln < 0) return false;
 
     bool flagLoopCells = true;
 
     while(flagLoopCells) {
 
-        bitfieldOrig.ClrCell  (celln);
-        bitfieldFig.SetCell   (celln);
+        bitfieldSrc.ClrCell(celln);
+        bitfieldDst.SetCell(celln);
 
         // Find from prev
-        int near = bitfieldOrig.FindNearest(cmatrix, celln);
-        if(near != -1) {
-            celln = near;
-            continue; }
+        celln = bitfieldSrc.FindNearest(cmatrix, celln);
+        if(celln != -1) continue;
 
         // Find in full path
-        near = bitfieldOrig.FindPath(cmatrix, bitfieldFig);
-        if(near != -1) {
-            celln = near;
-            continue; }
+        celln = bitfieldSrc.FindPath(cmatrix, bitfieldDst);
+        if(celln != -1) continue;
 
         // step-out, processing next figure ...
         flagLoopCells = false;
@@ -175,13 +182,13 @@ bool VHLibOptimal::ConvertFigure() {
     }
 
     if(loglevel >= LOG_LEVEL_MAX)
-        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, bitfieldOrig.arr(), (char *)"Original");
+        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, buffArrSrc, "Original");
     
     if(loglevel >= LOG_LEVEL_EXT)
-        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, bitfieldFig.arr(),  (char *)"Figure");
+        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, buffArrDst, "Figure");
 
     // Структура параметров текущей фигуры
-    VHOptimalFigure newfigure(bitfieldFig, cmatrix, cfg.spccnt);
+    VHOptimalFigure newfigure(bitfieldDst, cmatrix, cfg.spccnt);
 
     // Cортировка соседей последовательно
     if(loglevel >= LOG_LEVEL_EXT) {
@@ -212,18 +219,18 @@ bool VHLibOptimal::CheckWhiteLevel(const std::vector<uint8_t> & arr, uint8_t whi
 /**
  * 
  */
-bool VHLibOptimal::IsCellFilled(uint16_t cellx, uint16_t celly, uint8_t whitelevel) const {
+bool VHLibOptimal::IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t celly, uint8_t whitelevel) {
 
     for(int l=0;l<cmatrix.CellSize();l++) {
 
-        const std::vector<uint8_t> & arr = callbackGetPixels(
-            cellx * cmatrix.CellSize(),
-            celly * cmatrix.CellSize() + l,
-            cmatrix.CellSize());
+        uint16_t imgposx = cellx * cmatrix.CellSize();
+        uint16_t imgposy = celly * cmatrix.CellSize() + l;
 
-        if(CheckWhiteLevel(arr, whitelevel))
+        callbackGetPixels((void *)this, buffLine.data(), buffLine.size(), srcimgid, imgposx, imgposy);
+        if(CheckWhiteLevel(buffLine, whitelevel))
             return true;
     }
+
     return false;
 }
 
@@ -271,9 +278,9 @@ const CellsMatrix & VHLibOptimal::GetCMatrix() const {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.cpp
- * Revision         : 0.4
- * Content size     : 5875
- * Date / Time      : 20-07-2026 06:32:56
- * MD5              : 54bad2403deb85511f23bf45ab0ee261
+ * Revision         : 0.5
+ * Content size     : 6402
+ * Date / Time      : 22-07-2026 09:37:27
+ * MD5              : ab8fa10c7237696cdb5e76c7be822f79
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

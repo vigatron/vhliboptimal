@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.4
+ * Revision      : 0.5
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
- * File          : src/cmatrix/bitfield.hpp
- * Content size  : 1427
- * Date / Time   : 20-07-2026 06:32:56
- * MD5           : 3b8b4b87088d624e4ca22059c3348fcd
+ * File          : src/bitfield/bitfield.hpp
+ * Content size  : 1753
+ * Date / Time   : 22-07-2026 09:37:27
+ * MD5           : 7b79cc239c9264a885aa563ab667f9b4
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -27,35 +27,43 @@ class BitField {
 
     public:
 
-        void                            Setup               (const CellsMatrix & cmtx);
-        const std::vector<uint8_t> &    arr                 () const;
+        bool                            Setup               (const CellsMatrix & cmtx, uint8_t * arrptr, uint32_t limbytes);
 
         void                            ClrCell             (int celln);
-        void                            ClrCell             (const CellsMatrix & cmtx, int cellx, int celly);
         void                            SetCell             (int celln);
-        void                            SetCell             (const CellsMatrix & cmtx, int cellx, int celly);
         bool                            GetCell             (int celln) const;
+
+        void                            ClrCell             (const CellsMatrix & cmtx, int cellx, int celly);
+        void                            SetCell             (const CellsMatrix & cmtx, int cellx, int celly);
+        bool                            GetCell             (const CellsMatrix & cmtx, int cellx, int celly) const;
 
         const int                       FindEntryCell       (const CellsMatrix & cmtx) const;
         const int                       FindNearest         (const CellsMatrix & cmtx, int n) const;
         const int                       FindPath            (const CellsMatrix & cmtx, const BitField & fldfig) const;
         int                             ScanSpanLen         (const CellsMatrix & cmtx, int startcell, int skipmax) const;
+
         void                            ClearSpan           (const stspan & span);
 
     private:
 
-        // Память для анализа полного изображения
-        std::vector<uint8_t>    arrmem;
+        // Ссылка на блок памяти для анализа битового массива
+
+        uint8_t *                       arrPtr;
+        uint32_t                        arrSizeInBytes;
+
+        // Оптимизация под uint8_t / uint16_t / uint32_t / uint64_t / AVX2
+
+        int                             FastIdxNonZero() const;
 };
 
 };
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
- * File             : src/cmatrix/bitfield.hpp
- * Revision         : 0.4
- * Content size     : 1427
- * Date / Time      : 20-07-2026 06:32:56
- * MD5              : 3b8b4b87088d624e4ca22059c3348fcd
+ * File             : src/bitfield/bitfield.hpp
+ * Revision         : 0.5
+ * Content size     : 1753
+ * Date / Time      : 22-07-2026 09:37:27
+ * MD5              : 7b79cc239c9264a885aa563ab667f9b4
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
