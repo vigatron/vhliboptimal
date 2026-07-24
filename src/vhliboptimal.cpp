@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.6beta
+ * Revision      : 0.7.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.cpp
- * Content size  : 6402
- * Date / Time   : 22-07-2026 14:54:04
- * MD5           : ab8fa10c7237696cdb5e76c7be822f79
+ * Content size  : 7051
+ * Date / Time   : 24-07-2026 12:39:50
+ * MD5           : 603ff565edb7f6aa51a43c1f64d0d451
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -65,12 +65,6 @@ verr VHLibOptimal::Run(uint16_t srcimgid) {
     return vok;
 }
 
-/**
- * 
- */
-void VHLibOptimal::SetLogLevel(int verbose) {
-    loglevel = verbose;
-}
 
 /**
  * @brief Initialization: Check parameters
@@ -78,7 +72,7 @@ void VHLibOptimal::SetLogLevel(int verbose) {
 verr VHLibOptimal::CheckCfgParams() {
 
     // Check callbacks
-    if(!callbackGetPixels || !callbackBorder || !callbackContent)
+    if(!callbackGetPixels || !callbackBorder || !callbackContent )
         return verrmsg(1, "VHLibOptimal: Invalid callbacks / nullptr");
 
     // Check source
@@ -100,7 +94,7 @@ verr VHLibOptimal::InitialScanImage(uint16_t srcimgid) {
     // Calculate Cells Matrix Geometry
     cmatrix.Setup(cfg.imageWidth, cfg.imageHeight, cfg.cellsize);
 
-    if(loglevel)
+    if(cfg.loglevel)
         VHLibOptimalLogger::PicProps(*this, cmatrix);
 
     uint32_t bitbuffsize = cmatrix.BitMaskSizeBytes();
@@ -124,11 +118,11 @@ verr VHLibOptimal::InitialScanImage(uint16_t srcimgid) {
     }
 
     // Dump CellsMatrix
-    if(loglevel >= LOG_LEVEL_MAX) {
+    if(cfg.loglevel >= LOG_LEVEL_MAX) {
         VHLibOptimalLogger::DumpCellsHEX( *this, cmatrix, buffArrSrc, "Original Bitfield HEX");
     }
     
-    if(loglevel >= LOG_LEVEL_EXT) {
+    if(cfg.loglevel >= LOG_LEVEL_EXT) {
         VHLibOptimalLogger::DumpCellsTXT( *this, cmatrix, buffArrSrc, "Original Bitfield TXT");
     }
 
@@ -176,29 +170,29 @@ bool VHLibOptimal::ConvertFigure() {
 
     int fign = arrFigures.size();
 
-    if(loglevel) {
+    if(cfg.loglevel) {
         std::string msg = "Figure #" + std::to_string(fign) + " found";
         VHLibOptimalLogger::lineout(msg);
     }
 
-    if(loglevel >= LOG_LEVEL_MAX)
+    if(cfg.loglevel >= LOG_LEVEL_MAX)
         VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, buffArrSrc, "Original");
     
-    if(loglevel >= LOG_LEVEL_EXT)
+    if(cfg.loglevel >= LOG_LEVEL_EXT)
         VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, buffArrDst, "Figure");
 
     // Структура параметров текущей фигуры
     VHOptimalFigure newfigure(bitfieldDst, cmatrix, cfg.spccnt);
 
     // Cортировка соседей последовательно
-    if(loglevel >= LOG_LEVEL_EXT) {
+    if(cfg.loglevel >= LOG_LEVEL_EXT) {
         std::string msg = "Fig #" + std::to_string(fign) + ", Sorting Sequental";
         VHLibOptimalLogger::lineout(msg);
     }
 
     newfigure.Sort(cmatrix);
 
-    if(loglevel >= LOG_LEVEL_EXT)
+    if(cfg.loglevel >= LOG_LEVEL_EXT)
         VHLibOptimalLogger::DumpFigureSpans(newfigure, cmatrix);
 
     arrFigures.push_back(newfigure);
@@ -274,13 +268,45 @@ const CellsMatrix & VHLibOptimal::GetCMatrix() const {
     return cmatrix;
 }
 
+/**
+ * 
+ */
+bool VHLibOptimal::Border(int objn) const {
+
+    for(int i = 0; i < GetObjectsCount(); i++) {
+        const vhliboptimal::VHOptimalFigure & obj = GetObject(i);
+        const vhliboptimal::CellsMatrix & cmtx = GetCMatrix();
+        obj.Border(cmtx, callbackBorder);
+    }
+
+    return true;
+}
+
+/**
+ * 
+ */
+bool VHLibOptimal::ContentH(int objn) const {
+    const vhliboptimal::VHOptimalFigure & objfig = GetObject(objn);
+    objfig.ContentH(GetCMatrix(), callbackContent);
+    return true;
+}
+
+/**
+ * 
+ */
+bool VHLibOptimal::ContentV(int objn) const {
+    const vhliboptimal::VHOptimalFigure & objfig = GetObject(objn);
+    objfig.ContentV(GetCMatrix(), callbackContent);
+    return true;
+}
+
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.cpp
- * Revision         : 0.6beta
- * Content size     : 6402
- * Date / Time      : 22-07-2026 14:54:04
- * MD5              : ab8fa10c7237696cdb5e76c7be822f79
+ * Revision         : 0.7.0-beta
+ * Content size     : 7051
+ * Date / Time      : 24-07-2026 12:39:50
+ * MD5              : 603ff565edb7f6aa51a43c1f64d0d451
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

@@ -1,13 +1,13 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.6beta
+ * Revision      : 0.7.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/bitfield/bitfield.hpp
  * Content size  : 1753
- * Date / Time   : 22-07-2026 14:54:04
+ * Date / Time   : 24-07-2026 12:39:50
  * MD5           : 7b79cc239c9264a885aa563ab667f9b4
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -61,9 +61,9 @@ class BitField {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/bitfield/bitfield.hpp
- * Revision         : 0.6beta
+ * Revision         : 0.7.0-beta
  * Content size     : 1753
- * Date / Time      : 22-07-2026 14:54:04
+ * Date / Time      : 24-07-2026 12:39:50
  * MD5              : 7b79cc239c9264a885aa563ab667f9b4
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

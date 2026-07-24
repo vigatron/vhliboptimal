@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.6beta
+ * Revision      : 0.7.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figures/vhliboptimalfig.cpp
- * Content size  : 7998
- * Date / Time   : 22-07-2026 14:54:04
- * MD5           : 05ccfd3faf6a314b15e022d918c03fd6
+ * Content size  : 10127
+ * Date / Time   : 24-07-2026 12:39:50
+ * MD5           : d71b93598fa82d086b43551eb9abb832
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -231,11 +231,10 @@ void VHOptimalFigure::SortSequental(const CellsMatrix & cmtx) {
 
 }
 
-
 /**
- * @brief Найти крайний левый либо крайний правый ( sideFlag 0-Left/1-Right )
+ * @brief Найти ячейку слева либо справа ( sideFlag 0-Left/1-Right )
  */
-const int VHOptimalFigure::FindSpanByYLR(const CellsMatrix & cmtx, uint16_t spancy, int sideFlag) const {
+const int VHOptimalFigure::FindPosLRByY(const CellsMatrix & cmtx, uint16_t spancy, int sideFlag) const {
 
     int r = -1;
     uint16_t cellx;
@@ -257,11 +256,59 @@ const int VHOptimalFigure::FindSpanByYLR(const CellsMatrix & cmtx, uint16_t span
 
     // Not found
     if(r == -1) return r;
+
+    // Return Left or Right celln
     int cellLeft  = arrspans[r].n;
     int cellRight = arrspans[r].n + arrspans[r].l - 1;
 
     return !sideFlag ? cellLeft : cellRight;
 }
+
+/**
+ * @brief Найти ячейку сверху либо снизу ( sideFlag 0-Up / 1-Down )
+ * 
+ * @param spancx        Позиция ячейки по x
+ * @param sideFlag      0: Поиск верхней координаты 1: Поиск нижней координаты
+ */
+const int VHOptimalFigure::FindPosUDByX(const CellsMatrix & cmtx, uint16_t spancx, int sideFlag ) const {
+
+    int r = -1;
+    uint16_t posy;
+
+    for(int i=0; i < arrspans.size();i++) {
+
+        // Проверяем spancx на принадлежность
+        auto [cfx, cfy]     = cmtx.CellXY(arrspans[i].n);
+        auto [ctx, cty]     = cmtx.CellXY(arrspans[i].n + arrspans[i].l - 1);
+
+        // spancx вне диапазона участка ?
+        bool inside = spancx >= cfx && spancx <= ctx;
+        if(!inside) continue;
+
+        // Первый обнаруженый участок ?
+        if(r == -1) {
+            r = i;
+            posy = !sideFlag ? cfy : cty;
+            continue;
+        }
+
+        if(!sideFlag) {
+            // Поиск верхней координаты ячейки
+            if(cfy < posy) { posy = cfy; r = i; }
+        } else {
+            // Поиск нижней координаты ячейки
+            if(cty > posy) { posy = cty; r = i; }
+        }
+
+    }
+
+    // Not found
+    if(r == -1) return r;
+
+    // Return Top ot Bottom celln
+    return cmtx.CellN( spancx, posy);
+}
+
 
 /**
  * @brief Обход по контуру
@@ -278,7 +325,7 @@ void VHOptimalFigure::Border(const CellsMatrix & cmtx, CallbackBorder callbackBo
 
     // Direction DOWN
     for(int i=0; i < rows; i++) {
-        int n = FindSpanByYLR(cmtx, objrect.y1 + i, 0);
+        int n = FindPosLRByY(cmtx, objrect.y1 + i, 0);
         if(n != -1 ) {
             auto [cx, cy] = cmtx.CellXY(n);
             uint16_t pxlx = cx * cs;
@@ -290,7 +337,7 @@ void VHOptimalFigure::Border(const CellsMatrix & cmtx, CallbackBorder callbackBo
 
     // Direction UP
     for(int i=0; i < rows; i++) {
-        int n = FindSpanByYLR(cmtx, objrect.y2 - i, 1);
+        int n = FindPosLRByY(cmtx, objrect.y2 - i, 1);
         if(n != -1) {
             auto [cx, cy] = cmtx.CellXY(n);
             uint16_t pxlx = cx * cs + cs;
@@ -303,9 +350,9 @@ void VHOptimalFigure::Border(const CellsMatrix & cmtx, CallbackBorder callbackBo
 }
 
 /**
- * @brief габариты фигуры
+ * @brief габариты фигуры по горизонтали
  */
-void VHOptimalFigure::Content(const CellsMatrix & cmtx, CallbackContent callbackContent) const {
+void VHOptimalFigure::ContentH(const CellsMatrix & cmtx, CallbackContent callbackContent) const {
 
     // Empty, exit ...
     if(!arrspans.size()) return;
@@ -317,10 +364,34 @@ void VHOptimalFigure::Content(const CellsMatrix & cmtx, CallbackContent callback
 
     // Direction from Up to DOWN
     for(int i=0; i < rows; i++) {
-        int nl = FindSpanByYLR(cmtx, objrect.y1 + i, 0);
+        int nl = FindPosLRByY(cmtx, objrect.y1 + i, 0);
         if(nl != -1) {
-            int nr = FindSpanByYLR(cmtx, objrect.y1 + i, 1);
-            callbackContent((void *)this, nl, nr == -1 ? nl:nr);
+            int nr = FindPosLRByY(cmtx, objrect.y1 + i, 1);
+            callbackContent((void *)this, nl, nr == -1 ? nl:nr, 0);
+        }
+    }
+
+}
+
+/**
+ * @brief габариты фигуры по вертикали
+ */
+void VHOptimalFigure::ContentV(const CellsMatrix & cmtx, CallbackContent callbackContent) const {
+
+    // Empty, exit ...
+    if(!arrspans.size()) return;
+
+    if(callbackContent == nullptr) return;
+
+    uint16_t cols = objrect.x2 - objrect.x1 + 1;
+    int cs = cmtx.CellSize();
+
+    // Direction from Left to Right
+    for(int i=0; i < cols; i++) {
+        int nu = FindPosUDByX(cmtx, objrect.x1 + i, 0);
+        if(nu != -1) {
+            int nd = FindPosUDByX(cmtx, objrect.x1 + i, 1);
+            callbackContent((void *)this, nu, nd == -1 ? nu:nd, 1);
         }
     }
 
@@ -330,9 +401,9 @@ void VHOptimalFigure::Content(const CellsMatrix & cmtx, CallbackContent callback
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/figures/vhliboptimalfig.cpp
- * Revision         : 0.6beta
- * Content size     : 7998
- * Date / Time      : 22-07-2026 14:54:04
- * MD5              : 05ccfd3faf6a314b15e022d918c03fd6
+ * Revision         : 0.7.0-beta
+ * Content size     : 10127
+ * Date / Time      : 24-07-2026 12:39:50
+ * MD5              : d71b93598fa82d086b43551eb9abb832
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

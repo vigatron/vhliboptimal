@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.6beta
+ * Revision      : 0.7.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figures/vhliboptimalfig.hpp
- * Content size  : 2206
- * Date / Time   : 22-07-2026 14:54:04
- * MD5           : 99b00822c19c7040e741b37747faeffb
+ * Content size  : 2570
+ * Date / Time   : 24-07-2026 12:39:50
+ * MD5           : 52e3fc3e68348d90f2d07410cfcab13e
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -38,19 +38,22 @@ class VHOptimalFigure {
         strect                              SpanRect        (int spanidx, const CellsMatrix & cmtx) const;
 
         void                                Sort            (const CellsMatrix & cmtx);
-        const int                           FindSpanByYLR   (const CellsMatrix & cmtx, uint16_t spancy, int sideFlag) const;
+        const int                           FindPosLRByY    (const CellsMatrix & cmtx, uint16_t spancy, int sideFlag ) const;
+        const int                           FindPosUDByX    (const CellsMatrix & cmtx, uint16_t spancx, int sideFlag ) const;
         void                                Border          (const CellsMatrix & cmtx, CallbackBorder callbackBorder ) const;
-        void                                Content         (const CellsMatrix & cmtx, CallbackContent callbackContent) const;
+
+        void                                ContentH         (const CellsMatrix & cmtx, CallbackContent callbackContentH) const;
+        void                                ContentV         (const CellsMatrix & cmtx, CallbackContent callbackContentV) const;
 
 
-        static const uint8_t cmdStart   = 0;
-        static const uint8_t cmdMove    = 1;
-        static const uint8_t cmdStop    = 2;
+        static const uint8_t                cmdStart   = 0;
+        static const uint8_t                cmdMove    = 1;
+        static const uint8_t                cmdStop    = 2;
 
-        static const uint8_t dirLeft    = 1;
-        static const uint8_t dirRight   = 2;
-        static const uint8_t dirUp      = 3;
-        static const uint8_t dirDown    = 4;
+        static const uint8_t                dirLeft    = 1;
+        static const uint8_t                dirRight   = 2;
+        static const uint8_t                dirUp      = 3;
+        static const uint8_t                dirDown    = 4;
 
     private:
 
@@ -87,9 +90,9 @@ class VHOptimalFigure {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/figures/vhliboptimalfig.hpp
- * Revision         : 0.6beta
- * Content size     : 2206
- * Date / Time      : 22-07-2026 14:54:04
- * MD5              : 99b00822c19c7040e741b37747faeffb
+ * Revision         : 0.7.0-beta
+ * Content size     : 2570
+ * Date / Time      : 24-07-2026 12:39:50
+ * MD5              : 52e3fc3e68348d90f2d07410cfcab13e
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

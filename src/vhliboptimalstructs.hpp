@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.6beta
+ * Revision      : 0.7.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimalstructs.hpp
- * Content size  : 2525
- * Date / Time   : 22-07-2026 14:54:04
- * MD5           : 2efb160c5cb45d654b92c9290ca58449
+ * Content size  : 2958
+ * Date / Time   : 24-07-2026 12:39:50
+ * MD5           : da7de04b47c692b1db1b863da7205f0b
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -58,10 +58,11 @@ typedef void (*CallbackBorder)(void *userData, uint8_t cmd, uint8_t dirh, uint8_
  * CallbackContent          - Object Area
  * 
  * void *       userData    - User context pointer
- * uint32_t     cxl         - Left  Cell
- * uint32_t     cxr         - Right Cell
+ * uint32_t     cell1       - Left or Top  Cell 
+ * uint32_t     cell2       - Right or Bottom Cell
+ * uint8_t      dir         - Direction 0: LR 1: UD
  */
-typedef void (*CallbackContent)(void *userData, uint32_t cxl, uint32_t cxr);
+typedef void (*CallbackContent)(void *userData, uint32_t cell1, uint32_t cell2, uint8_t dir);
 
 
 
@@ -105,6 +106,17 @@ typedef struct _stConfig {
     // меньшие значения принимаем за черный
     uint8_t  minColorVal;
 
+    // Минимальный размер объекта в пикселях
+    uint16_t    min_obj_width;
+    uint16_t    min_obj_height;
+
+    // Максимальный размер объекта в пикселях
+    uint16_t    max_obj_width;
+    uint16_t    max_obj_height;
+
+    // Режим отладки
+    uint8_t     loglevel;
+
 } stConfig;
 
 };
@@ -112,9 +124,9 @@ typedef struct _stConfig {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimalstructs.hpp
- * Revision         : 0.6beta
- * Content size     : 2525
- * Date / Time      : 22-07-2026 14:54:04
- * MD5              : 2efb160c5cb45d654b92c9290ca58449
+ * Revision         : 0.7.0-beta
+ * Content size     : 2958
+ * Date / Time      : 24-07-2026 12:39:50
+ * MD5              : da7de04b47c692b1db1b863da7205f0b
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
