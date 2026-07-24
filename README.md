@@ -4,30 +4,31 @@
 ![CMake](https://img.shields.io/badge/Build-CMake-1f4f9c.svg)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Cross--platform-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/Version-0.6beta-orange.svg)
+![Version](https://img.shields.io/badge/Version-0.7.0-beta-orange.svg)
 
 ---
 
-| Header       | Description                       |
-|--------------|-----------------------------------|
-| Project      | VHLibOptimal                      |
-| Description  | C++ library for shape contour detection and image outline recognition |
-| Revision     | 0.6beta                           |
-| Date         | 2006 - 2026                       |
-| Author       | V01G04A81 / Viktor Glebov         |
-| License      | MIT                               |
-| Source code  | [https://github.com/vigatron/vhliboptimal](https://github.com/vigatron/vhliboptimal) |
+| Header               | Description                       |
+|----------------------|-----------------------------------|
+| Project              | VHLibOptimal                      |
+| Description          | C++ library for shape contour detection and image outline recognition |
+| Current Version      | 0.7.0-beta (2026)                 |
+| Development started  | 2006                              |
+| Major C++23 rewrite  | 2025 - 2026                       |
+| Author               | V01G04A81 / Viktor Glebov         |
+| License              | MIT                               |
+| Source code          | [https://github.com/vigatron/vhliboptimal](https://github.com/vigatron/vhliboptimal) |
 
+<br>
+
+***A high-performance C++23 library for fast shape contour detection and image outline recognition using optimized grid-based scanning.***
 
 
 ![img](docs/stereocam.jpg)
 
-*Historical reference: The 2016 FPGA-based stereo vision system that proved the algorithm's real-time viability.*
+*Historical reference: The 2016 FPGA-based stereo vision system that proved the algorithm's real-time viability on dual-camera setups.*
 
-*The modern 2026 version adapts this core logic for single-camera SBC setups.*
-
-***A high-performance C++23 library for fast shape contour detection and image outline recognition using optimized grid-based scanning.***
-
+*The core algorithm, originally developed in 2006, received a complete modern C++23 rewrite in 2025–2026. This version brings a clean object-oriented interface for single-camera Single Board Computer setups while preserving two decades of embedded efficiency lessons.*
 
 ---
 
@@ -36,7 +37,9 @@
 
 `vhliboptimal` is a high-performance C++23 library for fast shape contour detection and image outline recognition.  
 
-Originally developed in plain C (starting in 2006) for commercial embedded projects on ARM and AVR platforms, and later evolved through an FPGA-accelerated era (2016).
+Originally developed in plain C (starting in 2006) for commercial embedded projects on ARM and AVR platforms.
+
+Later evolved through an FPGA-accelerated era (2016).
 
 It has been completely modernized in 2026 with a clean object-oriented C++23 interface while preserving its efficiency-focused philosophy.  
 
@@ -44,7 +47,7 @@ It uses an optimized grid-based approach: the image is divided into a configurab
 
 This design delivers excellent performance with very low memory and CPU usage, making it ideal for embedded systems and real-time applications.  
 
-Unlike heavyweight computer vision libraries such as OpenCV, `vhliboptimal` is lightweight, highly portable, and works through simple callback interfaces.  
+Unlike general-purpose computer vision frameworks such as OpenCV, `vhliboptimal` focuses exclusively on contour extraction and therefore remains lightweight and easy to integrate.
 
 It excels at processing binary or high-contrast images and gracefully handles small gaps and noise thanks to tunable parameters.  
 
@@ -59,6 +62,75 @@ It excels at processing binary or high-contrast images and gracefully handles sm
 * Highly optimized grid-based scanning with bit-packing
 * Configurable cell size and noise tolerance
 * Real-time contour and content processing via callbacks
+* Modern C++ interoperability: While exposing raw C-style callbacks for maximum FFI compatibility (C, Python, Rust), the internal architecture is designed to leverage modern C++ features (e.g., `std::invoke` patterns) for flexible and type-safe execution.
+
+---
+
+### Road Signs Recognition Example
+
+The examples below demonstrate how `vhliboptimal` is utilized within a real-world road sign recognition application. 
+
+In this specific pipeline, the library is responsible **exclusively** for the high-speed, deterministic extraction of shape contours and internal spans from pre-processed frames. The extracted geometric data is then passed to a higher-level classification module.
+
+##### Example #1
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/roadsign1/example1_src.jpg" alt="src" style="width:100%; height:auto;"/>
+    </td>
+    <td align="center">
+      <img src="docs/roadsign1/example1_flt.jpg" alt="flt" style="width:100%; height:auto;"/>
+    </td>
+    <td align="center">
+      <img src="docs/roadsign1/example1_fin.jpg" alt="fin" style="width:100%; height:auto;"/>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/roadsign1/example1_flr.jpg" alt="flr" style="width:100%; height:auto;"/>
+    </td>
+    <td align="center">
+      <img src="docs/roadsign1/example1_flb.jpg" alt="flb" style="width:100%; height:auto;"/>
+    </td>
+    <td align="center">
+      <img src="docs/roadsign1/example1_flc.jpg" alt="flc" style="width:100%; height:auto;"/>
+    </td>
+  </tr>
+</table>
+
+##### Example #2
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/roadsign2/example2_src.jpg" alt="src" style="width:100%; height:auto;"/>
+    </td>
+    <td align="center">
+      <img src="docs/roadsign2/example2_flt.jpg" alt="flt" style="width:100%; height:auto;"/>
+    </td>
+    <td align="center">
+      <img src="docs/roadsign2/example2_fin.jpg" alt="fin" style="width:100%; height:auto;"/>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/roadsign2/example2_flr.jpg" alt="flr" style="width:100%; height:auto;"/>
+    </td>
+    <td align="center">
+      <img src="docs/roadsign2/example2_flb.jpg" alt="flb" style="width:100%; height:auto;"/>
+    </td>
+    <td align="center">
+      <img src="docs/roadsign2/example2_flc.jpg" alt="flc" style="width:100%; height:auto;"/>
+    </td>
+  </tr>
+</table>
 
 
 ---
@@ -67,10 +139,14 @@ It excels at processing binary or high-contrast images and gracefully handles sm
 
 The `vhliboptimal` library has deep roots in real-world embedded computer vision, evolving from extreme hardware constraints to modern software efficiency.
 
-#### 2006–2012 — The Extreme Embedded Roots (AVR + External SRAM)
-The algorithm originated as a raster-to-vector engine for 8-bit AVR microcontrollers, initially tasked with recognizing character contours and geometric shapes on tiny 128x64 B&W displays. To handle image processing, the system utilized 32KB of external SRAM accessed via a multiplexed bus (74HC573 + ALE). 
-The core engineering challenge was the severe bottleneck of the external memory bus. The grid-based `BitField` architecture was specifically designed here to minimize external bus accesses, keeping the heavy pathfinding logic strictly within the MCU's fast internal RAM.
-* **Legacy Artifact:** A surviving single-header (`.h`) version of this original plain C implementation is preserved as a historical reference at [electrolviv/optimal](https://github.com/electrolviv/optimal).
+#### 2006 - The Extreme Embedded Roots (AVR + External SRAM)
+
+The algorithm originated as a raster-to-vector engine for 8-bit AVR microcontrollers, initially tasked with recognizing character contours and geometric shapes on tiny 128x64 B&W displays. To handle image processing, the system utilized 32KB of external SRAM accessed via a multiplexed bus (74HC573 + ALE). The core engineering challenge was the severe bottleneck of the external memory bus.
+
+#### 2010 ... 2012 — Road Signs Recognition
+
+The grid-based `BitField` architecture was specifically designed here to minimize external bus accesses, keeping the heavy pathfinding logic strictly within the MCU's fast internal RAM. Tested on LPC2148 and AT91SAM7X256 platforms
+
 
 #### 2016 — Hardware-Accelerated Era (FPGA + STM32)
 As tasks grew more complex, the algorithm was scaled and integrated into a **dual-camera stereo vision** system based on a Xilinx Spartan-6 FPGA + SDRAM, paired with an STM32F7 microcontroller.
@@ -80,13 +156,20 @@ STM32F7 handled higher-level logic. This hybrid solution delivered hard real-tim
 
 - The STM32 handled control logic and remaining processing in plain C. This tight parallel cooperation proved the algorithm's viability for demanding industrial robotics and automated inspection lines, where software-only solutions like OpenCV were too heavy, slow, or non-deterministic.
 
-#### 2026 — Modern C++ Rewrite for SBCs
+* **Legacy Artifact:** A surviving single-header (`.h`) version of this original plain C implementation is preserved as a historical reference at [electrolviv/optimal](https://github.com/electrolviv/optimal).
 
-The library has been completely redesigned and rewritten from the ground up in modern **C++23**.  
 
-The main goal of this update is to adapt the battle-tested algorithm for modern affordable Single Board Computers (such as Raspberry Pi, Orange Pi, and similar), enabling real-time operation with **a single camera and pure software — no FPGA required**.  
+#### 2025–2026 — Modern C++23 Rewrite for SBCs
 
-Thanks to intelligent grid-based downsampling (`cellsize` 8–16 pixels), the library achieves practical real-time performance of approximately **10–20 FPS on 1080p** for edge-AI, robotics, and automated sorting tasks, while preserving the core philosophy of extreme efficiency that originated on 8-bit microcontrollers nearly 15 years ago.
+The library has been completely redesigned and rewritten from the ground up in modern **C++23**.
+
+**The main goal** of this update was to adapt the battle-tested grid-based algorithm for today's affordable Single Board Computers (Raspberry Pi, Orange Pi, etc.), enabling real-time operation with **a single camera and pure software — no FPGA required**.
+
+**Important trade-off:** While the 2016 FPGA implementation remains a strong reference for raw speed and determinism in core grid operations (thanks to dedicated BRAM and hardware parallelism), the new C++23 version delivers **practical real-time performance of approximately 10–25 FPS on 1080p** (depending on CPU, `cellsize` and configuration). This makes it highly suitable for edge-AI, robotics, and automated sorting tasks on widely available hardware.
+
+It preserves the original philosophy of extreme efficiency born on 8-bit microcontrollers nearly 20 years ago, now running efficiently on general-purpose CPUs with AVX2 optimizations where available.
+
+*The original FPGA implementation demonstrated that the algorithm maps efficiently to hardware because of its regular grid-based data flow and compact BitField representation. The modern C++23 implementation preserves the same memory-efficient architecture while targeting commodity CPUs and SBCs.*
 
 
 ---
@@ -114,7 +197,7 @@ Thanks to intelligent grid-based downsampling (`cellsize` 8–16 pixels), the li
 - **Image Type**: Best suited for binary or high-contrast images (a direct inheritance from its B&W display origins).
 - **Threading**: Currently single-threaded (multi-threading support is planned for future releases).
 - **Resolution vs. Performance**: To achieve real-time FPS on SBCs, the algorithm relies on grid-based downsampling (`cellsize` 8-16px). Fine image details smaller than the configured cell size will be intentionally lost to preserve CPU cycles.
-- **Memory Profile**: Zero dynamic allocations during the frame processing loop (all memory is pre-allocated inside the context during Setup), making it perfectly safe for both Linux applications and bare-metal RTOS environments on modern MCUs.
+- **Memory Profile**: In the current 0.7.x beta, dynamic allocations are used during processing, making it highly efficient for SBCs (Raspberry Pi, Orange Pi) and PCs. **Strict zero-allocation (fully pre-allocated memory) for bare-metal RTOS environments is guaranteed and targeted for the stable v1.0.0 release.**
 
 
 > **⚠️ Best Practices for Optimal Results**  
@@ -125,12 +208,51 @@ Thanks to intelligent grid-based downsampling (`cellsize` 8–16 pixels), the li
 
 ---
 
+#### Before the startup procedure, image source parameters and settings are specified
+
+- image width   pixels      For example 800 / 1024 / 1600 / ...
+- image height  pixels      For example 600 /  768 / 1200 / ...
+- cells size    pixels      For example 2 / 4 / 8 / 16 / ...
+
+##### Additionally:
+* Maximum number of figures                 (for example 128)
+* Maximum number of grid particles          (for example 1024)
+
+Or:
+* Available memory size in kilobytes
+
+
+##### Structure sizes
+
+* `stspan`                     8 bytes
+* `VHOptimalFigure`           16 bytes
+
+---
+
+#### Configuration Examples
+
+| Параметр                          | Example #1   | Example #2    | Example #3    | Example #4      |
+|-----------------------------------|--------------|---------------|---------------|-----------------|
+| **Maximum number of figures**     | 128          | 128           | 128           | 128             |
+| **Cell size**                     | 8 px         | 4 px          | 2 px          | 1 px            |
+| **Resolution**                    | 800×600      | 800×600       | 800×600       | 800×600         |
+| **Cells per frame**               | 100×75       | 200×150       | 400×300       | 800×600         |
+| **Bitmask (bits)**                | 7500         | 30000         | 120000        | 480000          |
+| **Bitmask (bytes)**               | 938          | 3750          | 15000         | 60000           |
+| **×2 bitmasks (Global + Local)**  | 1876         | 7500          | 30000         | 120000          |
+| **Memory (Worst case)**           | 60 000 bytes | 240 000 bytes | 960 000 bytes | 3 840 000 bytes |
+| **Memory (Typical)**              | 16 000 bytes | 64 000 bytes  | 240 000 bytes | 960 000 bytes   |
+| **+128 figures × 16**             | 2048 bytes   | 2048 bytes    | 2048 bytes    | 2048 bytes      |
+
+
+---
+
 ##  Architecture & Key Components
 
 The library operates completely abstracted from raw graphic decoders or UI frameworks (like OpenCV or `stb_image`). It processes data streams through an abstract coordinate grid:
 
 *   **`CellsMatrix`**: Manages the spatial geometry of the grid. Images are analyzed in configurable blocks (`cellsize`), decreasing overall data dimensionality.
-*   **`BitField`**: A packed bit array tracking filled/empty cells. It allows instantaneous pathfinding operations and cell clearing during figure extraction loops.
+*   **`BitField`**: A packed bit array tracking filled/empty cells. The algorithm utilizes a **dual-bitmask architecture**: a *global mask* for the entire frame (from which figures are extracted) and a *local mask* dedicated to tracking the traversal state of the specific figure currently being processed. This eliminates the need for heavy graph data structures and keeps memory access highly predictable.
 *   **`VHOptimalFigure`**: Encapsulates a single extracted shape, containing its bounding box, sorted sequential contours, and analytical span strings.
 
 
@@ -181,7 +303,7 @@ typedef void (*CallbackGetSrcPxls)(void *userData, uint8_t *dstptr,
  * @param imgy       Image Y coordinate (pixels)
  */
 typedef void (*CallbackBorder)(void *userData, uint8_t cmd, uint8_t dirh, 
-                               uint8_t dirv, uint32_t cellx, uint32_t celly, 
+                               uint8_t dirv, uint16_t cellx, uint16_t celly, 
                                uint16_t imgx, uint16_t imgy);
 ```
 
@@ -237,8 +359,8 @@ int main() {
 
     // 1. Configuration
     stConfig cfg{};
-    cfg.imageWidth   = 1920;
-    cfg.imageHeight  = 1080;
+    cfg.imageWidth   = 800;
+    cfg.imageHeight  = 600;
     cfg.cellsize     = 8;      // Grid cell size in pixels
     cfg.spccnt       = 2;      // Max consecutive empty cells (noise tolerance)
     cfg.minColorVal  = 128;    // Brightness threshold
@@ -276,5 +398,21 @@ int main() {
     return 0;
 }
 ```
+
+---
+
+### 💡 A Fun Geek Note: 2016 FPGA vs 2025–2026 C++23 (The Branching Dilemma)
+
+You might wonder: *How does the modern C++23 version compare to the 2016 FPGA implementation?*
+
+The answer lies in the fundamental difference between hardware and software when dealing with **unpredictable branching** during contour tracing.
+
+- **CPU Reality:** Tracing irregular shapes creates chaotic control flow. Branch mispredictions (15–25 cycle penalty on modern cores) and data-dependent bitwise operations on dynamic BitField indices create significant stalls. SIMD (AVX2/NEON) helps a lot during initial grid scanning, but is nearly useless in the extraction/tracing phase.
+
+- **FPGA Advantage:** The 2016 Spartan-6 implementation used a hardware Finite State Machine and Block RAM, evaluating neighbor states with minimal latency and perfect determinism. Even at ~166 MHz, it achieved outstanding efficiency in the core loop.
+
+**The 2026 Reality:**  
+Thanks to aggressive grid downsampling, careful BitField design, and raw CPU clock speeds, the C++23 version delivers **practical real-time performance** (10–25+ FPS on 1080p) on affordable SBCs. However, the 2016 FPGA version remains superior in raw tracing latency and timing predictability.
+
 
 © 2006 – 2026 V01G04A81 / Viktor Glebov

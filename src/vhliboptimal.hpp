@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.6beta
+ * Revision      : 0.7.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.hpp
- * Content size  : 2728
- * Date / Time   : 22-07-2026 14:54:04
- * MD5           : 7f4a14e16a0278d22cb387c57bb8790c
+ * Content size  : 2807
+ * Date / Time   : 24-07-2026 11:54:48
+ * MD5           : 3955c4aced59c3512851bd2ce73e0553
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -52,9 +52,11 @@ class VHLibOptimal {
 
         const size_t                    GetSpansTotal       () const;
 
-        void                            SetLogLevel         (int verbose);
-
         const CellsMatrix &             GetCMatrix          () const;
+
+        bool                            Border              (int objn) const;
+        bool                            ContentH            (int objn) const;
+        bool                            ContentV            (int objn) const;
 
     private:
 
@@ -70,8 +72,8 @@ class VHLibOptimal {
         // Callback: Moving across object border
         CallbackBorder                  callbackBorder      = nullptr;
 
-        // Callback: Moving across object content
-        CallbackContent                 callbackContent     = nullptr;
+        // Callback: Moving across object content ( Left > Right / Up > Down )
+        CallbackContent                 callbackContent   = nullptr;
 
         // 2D Configuration
         CellsMatrix                     cmatrix;
@@ -87,13 +89,8 @@ class VHLibOptimal {
         BitField                        bitfieldDst;
         std::vector<uint8_t>            buffArrDst;
 
-
         // Массив фигур
         std::vector<VHOptimalFigure>    arrFigures;
-
-        // Режим отладки
-        int                             loglevel = LOG_LEVEL_NONE;
-
 
         verr CheckCfgParams();
 
@@ -114,9 +111,9 @@ class VHLibOptimal {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.hpp
- * Revision         : 0.6beta
- * Content size     : 2728
- * Date / Time      : 22-07-2026 14:54:04
- * MD5              : 7f4a14e16a0278d22cb387c57bb8790c
+ * Revision         : 0.7.0-beta
+ * Content size     : 2807
+ * Date / Time      : 24-07-2026 11:54:48
+ * MD5              : 3955c4aced59c3512851bd2ce73e0553
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

@@ -1,7 +1,7 @@
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : ${fname}
- * Revision         : 0.6beta
+ * Revision         : 0.7.0-beta
  * Content size     : ${cntsz}
  * Date / Time      : ${fdatetime}
  * MD5              : ${fmd5}
