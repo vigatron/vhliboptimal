@@ -7,7 +7,7 @@
  * License       : MIT
  * File          : src/figures/vhliboptimalfig.hpp
  * Content size  : 2570
- * Date / Time   : 24-07-2026 11:54:48
+ * Date / Time   : 24-07-2026 12:39:50
  * MD5           : 52e3fc3e68348d90f2d07410cfcab13e
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -92,7 +92,7 @@ class VHOptimalFigure {
  * File             : src/figures/vhliboptimalfig.hpp
  * Revision         : 0.7.0-beta
  * Content size     : 2570
- * Date / Time      : 24-07-2026 11:54:48
+ * Date / Time      : 24-07-2026 12:39:50
  * MD5              : 52e3fc3e68348d90f2d07410cfcab13e
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

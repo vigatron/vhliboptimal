@@ -6,9 +6,9 @@
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figures/vhliboptimalfig.cpp
- * Content size  : 10162
- * Date / Time   : 24-07-2026 11:54:48
- * MD5           : a986a76417fbc7fdbf3a0991ef6172ee
+ * Content size  : 10127
+ * Date / Time   : 24-07-2026 12:39:50
+ * MD5           : d71b93598fa82d086b43551eb9abb832
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -232,7 +232,7 @@ void VHOptimalFigure::SortSequental(const CellsMatrix & cmtx) {
 }
 
 /**
- * @brief Найти крайний левый либо крайний правый ( sideFlag 0-Left/1-Right )
+ * @brief Найти ячейку слева либо справа ( sideFlag 0-Left/1-Right )
  */
 const int VHOptimalFigure::FindPosLRByY(const CellsMatrix & cmtx, uint16_t spancy, int sideFlag) const {
 
@@ -265,7 +265,7 @@ const int VHOptimalFigure::FindPosLRByY(const CellsMatrix & cmtx, uint16_t spanc
 }
 
 /**
- * @brief Найти крайний левый либо крайний правый ( sideFlag 0-Left/1-Right )
+ * @brief Найти ячейку сверху либо снизу ( sideFlag 0-Up / 1-Down )
  * 
  * @param spancx        Позиция ячейки по x
  * @param sideFlag      0: Поиск верхней координаты 1: Поиск нижней координаты
@@ -402,8 +402,8 @@ void VHOptimalFigure::ContentV(const CellsMatrix & cmtx, CallbackContent callbac
  * Library          : vhliboptimal
  * File             : src/figures/vhliboptimalfig.cpp
  * Revision         : 0.7.0-beta
- * Content size     : 10162
- * Date / Time      : 24-07-2026 11:54:48
- * MD5              : a986a76417fbc7fdbf3a0991ef6172ee
+ * Content size     : 10127
+ * Date / Time      : 24-07-2026 12:39:50
+ * MD5              : d71b93598fa82d086b43551eb9abb832
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

@@ -7,7 +7,7 @@
  * License       : MIT
  * File          : src/cmatrix/cmatrix.cpp
  * Content size  : 1127
- * Date / Time   : 24-07-2026 11:54:48
+ * Date / Time   : 24-07-2026 12:39:50
  * MD5           : 123b356bac30063383080a38fc630009
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -85,7 +85,7 @@ const size_t CellsMatrix::BitMaskSizeBytes() const {
  * File             : src/cmatrix/cmatrix.cpp
  * Revision         : 0.7.0-beta
  * Content size     : 1127
- * Date / Time      : 24-07-2026 11:54:48
+ * Date / Time      : 24-07-2026 12:39:50
  * MD5              : 123b356bac30063383080a38fc630009
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

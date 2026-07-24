@@ -7,7 +7,7 @@
  * License       : MIT
  * File          : src/vhliboptimalstructs.hpp
  * Content size  : 2958
- * Date / Time   : 24-07-2026 11:54:48
+ * Date / Time   : 24-07-2026 12:39:50
  * MD5           : da7de04b47c692b1db1b863da7205f0b
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -126,7 +126,7 @@ typedef struct _stConfig {
  * File             : src/vhliboptimalstructs.hpp
  * Revision         : 0.7.0-beta
  * Content size     : 2958
- * Date / Time      : 24-07-2026 11:54:48
+ * Date / Time      : 24-07-2026 12:39:50
  * MD5              : da7de04b47c692b1db1b863da7205f0b
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

@@ -6,9 +6,9 @@
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.cpp
- * Content size  : 7117
- * Date / Time   : 24-07-2026 11:54:48
- * MD5           : a9bc6ad576b02e6457c174783f409ab2
+ * Content size  : 7051
+ * Date / Time   : 24-07-2026 12:39:50
+ * MD5           : 603ff565edb7f6aa51a43c1f64d0d451
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -273,12 +273,11 @@ const CellsMatrix & VHLibOptimal::GetCMatrix() const {
  */
 bool VHLibOptimal::Border(int objn) const {
 
-    // // TODO: Border
-    // for(int i = 0; i < detector.GetObjectsCount(); i++) {
-    //     const vhliboptimal::VHOptimalFigure & obj = detector.GetObject(i);
-    //     const vhliboptimal::CellsMatrix & cmtx = detector.GetCMatrix();
-    //     obj.Border(cmtx, g_SetPosHandler);
-    // }
+    for(int i = 0; i < GetObjectsCount(); i++) {
+        const vhliboptimal::VHOptimalFigure & obj = GetObject(i);
+        const vhliboptimal::CellsMatrix & cmtx = GetCMatrix();
+        obj.Border(cmtx, callbackBorder);
+    }
 
     return true;
 }
@@ -306,8 +305,8 @@ bool VHLibOptimal::ContentV(int objn) const {
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.cpp
  * Revision         : 0.7.0-beta
- * Content size     : 7117
- * Date / Time      : 24-07-2026 11:54:48
- * MD5              : a9bc6ad576b02e6457c174783f409ab2
+ * Content size     : 7051
+ * Date / Time      : 24-07-2026 12:39:50
+ * MD5              : 603ff565edb7f6aa51a43c1f64d0d451
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
