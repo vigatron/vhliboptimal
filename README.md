@@ -156,7 +156,7 @@ STM32F7 handled higher-level logic. This hybrid solution delivered hard real-tim
 
 - The STM32 handled control logic and remaining processing in plain C. This tight parallel cooperation proved the algorithm's viability for demanding industrial robotics and automated inspection lines, where software-only solutions like OpenCV were too heavy, slow, or non-deterministic.
 
-* **Legacy Artifact:** A surviving single-header (`.h`) version of this original plain C implementation is preserved as a historical reference at [electrolviv/optimal](https://github.com/electrolviv/optimal).
+######  Legacy Artifact: A surviving single-header (`.h`) version of this original plain C implementation is preserved as a historical reference at [electrolviv/optimal](https://github.com/electrolviv/optimal).
 
 
 #### 2025–2026 — Modern C++23 Rewrite for SBCs
@@ -231,7 +231,7 @@ Or:
 
 #### Configuration Examples
 
-| Параметр                          | Example #1   | Example #2    | Example #3    | Example #4      |
+| Parameter                         | Example #1   | Example #2    | Example #3    | Example #4      |
 |-----------------------------------|--------------|---------------|---------------|-----------------|
 | **Maximum number of figures**     | 128          | 128           | 128           | 128             |
 | **Cell size**                     | 8 px         | 4 px          | 2 px          | 1 px            |
@@ -316,8 +316,9 @@ typedef void (*CallbackBorder)(void *userData, uint8_t cmd, uint8_t dirh,
  * @param userData   User context pointer
  * @param cxl        Left cell index
  * @param cxr        Right cell index
+ * @param dir        Direction 0: LR 1: UD
  */
-typedef void (*CallbackContent)(void *userData, uint32_t cxl, uint32_t cxr);
+typedef void (*CallbackContent)(void *userData, uint32_t cell1, uint32_t cell2, uint8_t dir);
 ```
 
 ### Basic Usage Example
@@ -346,7 +347,7 @@ void MyBorderCallback(void* userData, uint8_t cmd, uint8_t dirh, uint8_t dirv,
 }
 
 // Callback for internal content spans
-void MyContentCallback(void* userData, uint32_t cxl, uint32_t cxr) {
+void MyContentCallback(void* userData, uint32_t cxl, uint32_t cxr, uint8_t dir) {
     std::cout << "Content span: cells " << cxl << " to " << cxr << "\n";
 }
 
@@ -359,11 +360,22 @@ int main() {
 
     // 1. Configuration
     stConfig cfg{};
-    cfg.imageWidth   = 800;
-    cfg.imageHeight  = 600;
-    cfg.cellsize     = 8;      // Grid cell size in pixels
-    cfg.spccnt       = 2;      // Max consecutive empty cells (noise tolerance)
-    cfg.minColorVal  = 128;    // Brightness threshold
+
+    cfg.imageWidth      = 800;
+    cfg.imageHeight     = 600;
+
+    cfg.cellsize        = 8;        // Grid cell size in pixels
+    cfg.spccnt          = 2;        // Max consecutive empty cells (noise tolerance)
+    cfg.minColorVal     = 128;      // Brightness threshold
+
+    cfg.min_obj_width   = 32;
+    cfg.min_obj_height  = 32;
+
+    cfg.max_obj_width   = 256;
+    cfg.max_obj_height  = 256;
+
+    cfg.loglevel        = 1;        // vhliboptimal::LOG_LEVEL_BASE
+
 
     // 2. Setup with callbacks
     verr result = detector.Setup(cfg, 
