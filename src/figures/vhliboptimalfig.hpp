@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.0-beta
+ * Revision      : 0.7.2-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figures/vhliboptimalfig.hpp
- * Content size  : 2570
- * Date / Time   : 24-07-2026 12:39:50
- * MD5           : 52e3fc3e68348d90f2d07410cfcab13e
+ * Content size  : 2757
+ * Date / Time   : 25-07-2026 18:40:09
+ * MD5           : d0ef0b82bf3be6e28ba88ecd0f606d90
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -31,6 +31,8 @@ class VHOptimalFigure {
 
         const strect                &       PosCells        () const;
         const strect                        PosAbs          (const CellsMatrix & cmtx) const;
+        uint32_t                            Width           (const CellsMatrix & cmtx) const;
+        uint32_t                            Height          (const CellsMatrix & cmtx) const;
 
         const std::vector<stspan>   &       Spans           () const;
         const size_t                        SpansCount      () const;
@@ -44,7 +46,6 @@ class VHOptimalFigure {
 
         void                                ContentH         (const CellsMatrix & cmtx, CallbackContent callbackContentH) const;
         void                                ContentV         (const CellsMatrix & cmtx, CallbackContent callbackContentV) const;
-
 
         static const uint8_t                cmdStart   = 0;
         static const uint8_t                cmdMove    = 1;
@@ -90,9 +91,9 @@ class VHOptimalFigure {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/figures/vhliboptimalfig.hpp
- * Revision         : 0.7.0-beta
- * Content size     : 2570
- * Date / Time      : 24-07-2026 12:39:50
- * MD5              : 52e3fc3e68348d90f2d07410cfcab13e
+ * Revision         : 0.7.2-beta
+ * Content size     : 2757
+ * Date / Time      : 25-07-2026 18:40:09
+ * MD5              : d0ef0b82bf3be6e28ba88ecd0f606d90
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

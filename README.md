@@ -4,15 +4,15 @@
 ![CMake](https://img.shields.io/badge/Build-CMake-1f4f9c.svg)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Cross--platform-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/Version-0.7.1--beta-orange.svg)
+![Version](https://img.shields.io/badge/Version-0.7.2--beta-orange.svg)
 
 ---
 
 | Header               | Description                       |
 |----------------------|-----------------------------------|
 | Project              | VHLibOptimal                      |
-| Description          | C++ library for shape contour detection and image outline recognition |
-| Current Version      | 0.7.1-beta (2026)                 |
+| Description          | C++17 library for shape contour detection and image outline recognition |
+| Current Version      | 0.7.2-beta (2026)                 |
 | Development started  | 2006                              |
 | Major C++17 rewrite  | started in early 2026             |
 | Author               | V01G04A81 / Viktor Glebov         |
@@ -71,7 +71,7 @@ The examples below demonstrate how `vhliboptimal` is utilized within a real-worl
 
 In this specific pipeline, the library is responsible **exclusively** for the high-speed, deterministic extraction of shape contours and internal spans from pre-processed frames. The extracted geometric data is then passed to a higher-level classification module.
 
-##### Example #1
+##### Example #1: Road signs (front view)
 
 <table>
   <tr>
@@ -101,7 +101,7 @@ In this specific pipeline, the library is responsible **exclusively** for the hi
   </tr>
 </table>
 
-##### Example #2
+##### Example #2: Road signs (view from angle)
 
 <table>
   <tr>
@@ -130,6 +130,36 @@ In this specific pipeline, the library is responsible **exclusively** for the hi
     </td>
   </tr>
 </table>
+
+
+##### Example #3: Geometric Shapes
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/ocr3/example3src.jpg" alt="original" style="width:100%; height:auto;"/>
+    </td>
+    <td align="center">
+      <img src="docs/ocr3/example3out.jpg" alt="result" style="width:100%; height:auto;"/>
+    </td>
+  </tr>
+</table>
+
+##### Example #4: Text Localization (character coordinates & sizes)
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/ocr4/example4src.jpg" alt="original" style="width:100%; height:auto;"/>
+    </td>
+    <td align="center">
+      <img src="docs/ocr4/example4out.jpg" alt="result" style="width:100%; height:auto;"/>
+    </td>
+  </tr>
+</table>
+
+*Note: Original image processed at 1080p (contains > 2000 character objects).*
+*Only positions and sizes are extracted — content is not recognized.*
 
 
 ---

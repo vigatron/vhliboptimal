@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.0-beta
+ * Revision      : 0.7.2-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figures/vhliboptimalfig.cpp
- * Content size  : 10127
- * Date / Time   : 24-07-2026 12:39:50
- * MD5           : d71b93598fa82d086b43551eb9abb832
+ * Content size  : 10556
+ * Date / Time   : 25-07-2026 18:40:09
+ * MD5           : 428754ff149f02614a63c35dca12f339
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -33,6 +33,8 @@ VHOptimalFigure::VHOptimalFigure(
 ) {
 
     bool loop = true;
+
+    arrspans.reserve(64);
 
     // Сканируем участоки фигуры
     while(loop) {
@@ -93,8 +95,24 @@ const strect VHOptimalFigure::PosAbs(const CellsMatrix & cmtx) const {
     int cs = cmtx.CellSize();
     r.x1 = objrect.x1 * cs;
     r.y1 = objrect.y1 * cs;
-    r.x2 = objrect.x2 * cs;
-    r.y2 = objrect.y2 * cs;
+    r.x2 = (objrect.x2 + 1) * cs - 1;
+    r.y2 = (objrect.y2 + 1) * cs - 1;
+    return r;
+}
+
+/**
+ * 
+ */
+uint32_t VHOptimalFigure::Width (const CellsMatrix & cmtx) const {
+    int r = (objrect.x1 > objrect.x2) ? 0 : (cmtx.CellSize() * (objrect.x2 - objrect.x1 + 1));
+    return r;
+}
+
+/**
+ * 
+ */
+uint32_t VHOptimalFigure::Height(const CellsMatrix & cmtx) const {
+    int r = (objrect.y1 > objrect.y2) ? 0 : (cmtx.CellSize() * (objrect.y2 - objrect.y1 + 1));
     return r;
 }
 
@@ -401,9 +419,9 @@ void VHOptimalFigure::ContentV(const CellsMatrix & cmtx, CallbackContent callbac
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/figures/vhliboptimalfig.cpp
- * Revision         : 0.7.0-beta
- * Content size     : 10127
- * Date / Time      : 24-07-2026 12:39:50
- * MD5              : d71b93598fa82d086b43551eb9abb832
+ * Revision         : 0.7.2-beta
+ * Content size     : 10556
+ * Date / Time      : 25-07-2026 18:40:09
+ * MD5              : 428754ff149f02614a63c35dca12f339
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
