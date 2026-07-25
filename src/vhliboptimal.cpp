@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.0-beta
+ * Revision      : 0.7.2-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.cpp
- * Content size  : 7051
- * Date / Time   : 24-07-2026 12:39:50
- * MD5           : 603ff565edb7f6aa51a43c1f64d0d451
+ * Content size  : 7745
+ * Date / Time   : 25-07-2026 18:40:09
+ * MD5           : 12abc825b98d5fdc109e6d5c67a9339f
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -38,6 +38,8 @@ verr VHLibOptimal::Setup(
     // Save initial parameters
     cfg = cfgparams;
 
+    arrFigures.reserve(F1K*4);
+
     // Return check status
     return CheckCfgParams();
 }
@@ -60,6 +62,11 @@ verr VHLibOptimal::Run(uint16_t srcimgid) {
     // Scan objects
     while(FindFigure()) {
         ConvertFigure();
+    }
+
+    if(cfg.loglevel >= LOG_LEVEL_BASE) {
+        std::string msg = "Found " + std::to_string( arrFigures.size() ) + " objects";
+        VHLibOptimalLogger::lineout(msg);
     }
 
     return vok;
@@ -170,7 +177,7 @@ bool VHLibOptimal::ConvertFigure() {
 
     int fign = arrFigures.size();
 
-    if(cfg.loglevel) {
+    if(cfg.loglevel >= LOG_LEVEL_EXT) {
         std::string msg = "Figure #" + std::to_string(fign) + " found";
         VHLibOptimalLogger::lineout(msg);
     }
@@ -186,7 +193,7 @@ bool VHLibOptimal::ConvertFigure() {
 
     // Cортировка соседей последовательно
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        std::string msg = "Fig #" + std::to_string(fign) + ", Sorting Sequental";
+        std::string msg = "Figure #" + std::to_string(fign) + ", Sorting Sequental";
         VHLibOptimalLogger::lineout(msg);
     }
 
@@ -195,7 +202,21 @@ bool VHLibOptimal::ConvertFigure() {
     if(cfg.loglevel >= LOG_LEVEL_EXT)
         VHLibOptimalLogger::DumpFigureSpans(newfigure, cmatrix);
 
-    arrFigures.push_back(newfigure);
+
+    int figw   = newfigure.Width (cmatrix);
+    int figh   = newfigure.Height(cmatrix);
+
+    bool sizew = figw >= cfg.min_obj_width && figw <= cfg.max_obj_width;
+    bool sizeh = figh >= cfg.min_obj_height && figh <= cfg.max_obj_height;
+
+    if(sizew && sizeh) {
+        arrFigures.push_back(newfigure);
+    } else {
+        if(cfg.loglevel >= LOG_LEVEL_EXT) {
+            std::string msg = "Figure #" + std::to_string(fign) + " skipped";
+            VHLibOptimalLogger::lineout(msg);
+        }
+    }
 
     return true;
 }
@@ -304,9 +325,9 @@ bool VHLibOptimal::ContentV(int objn) const {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.cpp
- * Revision         : 0.7.0-beta
- * Content size     : 7051
- * Date / Time      : 24-07-2026 12:39:50
- * MD5              : 603ff565edb7f6aa51a43c1f64d0d451
+ * Revision         : 0.7.2-beta
+ * Content size     : 7745
+ * Date / Time      : 25-07-2026 18:40:09
+ * MD5              : 12abc825b98d5fdc109e6d5c67a9339f
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
