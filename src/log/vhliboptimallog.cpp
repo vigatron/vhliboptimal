@@ -15,15 +15,17 @@
  * Copyright     : © 2006–2026 Viktor Glebov
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #include <format>
+#include <sstream>
+#include <iomanip>
 
 #include "vhliboptimal.hpp"
 #include "vhliboptimallog.hpp"
 
 using namespace vhliboptimal;
 
-constexpr std::string strbit0 = "0";
-constexpr std::string strbit1 = "1";
-constexpr std::string strbitP = "*";
+static const std::string strbit0 = "0";
+static const std::string strbit1 = "1";
+static const std::string strbitP = "*";
 
 
 void VHLibOptimalLogger::partout(const std::string & str) {
@@ -116,11 +118,30 @@ void VHLibOptimalLogger::DumpCellsHEX(
 
         if(!(i%16)) {
             newlout();
-            std::string msg = std::format("{:04X}: ", i);
+
+            std::ostringstream oss;
+
+            oss << std::setw(4)
+                << std::setfill('0')
+                << std::hex
+                << i
+                << ": ";
+
+            std::string msg = oss.str();
+
             partout(msg);
         }
 
-        std::string msg = std::format("{:02X} ", arr[i]);
+        std::ostringstream oss;
+        oss << std::uppercase 
+            << std::setw(2)
+            << std::setfill('0')
+            << std::hex
+            << static_cast<int>(arr[i])
+            << " ";
+
+        std::string msg = oss.str();
+
         partout(msg);
     }
 
@@ -162,9 +183,15 @@ void VHLibOptimalLogger::DumpCell(
     int sx, int sy ) {
 
     partout(msg);
-    std::string txt = std::format(
-        ": cn={:4d}, cx={:d} cy={:d}, x={:d}  y={:d}",
-        celln, cellx, celly, sx, sy);
+
+    std::ostringstream oss;
+    oss << ": cn=" << std::setw(4) << celln
+        << ", cx=" << cellx
+        << " cy=" << celly
+        << ", x=" << sx
+        << "  y=" << sy;
+    std::string txt = oss.str();
+
     lineout(txt);
 }
 
@@ -178,7 +205,11 @@ void VHLibOptimalLogger::DumpFigurePos(const VHOptimalFigure & objfig, int showf
     partout(fmt("Figure #", showfigidx));
     partout(" Position: ");
 
-    std::string msg = std::format("[{:d}:{:d}] - [{:d}:{:d}]\n", rect.x1, rect.y1, rect.x2, rect.y2);
+    std::ostringstream oss;
+    oss << "[" << rect.x1 << ":" << rect.y1 << "] - ["
+        << rect.x2 << ":" << rect.y2 << "]\n";
+    std::string msg = oss.str();
+
     lineout(msg);
 }
 
@@ -190,22 +221,39 @@ void VHLibOptimalLogger::DumpSpan(
     const CellsMatrix & cmx,
     int spann)
 {
-    std::string msgn = std::format("# {:<5d} ", spann );
+    {
+        std::ostringstream oss;
+        oss << "# " << std::setw(5) << std::left << spann << " ";
+        partout(oss.str());
+    }
 
     auto [cellx, celly] = cmx.CellXY(spn.n);
-    std::string msgc = std::format(" N:{:>5d} (cx:cy {:>4d}:{:<4d})  L:{:>3d} , ",
-        spn.n, cellx, celly, spn.l );
+    {
+        std::ostringstream oss;
+        oss << " N:" << std::setw(5) << spn.n
+            << " (cx:cy " << std::setw(4) << cellx
+            << ":" << std::setw(4) << std::left << celly << std::right << ")"
+            << "  L:" << std::setw(3) << spn.l << " , ";
+        partout(oss.str());
+    }
 
     int cs = cmx.CellSize();
     int x1 = cellx * cs;
     int y1 = celly * cs;
     int x2 = (cellx + spn.l) * cs - 1;
     int y2 = (celly + 1) * cs - 1;
-    std::string msgg = std::format(" sx:sy - ex:ey = {:>5d}:{:>5d}:{:>5d}:{:>5d}",
-        x1, y1, x2, y2);
 
-    std::string msg = msgn + msgc + msgg;
-    lineout(msg);
+    {
+    std::ostringstream oss;
+    oss << " sx:sy - ex:ey = "
+        << std::setw(5) << x1 << ":"
+        << std::setw(5) << y1 << ":"
+        << std::setw(5) << x2 << ":"
+        << std::setw(5) << y2;
+        partout(oss.str());
+    }
+
+    newlout();
 }
 
 /**
@@ -216,7 +264,9 @@ void VHLibOptimalLogger::DumpFigureSpans(
     const CellsMatrix & cmx)
 {
 
-    std::string msg = std::format("Spans Count = {:d}", objfig.SpansCount());
+    std::ostringstream oss;
+    oss << "Spans Count = " << objfig.SpansCount();
+    std::string msg = oss.str();
     lineout(msg);
 
     for(int i=0; i < objfig.SpansCount(); i++) {
@@ -238,7 +288,10 @@ void VHLibOptimalLogger::DumpFigures(const VHLibOptimal & objlib) {
 
         const VHOptimalFigure & objfig = objlib.GetObject(i);
 
-        std::string msg = std::format("Figure #{:d}", i);
+        std::ostringstream oss;
+        oss << "Figure #" << i;
+        std::string msg = oss.str();
+
         lineout(msg);
 
         DumpFigurePos(objfig, i);
