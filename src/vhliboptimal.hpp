@@ -73,7 +73,7 @@ class VHLibOptimal {
         CallbackBorder                  callbackBorder      = nullptr;
 
         // Callback: Moving across object content ( Left > Right / Up > Down )
-        CallbackContent                 callbackContent   = nullptr;
+        CallbackContent                 callbackContent     = nullptr;
 
         // 2D Configuration
         CellsMatrix                     cmatrix;
@@ -103,6 +103,8 @@ class VHLibOptimal {
         bool CheckWhiteLevel(const std::vector<uint8_t> & arr, uint8_t whitelevel) const;
 
         bool IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t celly, uint8_t whitelevel);
+
+        bool IsSortEnabled();
 
 };
 

@@ -197,11 +197,11 @@ bool VHLibOptimal::ConvertFigure() {
         VHLibOptimalLogger::lineout(msg);
     }
 
-    newfigure.Sort(cmatrix);
+    if(IsSortEnabled())
+        newfigure.Sort(cmatrix);
 
     if(cfg.loglevel >= LOG_LEVEL_EXT)
         VHLibOptimalLogger::DumpFigureSpans(newfigure, cmatrix);
-
 
     int figw   = newfigure.Width (cmatrix);
     int figh   = newfigure.Height(cmatrix);
@@ -247,6 +247,13 @@ bool VHLibOptimal::IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t cell
     }
 
     return false;
+}
+
+/**
+ * 
+ */
+bool VHLibOptimal::IsSortEnabled() {
+    return true;
 }
 
 /** 

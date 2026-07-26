@@ -91,20 +91,20 @@ typedef struct _strect  {
 typedef struct _stConfig {
 
     // Размер картинки в пикселях, длинна
-    uint16_t imageWidth;
+    uint16_t    imageWidth;
 
     // Размер картинки в пикселях, высота
-    uint16_t imageHeight;
+    uint16_t    imageHeight;
 
     // Максимально допустимое количество пустых ячеек подряд в линии
-    uint16_t spccnt;
+    uint16_t    spccnt;
 
     // Размер ячейки в пикселях
-    uint8_t cellsize;
+    uint8_t     cellsize;
 
     // Подсветка цветности ячейки
     // меньшие значения принимаем за черный
-    uint8_t  minColorVal;
+    uint8_t     minColorVal;
 
     // Минимальный размер объекта в пикселях
     uint16_t    min_obj_width;
