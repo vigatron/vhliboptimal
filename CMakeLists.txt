@@ -29,5 +29,5 @@ target_include_directories(vhlib_optimal PUBLIC
 target_link_libraries(vhlib_optimal PUBLIC vhlib_platform)
 
 target_compile_definitions(vhlib_platform PUBLIC 
-    VHLIB_OPTIMAL_FASTIDX=2
+#    VHLIB_OPTIMAL_FASTIDX=3
 )

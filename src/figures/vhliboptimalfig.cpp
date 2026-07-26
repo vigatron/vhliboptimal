@@ -33,6 +33,7 @@ VHOptimalFigure::VHOptimalFigure(
 ) {
 
     bool loop = true;
+    stspan span;
 
     arrspans.reserve(64);
 
@@ -47,29 +48,8 @@ VHOptimalFigure::VHOptimalFigure(
         }
 
         // Вычисляем длинну отрезка ( + пустые ячейки, до 3х )
-        int spanlen = bfld.ScanSpanLen(cmtx, curn, skipcellsmax);
-
-        // // Корректируем габаритный размер фигуры: начальная точка X:Y
-        // auto [cur_x, cur_y] = cmtx.CellXY(curn);
-
-        // if(! arrspans.size()) {
-
-        //     objrect.x1 = cur_x;
-        //     objrect.y1 = cur_y;
-        //     objrect.x2 = cur_x + spanlen - 1;
-        //     objrect.y2 = cur_y;
-
-        // } else {
-
-        //     if(cur_x < objrect.x1) objrect.x1 = cur_x;
-        //     if(cur_y < objrect.y1) objrect.y1 = cur_y;
-
-        //     if((cur_x + spanlen - 1) > objrect.x2) objrect.x2 = cur_x + spanlen - 1;
-        //     if(cur_y > objrect.y2) objrect.y2 = cur_y;
-
-        // }
-
-        stspan span = { .n = (uint32_t)curn, .l = (uint32_t)spanlen };
+        span.l = bfld.ScanSpanLen(cmtx, curn, skipcellsmax);
+        span.n = (uint32_t)curn;
 
         // добавляем участок в список текущей фигуры
         arrspans.push_back(span);

@@ -212,7 +212,7 @@ int BitField::FastIdxNonZero() const {
 #endif
 
 
-#if VHLIB_OPTIMAL_FASTIDX == 2
+#if !__x86_64__
 
 /**
  * @brief Optimization: fast search entry index
@@ -245,7 +245,7 @@ int BitField::FastIdxNonZero() const {
 
 #endif
 
-#if VHLIB_OPTIMAL_FASTIDX == 3
+#if __x86_64__
 
 /**
  * @brief Optimization: fast search entry index
