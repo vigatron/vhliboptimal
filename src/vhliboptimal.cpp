@@ -106,17 +106,17 @@ verr VHLibOptimal::InitialScanImage(uint16_t srcimgid) {
 
     uint32_t bitbuffsize = cmatrix.BitMaskSizeBytes();
 
-    // Setup Original Bitfield and allocate memory buffer
+    // Setup Original Bitfield: allocate memory buffer
     buffArrSrc.assign(bitbuffsize, 0);
     bitfieldSrc.Setup(cmatrix, buffArrSrc.data(), bitbuffsize);
 
-    // Setup Destination Bitfield and allocate memory buffer
+    // Setup Destination Bitfield: allocate memory buffer
     buffArrDst.assign(bitbuffsize, 0);
     bitfieldDst.Setup(cmatrix, buffArrDst.data(), bitbuffsize);
 
     // Initial Scan
-    for(uint16_t celly=0; celly < cmatrix.CellsY(); celly++) {
-        for(uint16_t cellx=0; cellx < cmatrix.CellsX(); cellx++) {
+    for(uint16_t celly=1; celly < cmatrix.CellsY() - 1; celly++) {
+        for(uint16_t cellx=1; cellx < cmatrix.CellsX() - 1; cellx++) {
             if(IsCellFilled(srcimgid, cellx, celly, cfg.minColorVal)) {
                 int idx = cmatrix.CellN(cellx,celly);
                 bitfieldSrc.SetCell(idx);

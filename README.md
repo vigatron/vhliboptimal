@@ -462,4 +462,13 @@ A surviving header (`.h`) file of this original plain C implementation is preser
 
 ---
 
+##### ChangeLog
+
+##### 0.7.3
+* VHLibOptimal::InitialScanImage() Added a one-cell empty border around the bitfield.
+* VHLibOptimal::InitialScanImage() Reduced the active scan area by one cell on each side.
+
+
+---
+
 © 2006 – 2026 V01G04A81 / Viktor Glebov
