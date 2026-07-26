@@ -49,25 +49,25 @@ VHOptimalFigure::VHOptimalFigure(
         // Вычисляем длинну отрезка ( + пустые ячейки, до 3х )
         int spanlen = bfld.ScanSpanLen(cmtx, curn, skipcellsmax);
 
-        // Корректируем габаритный размер фигуры: начальная точка X:Y
-        auto [cur_x, cur_y] = cmtx.CellXY(curn);
+        // // Корректируем габаритный размер фигуры: начальная точка X:Y
+        // auto [cur_x, cur_y] = cmtx.CellXY(curn);
 
-        if(! arrspans.size()) {
+        // if(! arrspans.size()) {
 
-            objrect.x1 = cur_x;
-            objrect.y1 = cur_y;
-            objrect.x2 = cur_x + spanlen - 1;
-            objrect.y2 = cur_y;
+        //     objrect.x1 = cur_x;
+        //     objrect.y1 = cur_y;
+        //     objrect.x2 = cur_x + spanlen - 1;
+        //     objrect.y2 = cur_y;
 
-        } else {
+        // } else {
 
-            if(cur_x < objrect.x1) objrect.x1 = cur_x;
-            if(cur_y < objrect.y1) objrect.y1 = cur_y;
+        //     if(cur_x < objrect.x1) objrect.x1 = cur_x;
+        //     if(cur_y < objrect.y1) objrect.y1 = cur_y;
 
-            if((cur_x + spanlen - 1) > objrect.x2) objrect.x2 = cur_x + spanlen - 1;
-            if(cur_y > objrect.y2) objrect.y2 = cur_y;
+        //     if((cur_x + spanlen - 1) > objrect.x2) objrect.x2 = cur_x + spanlen - 1;
+        //     if(cur_y > objrect.y2) objrect.y2 = cur_y;
 
-        }
+        // }
 
         stspan span = { .n = (uint32_t)curn, .l = (uint32_t)spanlen };
 
@@ -77,6 +77,8 @@ VHOptimalFigure::VHOptimalFigure(
         // Удаляем участок из поля
         bfld.ClearSpan(span);
     }
+
+    RecalcFigurePosAndSize(cmtx);
 
 }
 
@@ -165,6 +167,39 @@ strect VHOptimalFigure::SpanRect(int spann, const CellsMatrix & cmtx) const {
 void VHOptimalFigure::Sort(const CellsMatrix & cmtx) {
     
     SortSequental(cmtx);
+
+}
+
+/**
+ * @brief Определение координат и размеров фигуры
+ */
+void VHOptimalFigure::RecalcFigurePosAndSize(const CellsMatrix & cmtx) {
+
+    // Empty
+    if(!arrspans.size()) return;
+
+    auto [cxi1,cyi1] = cmtx.CellXY(arrspans[0].n);
+    auto [cxi2,cyi2] = cmtx.CellXY(arrspans[0].n + arrspans[0].l - 1);
+
+    // Initial values
+    int cxl = cxi1, cxr = cxi2, cyt = cyi1, cyd = cyi2;
+
+    for(const stspan & span : arrspans) {
+
+        auto [cx1,cy1] = cmtx.CellXY(span.n);
+        auto [cx2,cy2] = cmtx.CellXY(span.n + span.l - 1);
+
+        if(cxl > cx1) { cxl = cx1; }
+        if(cxr < cx2) { cxr = cx2; }
+        if(cyt > cy1) { cyt = cy1; }
+        if(cyd < cy2) { cyd = cy2; }
+    }
+
+    // Define pos & size
+    objrect.x1 = cxl;
+    objrect.y1 = cyt;
+    objrect.x2 = cxr;
+    objrect.y2 = cyd;
 
 }
 

@@ -66,6 +66,9 @@ class VHOptimalFigure {
 
         strect                  objrect;
 
+        //
+        void RecalcFigurePosAndSize(const CellsMatrix & cmtx);
+
         // Calculate Distance
 
         int QDistance(
