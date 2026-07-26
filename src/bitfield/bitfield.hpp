@@ -44,12 +44,16 @@ class BitField {
 
         void                            ClearSpan           (const stspan & span);
 
+        void                            ResetSearchIndex    ();
+
     private:
 
         // Ссылка на блок памяти для анализа битового массива
 
         uint8_t *                       arrPtr;
         uint32_t                        arrSizeInBytes;
+
+        size_t                          previdx;
 
         // Оптимизация под uint8_t / uint16_t / uint32_t / uint64_t / AVX2
 

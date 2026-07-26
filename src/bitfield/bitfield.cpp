@@ -29,6 +29,8 @@ bool BitField::Setup(const CellsMatrix & cmtx, uint8_t * arrptr, uint32_t limbyt
     arrPtr = arrptr;
     arrSizeInBytes = limbytes;
 
+    ResetSearchIndex();
+
     return true;
 }
 
@@ -335,6 +337,13 @@ int BitField::FastIdxNonZero() const {
     return -1;
 }
 #endif
+
+/**
+ * 
+ */
+void BitField::ResetSearchIndex() {
+    previdx = 0;
+}
 
 
 /* ========================[  END FILE CONTENT  ]========================

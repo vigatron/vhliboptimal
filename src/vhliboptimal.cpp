@@ -20,7 +20,7 @@
 using namespace vhliboptimal;
 
 VHLibOptimal::VHLibOptimal() { 
-
+    SetSortMode(1);
 }
 
 verr VHLibOptimal::Setup(
@@ -253,7 +253,7 @@ bool VHLibOptimal::IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t cell
  * 
  */
 bool VHLibOptimal::IsSortEnabled() {
-    return true;
+    return sortMode > 0;
 }
 
 /** 
@@ -326,6 +326,13 @@ bool VHLibOptimal::ContentV(int objn) const {
     const vhliboptimal::VHOptimalFigure & objfig = GetObject(objn);
     objfig.ContentV(GetCMatrix(), callbackContent);
     return true;
+}
+
+/**
+ * 
+ */
+void VHLibOptimal::SetSortMode(uint8_t mode) {
+    sortMode = mode;
 }
 
 

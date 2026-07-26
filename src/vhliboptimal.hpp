@@ -58,6 +58,8 @@ class VHLibOptimal {
         bool                            ContentH            (int objn) const;
         bool                            ContentV            (int objn) const;
 
+        void                            SetSortMode         (uint8_t mode);
+
     private:
 
         const int                       ERR_InvalidParams = 1;
@@ -91,6 +93,9 @@ class VHLibOptimal {
 
         // Массив фигур
         std::vector<VHOptimalFigure>    arrFigures;
+
+
+        uint8_t                         sortMode;
 
         verr CheckCfgParams();
 
