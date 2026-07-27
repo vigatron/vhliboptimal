@@ -106,48 +106,16 @@ const int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
 
     int wx = cmtx.CellsX();
     int wy = cmtx.CellsY();
+    int tryn;
 
-    // 6
-    // 7
-    // 8
-    // 9
-    
-    // 1
-    // 2
-    // 3
-    // 4
-
-    auto [lx, ly] = cmtx.CellXY(n);
-
-    int crn[8] = {            // "corners"
-            (n - wx - 1),     // #0 : 1
-            (n - 1),          // #1 : 4
-            (n + wx - 1),     // #2 : 7
-            (n + wx),         // #3 : 8
-            (n + wx + 1),     // #4 : 9
-            (n + 1),          // #5 : 6
-            (n - wx + 1),     // #6 : 3
-            (n - wx)          // #7 : 2
-     };
-
-    // ----------------------------------------
-    // Cut out-of range ...
-    // ----------------------------------------
-    if(!lx)               { crn[0] = -1; crn[1] = -1; crn[2] = -1; }
-    if(lx == (wx-1))      { crn[4] = -1; crn[5] = -1; crn[6] = -1; }
-    if(!ly)               { crn[0] = -1; crn[6] = -1; crn[7] = -1; }
-    if(ly == (wy-1))      { crn[2] = -1; crn[3] = -1; crn[4] = -1; }
-
-    // ----------------------------------------
-    for(int i=0;i<8;i++) {
-
-        // Check limits
-        if((crn[i]>=0) && (crn[i]<cmtx.CellsT())) {
-            if(GetCell(crn[i])) {
-                return crn[i];
-            }
-        }
-    }
+    { tryn = n + 1;         if(GetCell(tryn)) return tryn; } // 6
+    { tryn = n + wx - 1;    if(GetCell(tryn)) return tryn; } // 7
+    { tryn = n + wx;        if(GetCell(tryn)) return tryn; } // 8
+    { tryn = n + wx + 1;    if(GetCell(tryn)) return tryn; } // 9
+    { tryn = n - wx - 1;    if(GetCell(tryn)) return tryn; } // 1
+    { tryn = n - wx;        if(GetCell(tryn)) return tryn; } // 2
+    { tryn = n - wx + 1;    if(GetCell(tryn)) return tryn; } // 3
+    { tryn = n - 1;         if(GetCell(tryn)) return tryn; } // 4
 
     return -1;
 }
@@ -257,7 +225,6 @@ void BitField::ResetSearchIndex(const CellsMatrix & cmtx) {
     curSearchWord    = cmtx.CellInnerFrom() / sizeof(uint64_t);
     lastSearchsByte  = cmtx.CellInnerTo()   / sizeof(uint8_t);
 }
-
 
 /**
  * @brief Optimization: fast search entry index
