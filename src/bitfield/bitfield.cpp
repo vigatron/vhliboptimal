@@ -29,7 +29,7 @@ bool BitField::Setup(const CellsMatrix & cmtx, uint8_t * arrptr, uint32_t limbyt
     arrPtr = arrptr;
     arrSizeInBytes = limbytes;
 
-    ResetSearchIndex();
+    ResetSearchIndex(cmtx);
 
     return true;
 }
@@ -104,9 +104,20 @@ const int BitField::FindEntryCell(const CellsMatrix & cmtx) {
  */
 const int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
 
-    auto [lx, ly] = cmtx.CellXY(n);
     int wx = cmtx.CellsX();
     int wy = cmtx.CellsY();
+
+    // 6
+    // 7
+    // 8
+    // 9
+    
+    // 1
+    // 2
+    // 3
+    // 4
+
+    auto [lx, ly] = cmtx.CellXY(n);
 
     int crn[8] = {            // "corners"
             (n - wx - 1),     // #0 : 1
@@ -203,6 +214,8 @@ void BitField::ClearSpan(const stspan & span)  {
 
 #if !defined(__x86_64__)
 
+#error "FastIdxNonZero() Fix bounds"
+
 /**
  * @brief Optimization: fast search entry index
  */
@@ -238,17 +251,26 @@ int BitField::FastIdxNonZero() {
 #if defined(__x86_64__)
 
 /**
+ * 
+ */
+void BitField::ResetSearchIndex(const CellsMatrix & cmtx) {
+    curSearchWord    = cmtx.CellInnerFrom() / sizeof(uint64_t);
+    lastSearchsByte  = cmtx.CellInnerTo()   / sizeof(uint8_t);
+}
+
+
+/**
  * @brief Optimization: fast search entry index
  */
 int BitField::FastIdxNonZero() {
     const uint64_t* p64 = reinterpret_cast<const uint64_t*>(arrPtr);
-    const size_t numWords = arrSizeInBytes / sizeof(uint64_t);
+    const size_t numWords = lastSearchsByte / sizeof(uint64_t);
 
     // Основной цикл — по 64-битным словам
-    for (size_t i = previdx; i < numWords; ++i) {
+    for (size_t i = curSearchWord; i < numWords; ++i) {
         uint64_t word = p64[i];
         if (word != 0ULL) {
-            previdx = i;
+            curSearchWord = i;
             // первый установленный бит в слове
             int bitPos = __builtin_ctzll(word);
             size_t byteIndex = i * sizeof(uint64_t) + (bitPos / CHAR_BIT);
@@ -258,7 +280,7 @@ int BitField::FastIdxNonZero() {
 
     // Хвост (если размер массива не кратен 8)
     const size_t processedBytes = numWords * sizeof(uint64_t);
-    for (size_t i = processedBytes; i < arrSizeInBytes; ++i) {
+    for (size_t i = processedBytes; i < lastSearchsByte; ++i) {
         if (arrPtr[i] != 0) {
             return static_cast<int>(i * CHAR_BIT);
         }
@@ -271,6 +293,8 @@ int BitField::FastIdxNonZero() {
 
 
 #if VHLIB_OPTIMAL_FASTIDX == 4
+
+#error "FastIdxNonZero() Fix bounds"
 
 #include <immintrin.h>
 
@@ -326,13 +350,6 @@ int BitField::FastIdxNonZero() {
     return -1;
 }
 #endif
-
-/**
- * 
- */
-void BitField::ResetSearchIndex() {
-    previdx = 0;
-}
 
 
 /* ========================[  END FILE CONTENT  ]========================

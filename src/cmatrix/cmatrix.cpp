@@ -27,6 +27,9 @@ void CellsMatrix::Setup(uint16_t imgpxlsw, uint16_t imgpxlsh, uint16_t csize) {
     cellsy      = (imgpxlsh / csize) + ((imgpxlsh % csize) ? 1:0);   // cells V
     cellst      = cellsx * cellsy;
     cellsz      = csize;
+
+    cellin      = cellsx + 1;
+    cellout     = cellst - cellsx - 2;
 }
 
 /**
@@ -77,6 +80,20 @@ const std::pair<size_t, size_t> CellsMatrix::CellXY(size_t n) const {
 const size_t CellsMatrix::BitMaskSizeBytes() const {
     size_t arrsz = (cellst / CHAR_BIT) + ((cellst % CHAR_BIT) ? 1:0);
     return arrsz;
+}
+
+/**
+ * 
+ */
+const size_t CellsMatrix::CellInnerFrom() const {
+    return cellin;
+}
+
+/**
+ * 
+ */
+const size_t CellsMatrix::CellInnerTo() const {
+    return cellout;
 }
 
 

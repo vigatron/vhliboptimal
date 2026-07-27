@@ -44,7 +44,7 @@ class BitField {
 
         void                            ClearSpan           (const stspan & span);
 
-        void                            ResetSearchIndex    ();
+        void                            ResetSearchIndex    (const CellsMatrix & cmtx);
 
     private:
 
@@ -53,7 +53,8 @@ class BitField {
         uint8_t *                       arrPtr;
         uint32_t                        arrSizeInBytes;
 
-        size_t previdx;
+        size_t                          curSearchWord;
+        size_t                          lastSearchsByte;
 
         // Оптимизация под uint8_t / uint16_t / uint32_t / uint64_t / AVX2
 

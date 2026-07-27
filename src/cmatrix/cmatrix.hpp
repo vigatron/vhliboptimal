@@ -34,6 +34,8 @@ class CellsMatrix {
         const size_t                        CellN               (size_t x, size_t y) const;
         const std::pair<size_t, size_t>     CellXY              (size_t n) const;
         const size_t                        BitMaskSizeBytes    () const;
+        const size_t                        CellInnerFrom       () const;
+        const size_t                        CellInnerTo         () const;
 
     private:
 
@@ -41,6 +43,9 @@ class CellsMatrix {
         size_t cellsy;        // Cells per V - Vertical   cells count
         size_t cellst;        // Cells total
         size_t cellsz;        // Cell size
+
+        size_t cellin;        // Within Border: Start cell
+        size_t cellout;       // Within Border: Last  cell
 };
 
 };
