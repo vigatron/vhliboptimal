@@ -179,7 +179,7 @@ void BitField::ClearSpan(const stspan & span)  {
     }
 }
 
-#if !defined(__x86_64__)
+#if !defined(__x86_64__x)
 #define VHLIB_OPTIMAL_MODE_32
 #else
 #define VHLIB_OPTIMAL_MODE_64
