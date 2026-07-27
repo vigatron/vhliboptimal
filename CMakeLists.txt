@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(vhliboptimal VERSION 0.7.3 LANGUAGES CXX)
+project(vhliboptimal VERSION 0.7.4 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 configure_file(

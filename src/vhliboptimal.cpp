@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.3-beta
+ * Revision      : 0.7.4-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.cpp
- * Content size  : 7997
- * Date / Time   : 27-07-2026 13:41:43
- * MD5           : a3737c0dc498821e0c4b449901076967
+ * Content size  : 7969
+ * Date / Time   : 27-07-2026 18:19:01
+ * MD5           : c8e9062ed6e7d8bc5c7c4a2e0076868e
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -119,16 +119,13 @@ verr VHLibOptimal::InitialScanImage(uint16_t srcimgid) {
         for(uint16_t cellx=1; cellx < cmatrix.CellsX() - 1; cellx++) {
             if(IsCellFilled(srcimgid, cellx, celly, cfg.minColorVal)) {
                 int idx = cmatrix.CellN(cellx,celly);
-                bitfieldSrc.SetCell(idx);
-            }
-        }
-    }
+                bitfieldSrc.SetCell(idx); } } }
 
     // Dump CellsMatrix
     if(cfg.loglevel >= LOG_LEVEL_MAX) {
         VHLibOptimalLogger::DumpCellsHEX( *this, cmatrix, buffArrSrc, "Original Bitfield HEX");
     }
-    
+
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
         VHLibOptimalLogger::DumpCellsTXT( *this, cmatrix, buffArrSrc, "Original Bitfield TXT");
     }
@@ -341,9 +338,9 @@ void VHLibOptimal::SetSortMode(uint8_t mode) {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.cpp
- * Revision         : 0.7.3-beta
- * Content size     : 7997
- * Date / Time      : 27-07-2026 13:41:43
- * MD5              : a3737c0dc498821e0c4b449901076967
+ * Revision         : 0.7.4-beta
+ * Content size     : 7969
+ * Date / Time      : 27-07-2026 18:19:01
+ * MD5              : c8e9062ed6e7d8bc5c7c4a2e0076868e
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
