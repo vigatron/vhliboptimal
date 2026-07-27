@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.2-beta
+ * Revision      : 0.7.3-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/bitfield/bitfield.cpp
- * Content size  : 8017
- * Date / Time   : 25-07-2026 18:40:09
- * MD5           : bfe86f9d66dc121b2384d37c2333d092
+ * Content size  : 6244
+ * Date / Time   : 27-07-2026 13:41:43
+ * MD5           : 2709813fc150748e2c6a52458be8c62d
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -179,10 +179,23 @@ void BitField::ClearSpan(const stspan & span)  {
     }
 }
 
-
 #if !defined(__x86_64__)
+#define VHLIB_OPTIMAL_MODE_32
+#else
+#define VHLIB_OPTIMAL_MODE_64
+#endif
 
-#error "FastIdxNonZero() Fix bounds"
+
+#if defined(VHLIB_OPTIMAL_MODE_32)
+
+/**
+ * 
+ */
+void BitField::ResetSearchIndex(const CellsMatrix & cmtx) {
+    curSearchWord    = cmtx.CellInnerFrom() / sizeof(uint32_t);
+    lastSearchsByte  = cmtx.CellInnerTo()   / sizeof(uint8_t);
+}
+
 
 /**
  * @brief Optimization: fast search entry index
@@ -190,11 +203,13 @@ void BitField::ClearSpan(const stspan & span)  {
 int BitField::FastIdxNonZero() {
 
     const uint32_t* p32 = reinterpret_cast<const uint32_t*>(arrPtr);
-    const size_t numWords = arrSizeInBytes / sizeof(uint32_t);
+    const size_t numWords = lastSearchsByte / sizeof(uint32_t);
 
-    for (size_t i = 0; i < numWords; ++i) {
+    // Основной цикл — по 32-битным словам
+    for (size_t i = curSearchWord; i < numWords; ++i) {
         uint32_t word = p32[i];
         if (word != 0) {
+            curSearchWord = i;
             // позиция первого установленного бита
             int bitPos = __builtin_ctz(word);
             size_t byteIndex = i * sizeof(uint32_t) + (bitPos / CHAR_BIT);
@@ -202,9 +217,9 @@ int BitField::FastIdxNonZero() {
         }
     }
 
-    // Хвост
-    const size_t processed = numWords * sizeof(uint32_t);
-    for (size_t i = processed; i < arrSizeInBytes; ++i) {
+    // Хвост (если размер массива не кратен 8)
+    const size_t processedBytes = numWords * sizeof(uint32_t);
+    for (size_t i = processedBytes; i < lastSearchsByte; ++i) {
         if (arrPtr[i] != 0) {
             return static_cast<int>(i * CHAR_BIT);
         }
@@ -216,7 +231,7 @@ int BitField::FastIdxNonZero() {
 #endif
 
 
-#if defined(__x86_64__)
+#if defined(VHLIB_OPTIMAL_MODE_64)
 
 /**
  * 
@@ -259,72 +274,12 @@ int BitField::FastIdxNonZero() {
 #endif
 
 
-#if VHLIB_OPTIMAL_FASTIDX == 4
-
-#error "FastIdxNonZero() Fix bounds"
-
-#include <immintrin.h>
-
-/**
- * @brief Optimization: fast search entry index
- */
-int BitField::FastIdxNonZero() {
-    const uint8_t* p = arrPtr;
-    size_t n = arrSizeInBytes;
-
-    // Для очень маленьких массивов — сразу обычный цикл
-    if (n < 64) {
-        for (size_t i = 0; i < n; ++i) {
-            if (p[i] != 0) return static_cast<int>(i * CHAR_BIT);
-        }
-        return -1;
-    }
-
-    size_t i = 0;
-
-    // AVX2 основной цикл (32 байта за раз)
-    for (; i + 32 <= n; i += 32) {
-        __m256i chunk = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p + i));
-        __m256i zero = _mm256_setzero_si256();
-        int mask = _mm256_movemask_epi8(_mm256_cmpeq_epi8(chunk, zero));
-
-        if (mask != 0xFFFFFFFF) {
-            int bytePos = _tzcnt_u32(~static_cast<uint32_t>(mask));
-            return static_cast<int>((i + bytePos) * CHAR_BIT);
-        }
-    }
-
-    // Остаток (можно добавить 64-битный цикл для хвоста)
-    const size_t remaining = n - i;
-    if (remaining >= 8) {
-        const uint64_t* p64 = reinterpret_cast<const uint64_t*>(p + i);
-        size_t num64 = remaining / 8;
-        for (size_t j = 0; j < num64; ++j) {
-            uint64_t word = p64[j];
-            if (word != 0) {
-                int bitPos = __builtin_ctzll(word);
-                size_t byteIndex = i + j * 8 + (bitPos / CHAR_BIT);
-                return static_cast<int>(byteIndex * CHAR_BIT);
-            }
-        }
-    }
-
-    // Финальный байтовый хвост
-    for (; i < n; ++i) {
-        if (p[i] != 0) return static_cast<int>(i * CHAR_BIT);
-    }
-
-    return -1;
-}
-#endif
-
-
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/bitfield/bitfield.cpp
- * Revision         : 0.7.2-beta
- * Content size     : 8017
- * Date / Time      : 25-07-2026 18:40:09
- * MD5              : bfe86f9d66dc121b2384d37c2333d092
+ * Revision         : 0.7.3-beta
+ * Content size     : 6244
+ * Date / Time      : 27-07-2026 13:41:43
+ * MD5              : 2709813fc150748e2c6a52458be8c62d
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
