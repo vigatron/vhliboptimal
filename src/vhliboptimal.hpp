@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.2-beta
+ * Revision      : 0.7.3-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.hpp
- * Content size  : 2807
- * Date / Time   : 25-07-2026 18:40:09
- * MD5           : 3955c4aced59c3512851bd2ce73e0553
+ * Content size  : 2969
+ * Date / Time   : 27-07-2026 13:41:43
+ * MD5           : 89d0af5cc20dd740c3dd4998b2c1764a
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -58,6 +58,8 @@ class VHLibOptimal {
         bool                            ContentH            (int objn) const;
         bool                            ContentV            (int objn) const;
 
+        void                            SetSortMode         (uint8_t mode);
+
     private:
 
         const int                       ERR_InvalidParams = 1;
@@ -73,7 +75,7 @@ class VHLibOptimal {
         CallbackBorder                  callbackBorder      = nullptr;
 
         // Callback: Moving across object content ( Left > Right / Up > Down )
-        CallbackContent                 callbackContent   = nullptr;
+        CallbackContent                 callbackContent     = nullptr;
 
         // 2D Configuration
         CellsMatrix                     cmatrix;
@@ -92,6 +94,9 @@ class VHLibOptimal {
         // Массив фигур
         std::vector<VHOptimalFigure>    arrFigures;
 
+
+        uint8_t                         sortMode;
+
         verr CheckCfgParams();
 
         verr InitialScanImage(uint16_t srcimgid);
@@ -104,6 +109,8 @@ class VHLibOptimal {
 
         bool IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t celly, uint8_t whitelevel);
 
+        bool IsSortEnabled();
+
 };
 
 };
@@ -111,9 +118,9 @@ class VHLibOptimal {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.hpp
- * Revision         : 0.7.2-beta
- * Content size     : 2807
- * Date / Time      : 25-07-2026 18:40:09
- * MD5              : 3955c4aced59c3512851bd2ce73e0553
+ * Revision         : 0.7.3-beta
+ * Content size     : 2969
+ * Date / Time      : 27-07-2026 13:41:43
+ * MD5              : 89d0af5cc20dd740c3dd4998b2c1764a
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

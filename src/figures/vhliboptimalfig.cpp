@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.2-beta
+ * Revision      : 0.7.3-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figures/vhliboptimalfig.cpp
- * Content size  : 10556
- * Date / Time   : 25-07-2026 18:40:09
- * MD5           : 428754ff149f02614a63c35dca12f339
+ * Content size  : 10776
+ * Date / Time   : 27-07-2026 13:41:43
+ * MD5           : 3239384c4a8bd1b7c7d862adc6e5ccb9
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -33,6 +33,7 @@ VHOptimalFigure::VHOptimalFigure(
 ) {
 
     bool loop = true;
+    stspan span;
 
     arrspans.reserve(64);
 
@@ -47,29 +48,8 @@ VHOptimalFigure::VHOptimalFigure(
         }
 
         // Вычисляем длинну отрезка ( + пустые ячейки, до 3х )
-        int spanlen = bfld.ScanSpanLen(cmtx, curn, skipcellsmax);
-
-        // Корректируем габаритный размер фигуры: начальная точка X:Y
-        auto [cur_x, cur_y] = cmtx.CellXY(curn);
-
-        if(! arrspans.size()) {
-
-            objrect.x1 = cur_x;
-            objrect.y1 = cur_y;
-            objrect.x2 = cur_x + spanlen - 1;
-            objrect.y2 = cur_y;
-
-        } else {
-
-            if(cur_x < objrect.x1) objrect.x1 = cur_x;
-            if(cur_y < objrect.y1) objrect.y1 = cur_y;
-
-            if((cur_x + spanlen - 1) > objrect.x2) objrect.x2 = cur_x + spanlen - 1;
-            if(cur_y > objrect.y2) objrect.y2 = cur_y;
-
-        }
-
-        stspan span = { .n = (uint32_t)curn, .l = (uint32_t)spanlen };
+        span.l = bfld.ScanSpanLen(cmtx, curn, skipcellsmax);
+        span.n = (uint32_t)curn;
 
         // добавляем участок в список текущей фигуры
         arrspans.push_back(span);
@@ -77,6 +57,8 @@ VHOptimalFigure::VHOptimalFigure(
         // Удаляем участок из поля
         bfld.ClearSpan(span);
     }
+
+    RecalcFigurePosAndSize(cmtx);
 
 }
 
@@ -165,6 +147,39 @@ strect VHOptimalFigure::SpanRect(int spann, const CellsMatrix & cmtx) const {
 void VHOptimalFigure::Sort(const CellsMatrix & cmtx) {
     
     SortSequental(cmtx);
+
+}
+
+/**
+ * @brief Определение координат и размеров фигуры
+ */
+void VHOptimalFigure::RecalcFigurePosAndSize(const CellsMatrix & cmtx) {
+
+    // Empty
+    if(!arrspans.size()) return;
+
+    auto [cxi1,cyi1] = cmtx.CellXY(arrspans[0].n);
+    auto [cxi2,cyi2] = cmtx.CellXY(arrspans[0].n + arrspans[0].l - 1);
+
+    // Initial values
+    int cxl = cxi1, cxr = cxi2, cyt = cyi1, cyd = cyi2;
+
+    for(const stspan & span : arrspans) {
+
+        auto [cx1,cy1] = cmtx.CellXY(span.n);
+        auto [cx2,cy2] = cmtx.CellXY(span.n + span.l - 1);
+
+        if(cxl > cx1) { cxl = cx1; }
+        if(cxr < cx2) { cxr = cx2; }
+        if(cyt > cy1) { cyt = cy1; }
+        if(cyd < cy2) { cyd = cy2; }
+    }
+
+    // Define pos & size
+    objrect.x1 = cxl;
+    objrect.y1 = cyt;
+    objrect.x2 = cxr;
+    objrect.y2 = cyd;
 
 }
 
@@ -419,9 +434,9 @@ void VHOptimalFigure::ContentV(const CellsMatrix & cmtx, CallbackContent callbac
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/figures/vhliboptimalfig.cpp
- * Revision         : 0.7.2-beta
- * Content size     : 10556
- * Date / Time      : 25-07-2026 18:40:09
- * MD5              : 428754ff149f02614a63c35dca12f339
+ * Revision         : 0.7.3-beta
+ * Content size     : 10776
+ * Date / Time      : 27-07-2026 13:41:43
+ * MD5              : 3239384c4a8bd1b7c7d862adc6e5ccb9
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

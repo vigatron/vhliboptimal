@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(vhliboptimal VERSION 0.7.2 LANGUAGES CXX)
+project(vhliboptimal VERSION 0.7.3 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 configure_file(
@@ -7,7 +7,6 @@ configure_file(
     "${CMAKE_CURRENT_BINARY_DIR}/generated/version_vhliboptimal.h"
 )
 
-# Собираем только исходники самой библиотеки
 file(GLOB_RECURSE srcfiles
     src/*
     src/cmatrix/*
@@ -30,5 +29,5 @@ target_include_directories(vhlib_optimal PUBLIC
 target_link_libraries(vhlib_optimal PUBLIC vhlib_platform)
 
 target_compile_definitions(vhlib_platform PUBLIC 
-    VHLIB_OPTIMAL_FASTIDX=2
+#    VHLIB_OPTIMAL_FASTIDX=3
 )

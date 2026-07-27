@@ -4,7 +4,7 @@
 ![CMake](https://img.shields.io/badge/Build-CMake-1f4f9c.svg)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Cross--platform-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/Version-0.7.2--beta-orange.svg)
+![Version](https://img.shields.io/badge/Version-0.7.3--beta-orange.svg)
 
 ---
 
@@ -12,7 +12,7 @@
 |----------------------|-----------------------------------|
 | Project              | VHLibOptimal                      |
 | Description          | C++17 library for shape contour detection and image outline recognition |
-| Current Version      | 0.7.2-beta (2026)                 |
+| Current Version      | 0.7.3-beta (2026)                 |
 | Development started  | 2006                              |
 | Major C++17 rewrite  | started in early 2026             |
 | Author               | V01G04A81 / Viktor Glebov         |
@@ -454,11 +454,25 @@ Thanks to aggressive grid downsampling, careful `BitField` design, and raw CPU c
 
 It preserves the original philosophy of extreme efficiency born on 8-bit microcontrollers nearly 20 years ago, now running efficiently on general-purpose CPUs with AVX2 optimizations where available. While the 2016 FPGA version remains superior in raw tracing latency and absolute timing predictability, the 2026 rewrite brings that hard-earned efficiency to the modern software edge.
 
+---
+###### Library tests and benchmark project
+
+Test and benchmark project: [vhliboptimal_test](https://github.com/vigatron/vhliboptimal_test)
 
 ---
 
 ######  Legacy Artifact
 A surviving header (`.h`) file of this original plain C implementation is preserved as a historical reference at [electrolviv/optimal](https://github.com/electrolviv/optimal).
+
+---
+
+##### ChangeLog
+
+##### 0.7.3
+* VHLibOptimal::InitialScanImage() Added a one-cell empty border around the bitfield.
+* VHLibOptimal::InitialScanImage() Reduced the active scan area by one cell on each side.
+* BitField::FastIdxNonZero() optimized for uint32_t and uint64_t
+* BitField::FastIdxNonZero() removed support for uint8_t and uint16_t
 
 ---
 

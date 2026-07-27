@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.2-beta
+ * Revision      : 0.7.3-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/cmatrix/cmatrix.cpp
- * Content size  : 1127
- * Date / Time   : 25-07-2026 18:40:09
- * MD5           : 123b356bac30063383080a38fc630009
+ * Content size  : 1364
+ * Date / Time   : 27-07-2026 13:41:43
+ * MD5           : 3b75304cdd3d35808349baf397b13755
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -27,6 +27,9 @@ void CellsMatrix::Setup(uint16_t imgpxlsw, uint16_t imgpxlsh, uint16_t csize) {
     cellsy      = (imgpxlsh / csize) + ((imgpxlsh % csize) ? 1:0);   // cells V
     cellst      = cellsx * cellsy;
     cellsz      = csize;
+
+    cellin      = cellsx + 1;
+    cellout     = cellst - cellsx - 2;
 }
 
 /**
@@ -79,13 +82,27 @@ const size_t CellsMatrix::BitMaskSizeBytes() const {
     return arrsz;
 }
 
+/**
+ * 
+ */
+const size_t CellsMatrix::CellInnerFrom() const {
+    return cellin;
+}
+
+/**
+ * 
+ */
+const size_t CellsMatrix::CellInnerTo() const {
+    return cellout;
+}
+
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/cmatrix/cmatrix.cpp
- * Revision         : 0.7.2-beta
- * Content size     : 1127
- * Date / Time      : 25-07-2026 18:40:09
- * MD5              : 123b356bac30063383080a38fc630009
+ * Revision         : 0.7.3-beta
+ * Content size     : 1364
+ * Date / Time      : 27-07-2026 13:41:43
+ * MD5              : 3b75304cdd3d35808349baf397b13755
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.2-beta
+ * Revision      : 0.7.3-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.cpp
- * Content size  : 7745
- * Date / Time   : 25-07-2026 18:40:09
- * MD5           : 12abc825b98d5fdc109e6d5c67a9339f
+ * Content size  : 7997
+ * Date / Time   : 27-07-2026 13:41:43
+ * MD5           : a3737c0dc498821e0c4b449901076967
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -20,7 +20,7 @@
 using namespace vhliboptimal;
 
 VHLibOptimal::VHLibOptimal() { 
-
+    SetSortMode(1);
 }
 
 verr VHLibOptimal::Setup(
@@ -106,17 +106,17 @@ verr VHLibOptimal::InitialScanImage(uint16_t srcimgid) {
 
     uint32_t bitbuffsize = cmatrix.BitMaskSizeBytes();
 
-    // Setup Original Bitfield and allocate memory buffer
+    // Setup Original Bitfield: allocate memory buffer
     buffArrSrc.assign(bitbuffsize, 0);
     bitfieldSrc.Setup(cmatrix, buffArrSrc.data(), bitbuffsize);
 
-    // Setup Destination Bitfield and allocate memory buffer
+    // Setup Destination Bitfield: allocate memory buffer
     buffArrDst.assign(bitbuffsize, 0);
     bitfieldDst.Setup(cmatrix, buffArrDst.data(), bitbuffsize);
 
     // Initial Scan
-    for(uint16_t celly=0; celly < cmatrix.CellsY(); celly++) {
-        for(uint16_t cellx=0; cellx < cmatrix.CellsX(); cellx++) {
+    for(uint16_t celly=1; celly < cmatrix.CellsY() - 1; celly++) {
+        for(uint16_t cellx=1; cellx < cmatrix.CellsX() - 1; cellx++) {
             if(IsCellFilled(srcimgid, cellx, celly, cfg.minColorVal)) {
                 int idx = cmatrix.CellN(cellx,celly);
                 bitfieldSrc.SetCell(idx);
@@ -143,10 +143,12 @@ bool VHLibOptimal::FindFigure() {
 
     // Clearing figure before processing
     std::memset(buffArrDst.data(), 0, buffArrDst.size());
+    bitfieldDst.ResetSearchIndex(cmatrix);
 
     // find entry point of figure
     int celln = bitfieldSrc.FindEntryCell(cmatrix);
     if(celln < 0) return false;
+
 
     bool flagLoopCells = true;
 
@@ -197,11 +199,11 @@ bool VHLibOptimal::ConvertFigure() {
         VHLibOptimalLogger::lineout(msg);
     }
 
-    newfigure.Sort(cmatrix);
+    if(IsSortEnabled())
+        newfigure.Sort(cmatrix);
 
     if(cfg.loglevel >= LOG_LEVEL_EXT)
         VHLibOptimalLogger::DumpFigureSpans(newfigure, cmatrix);
-
 
     int figw   = newfigure.Width (cmatrix);
     int figh   = newfigure.Height(cmatrix);
@@ -247,6 +249,13 @@ bool VHLibOptimal::IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t cell
     }
 
     return false;
+}
+
+/**
+ * 
+ */
+bool VHLibOptimal::IsSortEnabled() {
+    return sortMode > 0;
 }
 
 /** 
@@ -321,13 +330,20 @@ bool VHLibOptimal::ContentV(int objn) const {
     return true;
 }
 
+/**
+ * 
+ */
+void VHLibOptimal::SetSortMode(uint8_t mode) {
+    sortMode = mode;
+}
+
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.cpp
- * Revision         : 0.7.2-beta
- * Content size     : 7745
- * Date / Time      : 25-07-2026 18:40:09
- * MD5              : 12abc825b98d5fdc109e6d5c67a9339f
+ * Revision         : 0.7.3-beta
+ * Content size     : 7997
+ * Date / Time      : 27-07-2026 13:41:43
+ * MD5              : a3737c0dc498821e0c4b449901076967
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
