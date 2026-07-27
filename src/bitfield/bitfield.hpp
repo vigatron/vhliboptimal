@@ -37,9 +37,9 @@ class BitField {
         void                            SetCell             (const CellsMatrix & cmtx, int cellx, int celly);
         bool                            GetCell             (const CellsMatrix & cmtx, int cellx, int celly) const;
 
-        const int                       FindEntryCell       (const CellsMatrix & cmtx) const;
+        const int                       FindEntryCell       (const CellsMatrix & cmtx);
         const int                       FindNearest         (const CellsMatrix & cmtx, int n) const;
-        const int                       FindPath            (const CellsMatrix & cmtx, const BitField & fldfig) const;
+        const int                       FindPath            (const CellsMatrix & cmtx, BitField & fldfig);
         int                             ScanSpanLen         (const CellsMatrix & cmtx, int startcell, int skipmax) const;
 
         void                            ClearSpan           (const stspan & span);
@@ -53,11 +53,11 @@ class BitField {
         uint8_t *                       arrPtr;
         uint32_t                        arrSizeInBytes;
 
-        size_t                          previdx;
+        size_t previdx;
 
         // Оптимизация под uint8_t / uint16_t / uint32_t / uint64_t / AVX2
 
-        int                             FastIdxNonZero() const;
+        int                             FastIdxNonZero();
 };
 
 };

@@ -82,7 +82,7 @@ bool BitField::GetCell(const CellsMatrix & cmtx, int cellx, int celly) const {
 /**
  * @brief Find non-empty cell of the map
  */
-const int BitField::FindEntryCell(const CellsMatrix & cmtx) const {
+const int BitField::FindEntryCell(const CellsMatrix & cmtx) {
 
     int r = -1;
 
@@ -144,7 +144,7 @@ const int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
 /**
  * @brief Проход по фигуре fldfig : Поиск ответвлений
  */
-const int BitField::FindPath(const CellsMatrix & cmtx, const BitField & fldfig) const {
+const int BitField::FindPath(const CellsMatrix & cmtx, BitField & fldfig) {
 
     // Fast Entry point
     int idxstart = fldfig.FastIdxNonZero();
@@ -200,26 +200,13 @@ void BitField::ClearSpan(const stspan & span)  {
     }
 }
 
-#if VHLIB_OPTIMAL_FASTIDX == 1
-/**
- *  @brief Optimization: fast search entry index
- */
-int BitField::FastIdxNonZero() const {
 
-    for(size_t i = 0; i < arrSizeInBytes; i++)
-        if(arrPtr[i] != 0) return i*CHAR_BIT;
-    
-    return -1;
-}
-#endif
-
-
-#if !__x86_64__
+#if !defined(__x86_64__)
 
 /**
  * @brief Optimization: fast search entry index
  */
-int BitField::FastIdxNonZero() const {
+int BitField::FastIdxNonZero() {
 
     const uint32_t* p32 = reinterpret_cast<const uint32_t*>(arrPtr);
     const size_t numWords = arrSizeInBytes / sizeof(uint32_t);
@@ -247,19 +234,21 @@ int BitField::FastIdxNonZero() const {
 
 #endif
 
-#if __x86_64__
+
+#if defined(__x86_64__)
 
 /**
  * @brief Optimization: fast search entry index
  */
-int BitField::FastIdxNonZero() const {
+int BitField::FastIdxNonZero() {
     const uint64_t* p64 = reinterpret_cast<const uint64_t*>(arrPtr);
     const size_t numWords = arrSizeInBytes / sizeof(uint64_t);
 
     // Основной цикл — по 64-битным словам
-    for (size_t i = 0; i < numWords; ++i) {
+    for (size_t i = previdx; i < numWords; ++i) {
         uint64_t word = p64[i];
         if (word != 0ULL) {
+            previdx = i;
             // первый установленный бит в слове
             int bitPos = __builtin_ctzll(word);
             size_t byteIndex = i * sizeof(uint64_t) + (bitPos / CHAR_BIT);
@@ -288,7 +277,7 @@ int BitField::FastIdxNonZero() const {
 /**
  * @brief Optimization: fast search entry index
  */
-int BitField::FastIdxNonZero() const {
+int BitField::FastIdxNonZero() {
     const uint8_t* p = arrPtr;
     size_t n = arrSizeInBytes;
 

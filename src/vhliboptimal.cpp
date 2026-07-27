@@ -143,10 +143,12 @@ bool VHLibOptimal::FindFigure() {
 
     // Clearing figure before processing
     std::memset(buffArrDst.data(), 0, buffArrDst.size());
+    bitfieldDst.ResetSearchIndex();
 
     // find entry point of figure
     int celln = bitfieldSrc.FindEntryCell(cmatrix);
     if(celln < 0) return false;
+
 
     bool flagLoopCells = true;
 
