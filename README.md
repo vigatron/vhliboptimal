@@ -4,7 +4,7 @@
 ![CMake](https://img.shields.io/badge/Build-CMake-1f4f9c.svg)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Cross--platform-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/Version-0.7.4--beta-orange.svg)
+![Version](https://img.shields.io/badge/Version-0.7.5--beta-orange.svg)
 
 ---
 
@@ -12,7 +12,7 @@
 |----------------------|-----------------------------------|
 | Project              | VHLibOptimal                      |
 | Description          | C++17 library for shape contour detection and image outline recognition |
-| Current Version      | 0.7.4-beta (2026)                 |
+| Current Version      | 0.7.5-beta (2026)                 |
 | Development started  | 2006                              |
 | Major C++17 rewrite  | started in early 2026             |
 | Author               | V01G04A81 / Viktor Glebov         |
@@ -467,6 +467,9 @@ A surviving header (`.h`) file of this original plain C implementation is preser
 ---
 
 #### ChangeLog
+
+##### 0.7.5
+* TYPO FIXED: define fixed for correct 32/64-bit platform switch
 
 ##### 0.7.4
 * BUGFIX: BitField::ResetSearchIndex() - segmentation fault fixed, curSearchWord / lastSearchsByte calculated correctly
