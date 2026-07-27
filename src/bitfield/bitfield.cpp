@@ -1,14 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
  * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.3-beta
+ * Revision      : 0.7.4-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/bitfield/bitfield.cpp
- * Content size  : 6244
- * Date / Time   : 27-07-2026 13:41:43
- * MD5           : 2709813fc150748e2c6a52458be8c62d
+ * Content size  : 6190
+ * Date / Time   : 27-07-2026 18:19:01
+ * MD5           : 4e45eda4765f4e5dbd88fc0b54ce3578
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -192,8 +192,8 @@ void BitField::ClearSpan(const stspan & span)  {
  * 
  */
 void BitField::ResetSearchIndex(const CellsMatrix & cmtx) {
-    curSearchWord    = cmtx.CellInnerFrom() / sizeof(uint32_t);
-    lastSearchsByte  = cmtx.CellInnerTo()   / sizeof(uint8_t);
+    curSearchWord    = cmtx.CellInnerFrom() / 32;
+    lastSearchsByte  = cmtx.CellInnerTo()   / 8;
 }
 
 
@@ -237,8 +237,8 @@ int BitField::FastIdxNonZero() {
  * 
  */
 void BitField::ResetSearchIndex(const CellsMatrix & cmtx) {
-    curSearchWord    = cmtx.CellInnerFrom() / sizeof(uint64_t);
-    lastSearchsByte  = cmtx.CellInnerTo()   / sizeof(uint8_t);
+    curSearchWord    = cmtx.CellInnerFrom() / 64;
+    lastSearchsByte  = cmtx.CellInnerTo()   /  8;
 }
 
 /**
@@ -277,9 +277,9 @@ int BitField::FastIdxNonZero() {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/bitfield/bitfield.cpp
- * Revision         : 0.7.3-beta
- * Content size     : 6244
- * Date / Time      : 27-07-2026 13:41:43
- * MD5              : 2709813fc150748e2c6a52458be8c62d
+ * Revision         : 0.7.4-beta
+ * Content size     : 6190
+ * Date / Time      : 27-07-2026 18:19:01
+ * MD5              : 4e45eda4765f4e5dbd88fc0b54ce3578
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
