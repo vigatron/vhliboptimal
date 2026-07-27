@@ -454,6 +454,10 @@ Thanks to aggressive grid downsampling, careful `BitField` design, and raw CPU c
 
 It preserves the original philosophy of extreme efficiency born on 8-bit microcontrollers nearly 20 years ago, now running efficiently on general-purpose CPUs with AVX2 optimizations where available. While the 2016 FPGA version remains superior in raw tracing latency and absolute timing predictability, the 2026 rewrite brings that hard-earned efficiency to the modern software edge.
 
+---
+###### Library tests and benchmark project
+
+Test and benchmark project: [vhliboptimal_test](https://github.com/vigatron/vhliboptimal_test)
 
 ---
 
