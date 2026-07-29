@@ -1,21 +1,22 @@
 /* ======================================================================================
  * Library       : vhliboptimal
- * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.5-beta
+ * Description   : Lightweight C++17 library for fast object detection,
+ *                 counting, and bounding box extraction.
+ * Revision      : 0.8.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.cpp
- * Content size  : 7969
- * Date / Time   : 27-07-2026 18:49:23
- * MD5           : c8e9062ed6e7d8bc5c7c4a2e0076868e
+ * Content size  : 8479
+ * Date / Time   : 30-07-2026 21:53:54
+ * MD5           : c4ae9812788294ed0e28fd49ceaf4718
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
  * Copyright     : © 2006–2026 Viktor Glebov
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #include "vhliboptimal.hpp"
-#include "vhliboptimallog.hpp"
+#include "log/log.hpp"
 
 using namespace vhliboptimal;
 
@@ -23,22 +24,76 @@ VHLibOptimal::VHLibOptimal() {
     SetSortMode(1);
 }
 
+// Memory Layout Setup
+/**
+ *
+ */
+size_t VHLibOptimal::CalcMemory() {
+
+    // Hardware Setup
+    printf("\n=== VHLibOptimal::CalcMemory() === \n");
+    printf("sizeof(VHOptimalFigure) = %d bytes\n",  (int)sizeof(VHOptimalFigure));
+    printf("sizeof(spanword) = %d bytes\n",         (int)sizeof(spanword));
+
+    size_t total = 0;
+
+    int gridWidth           = 1 << VHOPTIMAL_GRID_X_LEVEL;
+    int gridHeight          = 1 << VHOPTIMAL_GRID_Y_LEVEL;
+    printf("Grid size: %d x %d\n", gridWidth, gridHeight);
+
+    int bytesPerGrid        = (gridWidth >> 3) * gridHeight;
+    printf("x1 grid  = %d bytes\n", bytesPerGrid);
+
+    total += bytesPerGrid * 2;
+    printf("x2 grids = %d bytes\n", bytesPerGrid * 2);
+
+    int bytesObjects        = sizeof(VHOptimalFigure) * VHOPTIMAL_OBJECTS_MAX;
+    printf("%d objects x %d bytes = %d bytes\n",
+        (int)sizeof(VHOptimalFigure),
+        VHOPTIMAL_OBJECTS_MAX,
+        bytesObjects );
+
+    int bytesSpans          = sizeof(spanword) * VHOPTIMAL_SPANS_MAX;
+    printf("%d spans x %d bytes = %d bytes\n",
+        (int)sizeof(spanword),
+        VHOPTIMAL_SPANS_MAX,
+        bytesSpans );
+
+    printf(">>> VHLIBOptimal Memory Layout Total: %d bytes\n", (int)total);
+    printf("\n");
+
+    return total;
+}
+
+
+verr VHLibOptimal::SetupMemory(uint8_t * ptr, size_t memsize) {
+
+    // uint8_t     x_level,
+    // uint8_t     y_level,
+    // uint16_t    maxobjs,
+    // uint16_t    maxspns
+
+    return vok;
+}
+
+
+
 verr VHLibOptimal::Setup(
     const stConfig      &       cfgparams,
     CallbackGetSrcPxls          funcGetPixels,
     CallbackBorder              funcBorder,
-    CallbackContent             funcContent
+    CallbackContent             funcContent,
+    CallbackBenchmark           funcBenchmark
 ) {
 
     // Setup callbacks
     callbackGetPixels       = funcGetPixels;
     callbackBorder          = funcBorder;
     callbackContent         = funcContent;
+    callbackBenchmark       = funcBenchmark;
 
     // Save initial parameters
     cfg = cfgparams;
-
-    arrFigures.reserve(F1K*4);
 
     // Return check status
     return CheckCfgParams();
@@ -54,19 +109,28 @@ verr VHLibOptimal::Run(uint16_t srcimgid) {
 
     buffLine.resize(cfg.cellsize);
 
+    VHLIB_OPTIMAL_IFACE_FrameReset();
+
     if(vok != InitialScanImage(srcimgid))
         return verrmsg(ERR_PictureInitialization, "VHLibOptimal: InitPicture failed");
 
-    arrFigures.clear();
 
-    // Scan objects
+    // Scan objects task started
+    if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkScan, 0);
+
     while(FindFigure()) {
-        ConvertFigure();
+        if(vok != ConvertFigure()) break;
     }
 
+    // Scan objects task completed
+    if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkScan, 1);
+
+
     if(cfg.loglevel >= LOG_LEVEL_BASE) {
-        std::string msg = "Found " + std::to_string( arrFigures.size() ) + " objects";
-        VHLibOptimalLogger::lineout(msg);
+        int objcount = VHLIB_OPTIMAL_IFACE_ObjectsCount();
+        std::string msg = "Found " + std::to_string(objcount) + " objects";
+        // VHLibOptimalLogger::lineout(msg);
+        VHLibOptimalLogger::lineout(msg.c_str());
     }
 
     return vok;
@@ -104,30 +168,37 @@ verr VHLibOptimal::InitialScanImage(uint16_t srcimgid) {
     if(cfg.loglevel)
         VHLibOptimalLogger::PicProps(*this, cmatrix);
 
-    uint32_t bitbuffsize = cmatrix.BitMaskSizeBytes();
+    uint32_t buffsize = cmatrix.BitMaskSizeBytes();
 
     // Setup Original Bitfield: allocate memory buffer
-    buffArrSrc.assign(bitbuffsize, 0);
-    bitfieldSrc.Setup(cmatrix, buffArrSrc.data(), bitbuffsize);
+    bitfieldSrc.Setup(cmatrix, VHLIB_OPTIMAL_IFACE_BitFieldSrcPtr(), buffsize);
+
+    // TODO: Only border (?)
+    bitfieldSrc.Clear();
 
     // Setup Destination Bitfield: allocate memory buffer
-    buffArrDst.assign(bitbuffsize, 0);
-    bitfieldDst.Setup(cmatrix, buffArrDst.data(), bitbuffsize);
+    bitfieldDst.Setup(cmatrix, VHLIB_OPTIMAL_IFACE_BitFieldDstPtr(), buffsize);
 
     // Initial Scan
+    if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkSampling, 0);
+
+
     for(uint16_t celly=1; celly < cmatrix.CellsY() - 1; celly++) {
         for(uint16_t cellx=1; cellx < cmatrix.CellsX() - 1; cellx++) {
             if(IsCellFilled(srcimgid, cellx, celly, cfg.minColorVal)) {
-                int idx = cmatrix.CellN(cellx,celly);
-                bitfieldSrc.SetCell(idx); } } }
+                bitfieldSrc.SetCell(cmatrix.CellN(cellx,celly)); } } }
+
+    if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkSampling, 1);
 
     // Dump CellsMatrix
     if(cfg.loglevel >= LOG_LEVEL_MAX) {
-        VHLibOptimalLogger::DumpCellsHEX( *this, cmatrix, buffArrSrc, "Original Bitfield HEX");
+        const uint8_t * ptr = VHLIB_OPTIMAL_IFACE_BitFieldSrcPtr();
+        VHLibOptimalLogger::DumpCellsHEX(*this, cmatrix, ptr, "Original Bitfield HEX");
     }
 
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        VHLibOptimalLogger::DumpCellsTXT( *this, cmatrix, buffArrSrc, "Original Bitfield TXT");
+        const uint8_t * ptr = VHLIB_OPTIMAL_IFACE_BitFieldDstPtr();
+        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, ptr, "Original Bitfield TXT");
     }
 
     return vok;
@@ -139,7 +210,7 @@ verr VHLibOptimal::InitialScanImage(uint16_t srcimgid) {
 bool VHLibOptimal::FindFigure() {
 
     // Clearing figure before processing
-    std::memset(buffArrDst.data(), 0, buffArrDst.size());
+    bitfieldDst.Clear();
     bitfieldDst.ResetSearchIndex(cmatrix);
 
     // find entry point of figure
@@ -172,52 +243,58 @@ bool VHLibOptimal::FindFigure() {
 /**
  * 
  */
-bool VHLibOptimal::ConvertFigure() {
+verr VHLibOptimal::ConvertFigure() {
 
-    int fign = arrFigures.size();
+    // Out of mem ?
+    if( !VHLIB_OPTIMAL_IFACE_AddObject() )
+        return verror(1);
+
+    int objid = VHLIB_OPTIMAL_IFACE_ObjectsCount() - 1;
 
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        std::string msg = "Figure #" + std::to_string(fign) + " found";
-        VHLibOptimalLogger::lineout(msg);
+        std::string msg = "Figure #" + std::to_string(objid) + " found";
+        // VHLibOptimalLogger::lineout(msg);
+        VHLibOptimalLogger::lineout(msg.c_str());
     }
 
-    if(cfg.loglevel >= LOG_LEVEL_MAX)
-        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, buffArrSrc, "Original");
+    if(cfg.loglevel >= LOG_LEVEL_MAX) {
+        uint8_t * ptr = VHLIB_OPTIMAL_IFACE_BitFieldSrcPtr();
+        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, ptr, "Original");
+    }
     
-    if(cfg.loglevel >= LOG_LEVEL_EXT)
-        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, buffArrDst, "Figure");
-
-    // Структура параметров текущей фигуры
-    VHOptimalFigure newfigure(bitfieldDst, cmatrix, cfg.spccnt);
-
-    // Cортировка соседей последовательно
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        std::string msg = "Figure #" + std::to_string(fign) + ", Sorting Sequental";
-        VHLibOptimalLogger::lineout(msg);
+        uint8_t * ptr = VHLIB_OPTIMAL_IFACE_BitFieldDstPtr();
+        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, ptr, "Figure");
     }
 
-    if(IsSortEnabled())
-        newfigure.Sort(cmatrix);
+    // 
+    VHOptimalFigure & newfigure = VHLIB_OPTIMAL_IFACE_Object(objid);
+
+    newfigure.Scan(bitfieldDst, cmatrix, cfg.spccnt);
+    newfigure.CalcPosAndSize(cmatrix);
+
+    // if(IsSortEnabled())
+    //     newfigure.Sort(cmatrix);
 
     if(cfg.loglevel >= LOG_LEVEL_EXT)
-        VHLibOptimalLogger::DumpFigureSpans(newfigure, cmatrix);
+        VHLibOptimalLogger::DumpFigureSpans(newfigure, cmatrix, CellSize() );
 
-    int figw   = newfigure.Width (cmatrix);
-    int figh   = newfigure.Height(cmatrix);
+    int figw   = newfigure.Width (cmatrix, CellSize());
+    int figh   = newfigure.Height(cmatrix, CellSize());
 
     bool sizew = figw >= cfg.min_obj_width && figw <= cfg.max_obj_width;
     bool sizeh = figh >= cfg.min_obj_height && figh <= cfg.max_obj_height;
 
-    if(sizew && sizeh) {
-        arrFigures.push_back(newfigure);
-    } else {
+    if(!(sizew && sizeh)) {
+        VHLIB_OPTIMAL_IFACE_RemoveObject();
         if(cfg.loglevel >= LOG_LEVEL_EXT) {
-            std::string msg = "Figure #" + std::to_string(fign) + " skipped";
-            VHLibOptimalLogger::lineout(msg);
+            std::string msg = "Figure #" + std::to_string(objid) + " skipped";
+            // VHLibOptimalLogger::lineout(msg);
+            VHLibOptimalLogger::lineout(msg.c_str());
         }
     }
 
-    return true;
+    return vok;
 }
 
 /**
@@ -235,10 +312,10 @@ bool VHLibOptimal::CheckWhiteLevel(const std::vector<uint8_t> & arr, uint8_t whi
  */
 bool VHLibOptimal::IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t celly, uint8_t whitelevel) {
 
-    for(int l=0;l<cmatrix.CellSize();l++) {
+    for(int l=0;l<CellSize();l++) {
 
-        uint16_t imgposx = cellx * cmatrix.CellSize();
-        uint16_t imgposy = celly * cmatrix.CellSize() + l;
+        uint16_t imgposx = cellx * CellSize();
+        uint16_t imgposy = celly * CellSize() + l;
 
         callbackGetPixels((void *)this, buffLine.data(), buffLine.size(), srcimgid, imgposx, imgposy);
         if(CheckWhiteLevel(buffLine, whitelevel))
@@ -261,7 +338,7 @@ bool VHLibOptimal::IsSortEnabled() {
  * @return общее количество
  */
 const size_t VHLibOptimal::GetObjectsCount() const {
-    return arrFigures.size();
+    return VHLIB_OPTIMAL_IFACE_ObjectsCount();
 }
 
 /** 
@@ -269,7 +346,7 @@ const size_t VHLibOptimal::GetObjectsCount() const {
  */
 const VHOptimalFigure & VHLibOptimal::GetObject(int idx) const {
     asrts(idx < GetObjectsCount(), 0, "VHLibOptimal::GetObject out of range");
-    return arrFigures[idx];
+    return VHLIB_OPTIMAL_IFACE_Object(idx);
 }
 
 /**
@@ -281,8 +358,9 @@ const size_t VHLibOptimal::GetSpansTotal() const {
 
     int r = 0;
 
-    for(int i=0;i<arrFigures.size();i++) {
-        r += arrFigures[i].SpansCount();
+    for(int i=0; i < GetObjectsCount();i++) {
+        const VHOptimalFigure & obj = GetObject(i);
+        r += obj.SpansCount();
     }
 
     return r;
@@ -298,12 +376,19 @@ const CellsMatrix & VHLibOptimal::GetCMatrix() const {
 /**
  * 
  */
+const size_t VHLibOptimal::CellSize    () const {
+    return cfg.cellsize;
+}
+
+/**
+ * 
+ */
 bool VHLibOptimal::Border(int objn) const {
 
     for(int i = 0; i < GetObjectsCount(); i++) {
         const vhliboptimal::VHOptimalFigure & obj = GetObject(i);
         const vhliboptimal::CellsMatrix & cmtx = GetCMatrix();
-        obj.Border(cmtx, callbackBorder);
+        // obj.Border(cmtx, callbackBorder);
     }
 
     return true;
@@ -314,7 +399,7 @@ bool VHLibOptimal::Border(int objn) const {
  */
 bool VHLibOptimal::ContentH(int objn) const {
     const vhliboptimal::VHOptimalFigure & objfig = GetObject(objn);
-    objfig.ContentH(GetCMatrix(), callbackContent);
+    // objfig.ContentH(GetCMatrix(), callbackContent);
     return true;
 }
 
@@ -323,7 +408,7 @@ bool VHLibOptimal::ContentH(int objn) const {
  */
 bool VHLibOptimal::ContentV(int objn) const {
     const vhliboptimal::VHOptimalFigure & objfig = GetObject(objn);
-    objfig.ContentV(GetCMatrix(), callbackContent);
+    // objfig.ContentV(GetCMatrix(), callbackContent);
     return true;
 }
 
@@ -338,9 +423,9 @@ void VHLibOptimal::SetSortMode(uint8_t mode) {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.cpp
- * Revision         : 0.7.5-beta
- * Content size     : 7969
- * Date / Time      : 27-07-2026 18:49:23
- * MD5              : c8e9062ed6e7d8bc5c7c4a2e0076868e
+ * Revision         : 0.8.0-beta
+ * Content size     : 8479
+ * Date / Time      : 30-07-2026 21:53:54
+ * MD5              : c4ae9812788294ed0e28fd49ceaf4718
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

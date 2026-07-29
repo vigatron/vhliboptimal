@@ -1,13 +1,14 @@
 /* ======================================================================================
  * Library       : vhliboptimal
- * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.5-beta
+ * Description   : Lightweight C++17 library for fast object detection,
+ *                 counting, and bounding box extraction.
+ * Revision      : 0.8.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/cmatrix/cmatrix.cpp
  * Content size  : 1364
- * Date / Time   : 27-07-2026 18:49:23
+ * Date / Time   : 30-07-2026 21:53:54
  * MD5           : 3b75304cdd3d35808349baf397b13755
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -26,7 +27,6 @@ void CellsMatrix::Setup(uint16_t imgpxlsw, uint16_t imgpxlsh, uint16_t csize) {
     cellsx      = (imgpxlsw / csize) + ((imgpxlsw % csize) ? 1:0);   // cells H
     cellsy      = (imgpxlsh / csize) + ((imgpxlsh % csize) ? 1:0);   // cells V
     cellst      = cellsx * cellsy;
-    cellsz      = csize;
 
     cellin      = cellsx + 1;
     cellout     = cellst - cellsx - 2;
@@ -51,13 +51,6 @@ const size_t CellsMatrix::CellsY      () const {
  */
 const size_t CellsMatrix::CellsT      () const {
     return cellst;
-}
-
-/**
- * 
- */
-const size_t CellsMatrix::CellSize    () const {
-    return cellsz;
 }
 
 /**
@@ -100,9 +93,9 @@ const size_t CellsMatrix::CellInnerTo() const {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/cmatrix/cmatrix.cpp
- * Revision         : 0.7.5-beta
+ * Revision         : 0.8.0-beta
  * Content size     : 1364
- * Date / Time      : 27-07-2026 18:49:23
+ * Date / Time      : 30-07-2026 21:53:54
  * MD5              : 3b75304cdd3d35808349baf397b13755
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

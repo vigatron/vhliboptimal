@@ -1,14 +1,15 @@
 /* ======================================================================================
  * Library       : vhliboptimal
- * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.5-beta
+ * Description   : Lightweight C++17 library for fast object detection,
+ *                 counting, and bounding box extraction.
+ * Revision      : 0.8.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figures/vhliboptimalfig.hpp
- * Content size  : 2832
- * Date / Time   : 27-07-2026 18:49:23
- * MD5           : d92f55b29d77751f3bbb87625f780bb5
+ * Content size  : 3042
+ * Date / Time   : 30-07-2026 21:53:54
+ * MD5           : 5235b21b7f5609e539be680316096ba0
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -19,6 +20,7 @@
 #include "vhliboptimalstructs.hpp"
 #include "cmatrix/cmatrix.hpp"
 #include "bitfield/bitfield.hpp"
+#include "vhliboptimalcallbacks.hpp"
 
 
 namespace vhliboptimal {
@@ -27,76 +29,83 @@ class VHOptimalFigure {
 
     public:
 
-        VHOptimalFigure(BitField & bfld, const CellsMatrix & cmtx, int skipcellsmax);
+        VHOptimalFigure();
 
-        const strect                &       PosCells        () const;
-        const strect                        PosAbs          (const CellsMatrix & cmtx) const;
-        uint32_t                            Width           (const CellsMatrix & cmtx) const;
-        uint32_t                            Height          (const CellsMatrix & cmtx) const;
+        verr                            Scan            (BitField & bfld, const CellsMatrix & cmtx, int skipcellsmax);
+        void                            CalcPosAndSize  (const CellsMatrix & cmtx);
 
-        const std::vector<stspan>   &       Spans           () const;
-        const size_t                        SpansCount      () const;
-        const stspan                &       Span            (int spanidx) const;
-        strect                              SpanRect        (int spanidx, const CellsMatrix & cmtx) const;
+        const uint16_t                  SpansCount      () const;
+        const spanword                  Span            (int spanidx) const;
+        const VHArea               &    Area            () const;
+        const uint16_t                  Width           (const CellsMatrix & cmtx, int cellsize) const;
+        const uint16_t                  Height          (const CellsMatrix & cmtx, int cellsize) const;
 
-        void                                Sort            (const CellsMatrix & cmtx);
-        const int                           FindPosLRByY    (const CellsMatrix & cmtx, uint16_t spancy, int sideFlag ) const;
-        const int                           FindPosUDByX    (const CellsMatrix & cmtx, uint16_t spancx, int sideFlag ) const;
-        void                                Border          (const CellsMatrix & cmtx, CallbackBorder callbackBorder ) const;
 
-        void                                ContentH         (const CellsMatrix & cmtx, CallbackContent callbackContentH) const;
-        void                                ContentV         (const CellsMatrix & cmtx, CallbackContent callbackContentV) const;
+        // const strect                &       PosCells        () const;
+        // const strect                        PosAbs          (const CellsMatrix & cmtx) const;
 
-        static const uint8_t                cmdStart   = 0;
-        static const uint8_t                cmdMove    = 1;
-        static const uint8_t                cmdStop    = 2;
+        // const std::vector<stspan>   &       Spans           () const;
+        // strect                              SpanRect        (int spanidx, const CellsMatrix & cmtx) const;
 
-        static const uint8_t                dirLeft    = 1;
-        static const uint8_t                dirRight   = 2;
-        static const uint8_t                dirUp      = 3;
-        static const uint8_t                dirDown    = 4;
+        // void                                Sort            (const CellsMatrix & cmtx);
+        // const int                           FindPosLRByY    (const CellsMatrix & cmtx, uint16_t spancy, int sideFlag ) const;
+        // const int                           FindPosUDByX    (const CellsMatrix & cmtx, uint16_t spancx, int sideFlag ) const;
+        // void                                Border          (const CellsMatrix & cmtx, CallbackBorder callbackBorder ) const;
+
+        // void                                ContentH        (const CellsMatrix & cmtx, CallbackContent callbackContentH) const;
+        // void                                ContentV        (const CellsMatrix & cmtx, CallbackContent callbackContentV) const;
+
+        // static const uint8_t                cmdStart   = 0;
+        // static const uint8_t                cmdMove    = 1;
+        // static const uint8_t                cmdStop    = 2;
+
+        // static const uint8_t                dirLeft    = 1;
+        // static const uint8_t                dirRight   = 2;
+        // static const uint8_t                dirUp      = 3;
+        // static const uint8_t                dirDown    = 4;
 
     private:
 
-        // Содержит в себе массив участков
+        // Позиция и размеры фигуры
+        VHArea      _area;
 
-        std::vector<stspan>     arrspans;
+        uint32_t    _reserved;
 
-        // Параметры фигуры
+        // Стартовый индекс отрезков фигур
+        uint16_t    _startIDX;
 
-        strect                  objrect;
+        // Количество отрезков
+        uint16_t    _spansCount;
 
-        //
-        void RecalcFigurePosAndSize(const CellsMatrix & cmtx);
 
-        // Calculate Distance
+        // // Calculate Distance
 
-        int QDistance(
-            const stspan & p1,
-            const stspan & p2,
-            const CellsMatrix & cmtx) const;
+        // int QDistance(
+        //     const stspan & p1,
+        //     const stspan & p2,
+        //     const CellsMatrix & cmtx) const;
 
-        // Find Closest Span
+        // // Find Closest Span
 
-        int FindClosestSpan(
-            const stspan & span,
-            const std::vector<stspan> & arr,
-            const CellsMatrix & cmtx) const;
+        // int FindClosestSpan(
+        //     const stspan & span,
+        //     const std::vector<stspan> & arr,
+        //     const CellsMatrix & cmtx) const;
 
-        // Optimization: Sorting parts
+        // // Optimization: Sorting parts
 
-        void SortSequental(const CellsMatrix & cmtx);
+        // void SortSequental(const CellsMatrix & cmtx);
 
-};
+} __attribute__((packed));
 
 };
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/figures/vhliboptimalfig.hpp
- * Revision         : 0.7.5-beta
- * Content size     : 2832
- * Date / Time      : 27-07-2026 18:49:23
- * MD5              : d92f55b29d77751f3bbb87625f780bb5
+ * Revision         : 0.8.0-beta
+ * Content size     : 3042
+ * Date / Time      : 30-07-2026 21:53:54
+ * MD5              : 5235b21b7f5609e539be680316096ba0
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

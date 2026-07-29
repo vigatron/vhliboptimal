@@ -4,15 +4,15 @@
 ![CMake](https://img.shields.io/badge/Build-CMake-1f4f9c.svg)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Cross--platform-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/Version-0.7.5--beta-orange.svg)
+![Version](https://img.shields.io/badge/Version-0.8.0--beta-orange.svg)
 
 ---
 
 | Header               | Description                       |
 |----------------------|-----------------------------------|
 | Project              | VHLibOptimal                      |
-| Description          | C++17 library for shape contour detection and image outline recognition |
-| Current Version      | 0.7.5-beta (2026)                 |
+| Description          | C++17 library for fast shape detection, object counting, and outer boundary estimation. |
+| Current Version      | 0.8.0-beta (2026)                 |
 | Development started  | 2006                              |
 | Major C++17 rewrite  | started in early 2026             |
 | Author               | V01G04A81 / Viktor Glebov         |
@@ -21,14 +21,14 @@
 
 <br>
 
-***A high-performance C++17 library for fast shape contour detection and image outline recognition using optimized grid-based scanning.***
+***C++17 library for fast shape detection, object counting, and outer boundary estimation.***
 
+A lightweight, zero-dependency C++17 library focused exclusively on identifying discrete shapes, counting objects, and extracting their spatial coordinates and external dimensions using efficient bit-packed grid scanning. The core algorithm, originally developed in 2006, received a complete modern C++17 rewrite in 2026. This version brings a clean object-oriented interface for single-camera Single Board Computer setups while preserving two decades of embedded efficiency lessons.
 
 ![img](docs/stereocam.jpg)
 
 *Historical reference: The 2016 FPGA-based stereo vision system that proved the algorithm's real-time viability on dual-camera setups.*
 
-*The core algorithm, originally developed in 2006, received a complete modern C++17 rewrite in 2026. This version brings a clean object-oriented interface for single-camera Single Board Computer setups while preserving two decades of embedded efficiency lessons.*
 
 ---
 

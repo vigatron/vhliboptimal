@@ -1,14 +1,15 @@
 /* ======================================================================================
  * Library       : vhliboptimal
- * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.5-beta
+ * Description   : Lightweight C++17 library for fast object detection,
+ *                 counting, and bounding box extraction.
+ * Revision      : 0.8.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/bitfield/bitfield.cpp
- * Content size  : 6189
- * Date / Time   : 27-07-2026 18:49:23
- * MD5           : 440af55d9009377603d59476881884f6
+ * Content size  : 6260
+ * Date / Time   : 30-07-2026 21:53:54
+ * MD5           : cb968610d7ffd7af8428f12446bbd600
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -32,6 +33,10 @@ bool BitField::Setup(const CellsMatrix & cmtx, uint8_t * arrptr, uint32_t limbyt
     ResetSearchIndex(cmtx);
 
     return true;
+}
+
+void BitField::Clear() {
+    std::memset(arrPtr, 0, arrSizeInBytes);
 }
 
 /**
@@ -173,9 +178,11 @@ int BitField::ScanSpanLen(const CellsMatrix & cmtx, int startcell, int skipmax) 
 /**
  * 
  */
-void BitField::ClearSpan(const stspan & span)  {
-    for(size_t i=0; i < span.l; i++) {
-        ClrCell(span.n+i);
+void BitField::ClearSpan(const spanword word)  {
+    int spanid = get_span_id(word);
+    int spanln = get_span_len(word);
+    for(size_t i=0; i < spanln; i++) {
+        ClrCell(spanid+i);
     }
 }
 
@@ -277,9 +284,9 @@ int BitField::FastIdxNonZero() {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/bitfield/bitfield.cpp
- * Revision         : 0.7.5-beta
- * Content size     : 6189
- * Date / Time      : 27-07-2026 18:49:23
- * MD5              : 440af55d9009377603d59476881884f6
+ * Revision         : 0.8.0-beta
+ * Content size     : 6260
+ * Date / Time      : 30-07-2026 21:53:54
+ * MD5              : cb968610d7ffd7af8428f12446bbd600
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

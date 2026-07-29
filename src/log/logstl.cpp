@@ -1,19 +1,23 @@
 /* ======================================================================================
  * Library       : vhliboptimal
- * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.5-beta
+ * Description   : Lightweight C++17 library for fast object detection,
+ *                 counting, and bounding box extraction.
+ * Revision      : 0.8.0-beta
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/log/vhliboptimallog.cpp
- * Content size  : 6443
- * Date / Time   : 27-07-2026 18:49:23
- * MD5           : f7a6a76fe3f805f359b9e25e4edde99f
+ * Content size  : 6949
+ * Date / Time   : 30-07-2026 21:53:54
+ * MD5           : 98b1eaf0a0207d47c6537cf4a969bb04
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
  * Copyright     : © 2006–2026 Viktor Glebov
  * ========================[ BEGIN FILE CONTENT ]====================================== */
+
+#ifdef VHLIB_OPTIMAL_WITHSTL
+
 #include <format>
 #include <sstream>
 #include <iomanip>
@@ -100,7 +104,7 @@ void VHLibOptimalLogger::DumpCellsHEX(
     const VHLibOptimal & obj,
     const CellsMatrix & cmatrix,
     const std::vector<uint8_t> & arr,
-    const char *msg )
+    const char *msg)
 {
 
     if(msg) lineout( "Dumping: " + std::string(msg));
@@ -156,8 +160,7 @@ void VHLibOptimalLogger::DumpCellsTXT(
     const CellsMatrix & cmatrix,
     const std::vector<uint8_t> & arr,
     const char *msg,
-    const int cellMarker
-)
+    const int cellMarker)
 {
     if(msg) lineout("Dumping: " + std::string(msg));
 
@@ -174,13 +177,16 @@ void VHLibOptimalLogger::DumpCellsTXT(
     }
 }
 
+
+
 /**
  * @brief Параметры ячейки
  */
 void VHLibOptimalLogger::DumpCell(
     const std::string & msg,
     int celln, int cellx, int celly,
-    int sx, int sy ) {
+    int sx, int sy)
+{
 
     partout(msg);
 
@@ -198,63 +204,87 @@ void VHLibOptimalLogger::DumpCell(
 /**
  * 
  */
-void VHLibOptimalLogger::DumpFigurePos(const VHOptimalFigure & objfig, int showfigidx) {
-
-    const strect & rect = objfig.PosCells();
-
-    partout(fmt("Figure #", showfigidx));
-    partout(" Position: ");
-
-    std::ostringstream oss;
-    oss << "[" << rect.x1 << ":" << rect.y1 << "] - ["
-        << rect.x2 << ":" << rect.y2 << "]\n";
-    std::string msg = oss.str();
-
-    lineout(msg);
-}
-
-/**
- * 
- */
 void VHLibOptimalLogger::DumpSpan(
-    const stspan & spn,
-    const CellsMatrix & cmx,
+    const spanword spn,
+    const CellsMatrix & cmtx,
     int spann)
 {
+
     {
         std::ostringstream oss;
         oss << "# " << std::setw(5) << std::left << spann << " ";
         partout(oss.str());
     }
 
-    auto [cellx, celly] = cmx.CellXY(spn.n);
-    {
-        std::ostringstream oss;
-        oss << " N:" << std::setw(5) << spn.n
-            << " (cx:cy " << std::setw(4) << cellx
-            << ":" << std::setw(4) << std::left << celly << std::right << ")"
-            << "  L:" << std::setw(3) << spn.l << " , ";
-        partout(oss.str());
-    }
-
-    int cs = cmx.CellSize();
+    int spanid = get_span_id(spn);
+    int spanln = get_span_len(spn);
+    auto [cellx, celly] = cmtx.CellXY(spanid);
+    int cs = cmtx.CellSize();
     int x1 = cellx * cs;
     int y1 = celly * cs;
-    int x2 = (cellx + spn.l) * cs - 1;
+    int x2 = (cellx + spanln) * cs - 1;
     int y2 = (celly + 1) * cs - 1;
 
     {
-    std::ostringstream oss;
-    oss << " sx:sy - ex:ey = "
-        << std::setw(5) << x1 << ":"
-        << std::setw(5) << y1 << ":"
-        << std::setw(5) << x2 << ":"
-        << std::setw(5) << y2;
+        std::ostringstream oss;
+        oss << " N:" << std::setw(5) << spanid
+            << " (cx:cy " << std::setw(4) << cellx
+            << ":" << std::setw(4) << std::left << celly << std::right << ")"
+            << "  L:" << std::setw(3) << spanln << " , ";
+        partout(oss.str());
+    }
+
+    {
+        std::ostringstream oss;
+        oss << " sx:sy - ex:ey = "
+            << std::setw(5) << x1
+            << ":"
+            << std::setw(5) << y1
+            << ":"
+            << std::setw(5) << x2
+            << ":"
+            << std::setw(5) << y2;
         partout(oss.str());
     }
 
     newlout();
 }
+
+
+/**
+ * 
+ */
+void VHLibOptimalLogger::DumpFigurePos(
+    const VHOptimalFigure & obj,
+    const CellsMatrix & cmtx,
+    int showfigidx
+) {
+
+    const VHArea & area = obj.Area();
+    int spanid = get_span_id    (area.cellid);
+    int spanln = get_span_len   (area.cellid);
+    auto [cellx, celly] = cmtx.CellXY(spanid);
+    int cs = cmtx.CellSize();
+    int x1 = cellx * cs;
+    int y1 = celly * cs;
+    int x2 = (cellx + spanln) * cs - 1;
+    int y2 = (celly + 1) * cs - 1;
+
+    partout(fmt("Figure #", showfigidx));
+    partout(" Position: ");
+
+    std::ostringstream oss;
+    oss << "["
+        << x1 << ":" << y1
+        << "] - ["
+        << x2 << ":" << y2
+        << "]\n";
+
+    std::string msg = oss.str();
+
+    lineout(msg);
+}
+
 
 /**
  * 
@@ -270,8 +300,8 @@ void VHLibOptimalLogger::DumpFigureSpans(
     lineout(msg);
 
     for(int i=0; i < objfig.SpansCount(); i++) {
-        const stspan & objspn = objfig.Span(i);
-        DumpSpan(objspn, cmx, i);
+        const spanword wspn = objfig.Span(i);
+        DumpSpan(wspn, cmx, i);
     }
 
 }
@@ -279,7 +309,10 @@ void VHLibOptimalLogger::DumpFigureSpans(
 /**
  * 
  */
-void VHLibOptimalLogger::DumpFigures(const VHLibOptimal & objlib) {
+void VHLibOptimalLogger::DumpFigures(
+    const VHLibOptimal & objlib,
+    const CellsMatrix & cmtx)
+{
 
     lineout(fmt("Figs  count: ", objlib.GetObjectsCount()));
     lineout(fmt("Total spans: ", objlib.GetSpansTotal()));
@@ -294,19 +327,21 @@ void VHLibOptimalLogger::DumpFigures(const VHLibOptimal & objlib) {
 
         lineout(msg);
 
-        DumpFigurePos(objfig, i);
+        DumpFigurePos(objfig, cmtx, i);
         DumpFigureSpans(objfig, objlib.GetCMatrix());
     }
 
 }
 
+#endif
+
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/log/vhliboptimallog.cpp
- * Revision         : 0.7.5-beta
- * Content size     : 6443
- * Date / Time      : 27-07-2026 18:49:23
- * MD5              : f7a6a76fe3f805f359b9e25e4edde99f
+ * Revision         : 0.8.0-beta
+ * Content size     : 6949
+ * Date / Time      : 30-07-2026 21:53:54
+ * MD5              : 98b1eaf0a0207d47c6537cf4a969bb04
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
