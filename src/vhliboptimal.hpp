@@ -62,9 +62,9 @@ class VHLibOptimal {
 
         const CellsMatrix &             GetCMatrix          () const;
 
-        // const size_t                    CellSize            () const;
-        const uint8_t                   CellSZLevel () const noexcept { return cfg.levelcs; }
-        const uint8_t                   CellSZ      () const noexcept { return 1 << cfg.levelcs; }
+        const uint8_t                   CellSZLevel         () const noexcept { return cfg.levelcs; }
+
+        const uint8_t                   CellSZ              () const noexcept { return 1 << cfg.levelcs; }
 
         bool                            Border              (int objn) const;
         bool                            ContentH            (int objn) const;

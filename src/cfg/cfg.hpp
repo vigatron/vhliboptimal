@@ -55,12 +55,6 @@ using spanword  = uint32_t;
 //
 typedef struct _stConfig {
 
-    // // Размер картинки в пикселях, длинна
-    // uint16_t    imageWidth;
-
-    // // Размер картинки в пикселях, высота
-    // uint16_t    imageHeight;
-
     // Максимально допустимое количество пустых ячеек подряд в линии
     uint16_t    spccnt;
 

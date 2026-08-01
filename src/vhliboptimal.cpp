@@ -80,7 +80,6 @@ verr VHLibOptimal::Run() {
     return vok;
 }
 
-
 /**
  * @brief Initialization: Check parameters
  */

@@ -102,8 +102,8 @@ void VHOptimalFigure::CalcPosAndSize(const CellsMatrix & cmtx) {
 
     // Define pos & size
     _area.cellid = cmtx.CellN(cxl, cyt);
-    _area.cntx   = cxr - cxl;
-    _area.cnty   = cyd - cyt;
+    _area.cntx   = cxr - cxl + 1;
+    _area.cnty   = cyd - cyt + 1;
 
 }
 
