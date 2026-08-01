@@ -50,9 +50,16 @@ verr VHLibOptimal::Run() {
     if(vok != CheckCfgParams())
         return verrmsg(ERR_InvalidParams, "VHLibOptimal: Invalid parameters");
 
-
     VHLIB_OPTIMAL_IFACE_FrameReset();
 
+    if(cfg.loglevel >= LOG_LEVEL_MAX) {
+        log::DumpCellsHEX(*this, cmatrix, memlay.BitFieldSrcPtr(), "Original Bitfield HEX"); }
+
+    if(cfg.loglevel >= LOG_LEVEL_EXT) {
+        log::DumpCellsTXT(*this, cmatrix, memlay.BitFieldSrcPtr(), "Original Bitfield TXT"); }
+
+    // Important!
+    bitfieldSrc.ResetSearchIndex(cmatrix);
 
     // Scan objects task started
     if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkScan, 0);
@@ -63,7 +70,6 @@ verr VHLibOptimal::Run() {
 
     // Scan objects task completed
     if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkScan, 1);
-
 
     if(cfg.loglevel >= LOG_LEVEL_BASE) {
         int objcount = VHLIB_OPTIMAL_IFACE_ObjectsCount();
@@ -80,9 +86,8 @@ verr VHLibOptimal::Run() {
  */
 verr VHLibOptimal::CheckCfgParams() {
 
-
-    if(!cfg.cellsize)
-        return verrmsg(3, "VHLibOptimal: Invalid settings: cell size");
+    if(cfg.levelcs > 10)
+        return verrmsg(3, "VHLibOptimal: Invalid settings: cell size > 10");
 
     // Initial parameters valid
     return vok;
@@ -94,8 +99,7 @@ verr VHLibOptimal::CheckCfgParams() {
 bool VHLibOptimal::FindFigure() {
 
     // Clearing figure before processing
-    bitfieldDst.Clear();
-    bitfieldDst.ResetSearchIndex(cmatrix);
+    bitfieldDst.Clear(cmatrix);
 
     // find entry point of figure
     int celln = bitfieldSrc.FindEntryCell(cmatrix);
@@ -143,13 +147,11 @@ verr VHLibOptimal::ConvertFigure() {
     }
 
     if(cfg.loglevel >= LOG_LEVEL_MAX) {
-        uint8_t * ptr = VHLIB_OPTIMAL_IFACE_BitFieldSrcPtr();
-        log::DumpCellsTXT(*this, cmatrix, ptr, "Original");
+        log::DumpCellsTXT(*this, cmatrix, memlay.BitFieldSrcPtr(), "Original");
     }
     
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        uint8_t * ptr = VHLIB_OPTIMAL_IFACE_BitFieldDstPtr();
-        log::DumpCellsTXT(*this, cmatrix, ptr, "Figure");
+        log::DumpCellsTXT(*this, cmatrix, memlay.BitFieldDstPtr(), "Figure");
     }
 
     // 
@@ -162,12 +164,11 @@ verr VHLibOptimal::ConvertFigure() {
     //     newfigure.Sort(cmatrix);
 
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        log::DumpFigureSpans(newfigure, cmatrix, CellSize());
+        log::DumpFigureSpans(newfigure, cmatrix, CellSZ());
     }
 
-    int figw   = newfigure.Width (cmatrix, CellSize());
-    int figh   = newfigure.Height(cmatrix, CellSize());
-
+    uint16_t figw   = newfigure.Width (cmatrix, CellSZ());
+    uint16_t figh   = newfigure.Height(cmatrix, CellSZ());
     bool sizew = figw >= cfg.min_obj_width && figw <= cfg.max_obj_width;
     bool sizeh = figh >= cfg.min_obj_height && figh <= cfg.max_obj_height;
 
@@ -235,9 +236,7 @@ const CellsMatrix & VHLibOptimal::GetCMatrix() const {
 /**
  * 
  */
-const size_t VHLibOptimal::CellSize    () const {
-    return cfg.cellsize;
-}
+// const size_t VHLibOptimal::CellSize    () const { return cfg.cellsize; }
 
 /**
  * 
@@ -273,6 +272,10 @@ bool VHLibOptimal::ContentV(int objn) const {
 
 VHMemoryLayout & VHLibOptimal::MemoryLayout() {
     return memlay;
+}
+
+BitField & VHLibOptimal::BitFieldSrc() {
+    return bitfieldSrc;
 }
 
 

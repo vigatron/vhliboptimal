@@ -22,6 +22,23 @@
 // VHPlatform partially implemented for zero dependencies case
 #include "platform/platform.hpp"
 
+#if defined(VHLIB_OPTIMAL_EMBEDDED)
+
+    // #define VHLIB_OPTIMAL_MODE_32
+    #define VHLIB_OPTIMAL_MODE_64
+
+#else
+
+    #if !defined(__x86_64__)
+    #define VHLIB_OPTIMAL_MODE_32
+    #else
+    #define VHLIB_OPTIMAL_MODE_64
+    #endif
+
+#endif
+
+
+
 namespace vhliboptimal {
 
 // Константы устанавливается при сборке
@@ -47,8 +64,8 @@ typedef struct _stConfig {
     // Максимально допустимое количество пустых ячеек подряд в линии
     uint16_t    spccnt;
 
-    // Размер ячейки в пикселях
-    uint8_t     cellsize;
+    // 2 в степени: вычисление размера ячейки в пикселях
+    uint8_t     levelcs;
 
     // Подсветка цветности ячейки
     // меньшие значения принимаем за черный

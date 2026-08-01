@@ -62,14 +62,33 @@ class VHLibOptimal {
 
         const CellsMatrix &             GetCMatrix          () const;
 
-        const size_t                    CellSize            () const;
-
+        // const size_t                    CellSize            () const;
+        const uint8_t                   CellSZLevel () const noexcept { return cfg.levelcs; }
+        const uint8_t                   CellSZ      () const noexcept { return 1 << cfg.levelcs; }
 
         bool                            Border              (int objn) const;
         bool                            ContentH            (int objn) const;
         bool                            ContentV            (int objn) const;
 
+        BitField                    &   BitFieldSrc();
+
+        inline uint8_t                  FilterLevel() const noexcept { return cfg.minColorVal; }
+
+        // Forwarding Memory layout interface
         VHMemoryLayout              &   MemoryLayout();
+
+        size_t  CalcMemory() { return memlay.CalcMemory(); }
+
+        verr    SetupMemory(uint8_t * ptr, size_t memsize) {
+
+            if(memlay.SetupMemory(ptr, memsize)) return verror(1);
+
+            // Init Src & Dst BitFields
+            bitfieldSrc.Setup(cmatrix, memlay.BitFieldSrcPtr(), memlay.BitFieldSrcSize());
+            bitfieldDst.Setup(cmatrix, memlay.BitFieldDstPtr(), memlay.BitFieldDstSize());
+
+            return vok;
+        }
 
     private:
 

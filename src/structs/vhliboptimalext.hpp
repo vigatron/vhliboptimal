@@ -17,8 +17,4 @@ extern const spanword                       VHLIB_OPTIMAL_IFACE_GetSpan         
 extern verr                                 VHLIB_OPTIMAL_IFACE_AddSpan         (spanword word);
 extern const int                            VHLIB_OPTIMAL_IFACE_GetSpansCount   ();
 
-extern uint8_t *                            VHLIB_OPTIMAL_IFACE_BitFieldSrcPtr  ();
-extern uint8_t *                            VHLIB_OPTIMAL_IFACE_BitFieldDstPtr  ();
-
-
 };

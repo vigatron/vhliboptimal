@@ -29,14 +29,6 @@
 
 namespace vhliboptimal {
 
-#ifdef VHARCH_32BIT
-
-#else
-
-#endif
-
-
-
 // Выносим константы в тип constexpr
 constexpr uint32_t  id_bits  = 22;  // 
 constexpr uint32_t  len_bits = 10;  // 1023 max

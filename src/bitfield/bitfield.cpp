@@ -41,8 +41,12 @@ bool BitField::Setup(const CellsMatrix & cmtx, uint8_t * arrptr, uint32_t limbyt
     return true;
 }
 
-void BitField::Clear() {
+/**
+ * 
+ */
+void BitField::Clear(const CellsMatrix & cmtx) noexcept {
     std::memset(arrPtr, 0, arrSizeInBytes);
+    ResetSearchIndex(cmtx);
 }
 
 /**
@@ -192,21 +196,15 @@ void BitField::ClearSpan(const spanword word)  {
     }
 }
 
-#if !defined(__x86_64__)
-#define VHLIB_OPTIMAL_MODE_32
-#else
-#define VHLIB_OPTIMAL_MODE_64
-#endif
-
 
 #if defined(VHLIB_OPTIMAL_MODE_32)
 
 /**
  * 
  */
-void BitField::ResetSearchIndex(const CellsMatrix & cmtx) {
-    curSearchWord    = cmtx.CellInnerFrom() / 32;
-    lastSearchsByte  = cmtx.CellInnerTo()   / 8;
+void BitField::ResetSearchIndex(const CellsMatrix & cmtx) noexcept {
+    curSearchWord    = cmtx.CellCornerTopLeft()     / 32;
+    lastSearchsByte  = cmtx.CellCornerBottomRight() / 8;
 }
 
 
@@ -249,9 +247,9 @@ int BitField::FastIdxNonZero() {
 /**
  * 
  */
-void BitField::ResetSearchIndex(const CellsMatrix & cmtx) {
-    curSearchWord    = cmtx.CellInnerFrom() / 64;
-    lastSearchsByte  = cmtx.CellInnerTo()   /  8;
+void BitField::ResetSearchIndex(const CellsMatrix & cmtx) noexcept {
+    curSearchWord    = cmtx.CellCornerTopLeft()     / 64;
+    lastSearchsByte  = cmtx.CellCornerBottomRight() /  8;
 }
 
 /**

@@ -79,8 +79,9 @@ void log::PicProps(
     const VHLibOptimal & obj,
     const CellsMatrix & cmatrix)
 {
-    int w = cmatrix.CellsX() * obj.CellSize();
-    int h = cmatrix.CellsY() * obj.CellSize();
+    int cs = obj.CellSZ();
+    int w = cmatrix.CellsX() * cs;
+    int h = cmatrix.CellsY() * cs;
 
     partout("Picture Props:");
     append_param(" W=", w);
@@ -94,7 +95,7 @@ void log::PicProps(
     partout(">");
 
     append_param(" total=", cmatrix.CellsT());
-    append_param(" cellsize=", obj.CellSize());
+    append_param(" cellsize=", cs);
     append_param(" buffer size (bytes) ", cmatrix.BitMaskSizeBytes());
 
     newlout();

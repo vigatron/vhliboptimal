@@ -28,7 +28,7 @@ class BitField {
 
         bool                            Setup               (const CellsMatrix & cmtx, uint8_t * arrptr, uint32_t limbytes);
 
-        void                            Clear               ();
+        void Clear(const CellsMatrix & cmtx) noexcept;
 
         void                            ClrCell             (int celln);
         void                            SetCell             (int celln);
@@ -45,7 +45,7 @@ class BitField {
 
         void                            ClearSpan           (const spanword word);
 
-        void                            ResetSearchIndex    (const CellsMatrix & cmtx);
+        void ResetSearchIndex    (const CellsMatrix & cmtx) noexcept;
 
     private:
 

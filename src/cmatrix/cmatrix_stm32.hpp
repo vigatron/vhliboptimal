@@ -1,15 +1,13 @@
 #pragma once
 
+// Optimized for speed:
+// * STM32F4/F7/H7
+// * ESP32
+
 #include <cstddef>
 #include <cstdint>
-#include <utility>
 #include <climits>
 
-// TODO: Scan Window
-// size_t wndx1;
-// size_t wndy1;
-// size_t wndx2;
-// size_t wndy2;
 
 namespace vhliboptimal {
 
@@ -38,8 +36,6 @@ class CellsMatrix {
             if(! (flageqx && flageqy) )
                 return false;
 
-            // cellin  = CellsX() + 1;
-            // cellout = CellsT() - CellsX() - 2;
             return true;
         }
 
@@ -65,17 +61,14 @@ class CellsMatrix {
         }
 
         // Стартовый индекс поиска
-        constexpr size_t CellInnerFrom() const noexcept {
+        constexpr size_t CellCornerTopLeft() const noexcept {
             return CellsX() + 1; }
 
         //! Конечный индекс поиска
-        constexpr size_t CellInnerTo() const noexcept {
+        constexpr size_t CellCornerBottomRight() const noexcept {
             return CellsT() - CellsX() - 2; }
 
     private:
-
-        // static constexpr size_t cellin;    // Within Border: Start cell
-        // static constexpr size_t cellout;   // Within Border: Last  cell
 
         static constexpr size_t fixedw = (1 << VHLIB_OPTIMAL_GRID_LX); 
         static constexpr size_t fixedh = (1 << VHLIB_OPTIMAL_GRID_LY);
