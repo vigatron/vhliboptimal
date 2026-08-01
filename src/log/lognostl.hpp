@@ -5,13 +5,14 @@
 namespace vhliboptimal {
 
 
-class VHLibOptimalLogger {
+class log {
 
     public:
 
         static void newlout();
         static void print_param     (const char *msg, int val);
         static void partout         (const char *msg);
+        static void partint         (const int val);
         static void lineout         (const char *msg);
 
         // ------------------------------------------------

@@ -15,7 +15,7 @@
  * Author        : Viktor Glebov / V01G04A81
  * Copyright     : © 2006–2026 Viktor Glebov
  * ========================[ BEGIN FILE CONTENT ]====================================== */
-#include "vhliboptimalfig.hpp"
+#include "figures.hpp"
 #include "log/log.hpp"
 
 using namespace vhliboptimal;

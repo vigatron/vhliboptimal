@@ -17,7 +17,7 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
-#include "vhplatform.hpp"
+#include <cstdint>
 
 namespace vhliboptimal {
 
@@ -30,26 +30,6 @@ enum enCmdBenchmark {
     eCmdBenchmarkSubfuncFigure      // Subtask for single object measurement
 
 };
-
-
-/**
- * CallbackGetSrcPxls       - Read source image data
- * 
- * void *       userData    - User context pointer
- * uint8_t *    dstptr      - Destination buffer to fill (Expected format: 8-bit grayscale, 1 byte per pixel)
- * uint16_t     bytescnt    - Number of bytes to read (typically equal to image width in pixels)
- * uint16_t     srcid       - Image ID
- * uint16_t     srcx        - Image offset X
- * uint16_t     srcy        - Image offset Y
- */
-typedef void (*CallbackGetSrcPxls)(
-    void *userData,
-    uint8_t *dstptr,
-    uint16_t bytescnt,
-    uint16_t srcid,
-    uint16_t srcx,
-    uint16_t srcy);
-
 
 /**
  * CallbackBorder           - Move across figure border

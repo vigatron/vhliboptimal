@@ -20,74 +20,17 @@
 
 using namespace vhliboptimal;
 
-VHLibOptimal::VHLibOptimal() { 
-    SetSortMode(1);
-}
-
-// Memory Layout Setup
-/**
- *
- */
-size_t VHLibOptimal::CalcMemory() {
-
-    // Hardware Setup
-    printf("\n=== VHLibOptimal::CalcMemory() === \n");
-    printf("sizeof(VHOptimalFigure) = %d bytes\n",  (int)sizeof(VHOptimalFigure));
-    printf("sizeof(spanword) = %d bytes\n",         (int)sizeof(spanword));
-
-    size_t total = 0;
-
-    int gridWidth           = 1 << VHOPTIMAL_GRID_X_LEVEL;
-    int gridHeight          = 1 << VHOPTIMAL_GRID_Y_LEVEL;
-    printf("Grid size: %d x %d\n", gridWidth, gridHeight);
-
-    int bytesPerGrid        = (gridWidth >> 3) * gridHeight;
-    printf("x1 grid  = %d bytes\n", bytesPerGrid);
-
-    total += bytesPerGrid * 2;
-    printf("x2 grids = %d bytes\n", bytesPerGrid * 2);
-
-    int bytesObjects        = sizeof(VHOptimalFigure) * VHOPTIMAL_OBJECTS_MAX;
-    printf("%d objects x %d bytes = %d bytes\n",
-        (int)sizeof(VHOptimalFigure),
-        VHOPTIMAL_OBJECTS_MAX,
-        bytesObjects );
-
-    int bytesSpans          = sizeof(spanword) * VHOPTIMAL_SPANS_MAX;
-    printf("%d spans x %d bytes = %d bytes\n",
-        (int)sizeof(spanword),
-        VHOPTIMAL_SPANS_MAX,
-        bytesSpans );
-
-    printf(">>> VHLIBOptimal Memory Layout Total: %d bytes\n", (int)total);
-    printf("\n");
-
-    return total;
-}
-
-
-verr VHLibOptimal::SetupMemory(uint8_t * ptr, size_t memsize) {
-
-    // uint8_t     x_level,
-    // uint8_t     y_level,
-    // uint16_t    maxobjs,
-    // uint16_t    maxspns
-
-    return vok;
-}
-
+VHLibOptimal::VHLibOptimal() { }
 
 
 verr VHLibOptimal::Setup(
     const stConfig      &       cfgparams,
-    CallbackGetSrcPxls          funcGetPixels,
     CallbackBorder              funcBorder,
     CallbackContent             funcContent,
     CallbackBenchmark           funcBenchmark
 ) {
 
     // Setup callbacks
-    callbackGetPixels       = funcGetPixels;
     callbackBorder          = funcBorder;
     callbackContent         = funcContent;
     callbackBenchmark       = funcBenchmark;
@@ -102,17 +45,13 @@ verr VHLibOptimal::Setup(
 /**
  * @brief Start process
  */
-verr VHLibOptimal::Run(uint16_t srcimgid) {
+verr VHLibOptimal::Run() {
 
     if(vok != CheckCfgParams())
         return verrmsg(ERR_InvalidParams, "VHLibOptimal: Invalid parameters");
 
-    buffLine.resize(cfg.cellsize);
 
     VHLIB_OPTIMAL_IFACE_FrameReset();
-
-    if(vok != InitialScanImage(srcimgid))
-        return verrmsg(ERR_PictureInitialization, "VHLibOptimal: InitPicture failed");
 
 
     // Scan objects task started
@@ -128,9 +67,8 @@ verr VHLibOptimal::Run(uint16_t srcimgid) {
 
     if(cfg.loglevel >= LOG_LEVEL_BASE) {
         int objcount = VHLIB_OPTIMAL_IFACE_ObjectsCount();
-        std::string msg = "Found " + std::to_string(objcount) + " objects";
-        // VHLibOptimalLogger::lineout(msg);
-        VHLibOptimalLogger::lineout(msg.c_str());
+        log::partout("Found "); log::partint(objcount); log::partout(" objects");
+        log::newlout();
     }
 
     return vok;
@@ -142,65 +80,11 @@ verr VHLibOptimal::Run(uint16_t srcimgid) {
  */
 verr VHLibOptimal::CheckCfgParams() {
 
-    // Check callbacks
-    if(!callbackGetPixels || !callbackBorder || !callbackContent )
-        return verrmsg(1, "VHLibOptimal: Invalid callbacks / nullptr");
-
-    // Check source
-    if(!cfg.imageWidth || !cfg.imageHeight)
-        return verrmsg(2, "VHLibOptimal: Invalid settings: source image props");
 
     if(!cfg.cellsize)
         return verrmsg(3, "VHLibOptimal: Invalid settings: cell size");
 
     // Initial parameters valid
-    return vok;
-}
-
-/**
- * @brief Initialization: Initial Picture scan
- */
-verr VHLibOptimal::InitialScanImage(uint16_t srcimgid) {
-
-    // Calculate Cells Matrix Geometry
-    cmatrix.Setup(cfg.imageWidth, cfg.imageHeight, cfg.cellsize);
-
-    if(cfg.loglevel)
-        VHLibOptimalLogger::PicProps(*this, cmatrix);
-
-    uint32_t buffsize = cmatrix.BitMaskSizeBytes();
-
-    // Setup Original Bitfield: allocate memory buffer
-    bitfieldSrc.Setup(cmatrix, VHLIB_OPTIMAL_IFACE_BitFieldSrcPtr(), buffsize);
-
-    // TODO: Only border (?)
-    bitfieldSrc.Clear();
-
-    // Setup Destination Bitfield: allocate memory buffer
-    bitfieldDst.Setup(cmatrix, VHLIB_OPTIMAL_IFACE_BitFieldDstPtr(), buffsize);
-
-    // Initial Scan
-    if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkSampling, 0);
-
-
-    for(uint16_t celly=1; celly < cmatrix.CellsY() - 1; celly++) {
-        for(uint16_t cellx=1; cellx < cmatrix.CellsX() - 1; cellx++) {
-            if(IsCellFilled(srcimgid, cellx, celly, cfg.minColorVal)) {
-                bitfieldSrc.SetCell(cmatrix.CellN(cellx,celly)); } } }
-
-    if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkSampling, 1);
-
-    // Dump CellsMatrix
-    if(cfg.loglevel >= LOG_LEVEL_MAX) {
-        const uint8_t * ptr = VHLIB_OPTIMAL_IFACE_BitFieldSrcPtr();
-        VHLibOptimalLogger::DumpCellsHEX(*this, cmatrix, ptr, "Original Bitfield HEX");
-    }
-
-    if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        const uint8_t * ptr = VHLIB_OPTIMAL_IFACE_BitFieldDstPtr();
-        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, ptr, "Original Bitfield TXT");
-    }
-
     return vok;
 }
 
@@ -252,19 +136,20 @@ verr VHLibOptimal::ConvertFigure() {
     int objid = VHLIB_OPTIMAL_IFACE_ObjectsCount() - 1;
 
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        std::string msg = "Figure #" + std::to_string(objid) + " found";
-        // VHLibOptimalLogger::lineout(msg);
-        VHLibOptimalLogger::lineout(msg.c_str());
+        log::partout("Figure #");
+        log::partint(objid);
+        log::partout(" found");
+        log::newlout();
     }
 
     if(cfg.loglevel >= LOG_LEVEL_MAX) {
         uint8_t * ptr = VHLIB_OPTIMAL_IFACE_BitFieldSrcPtr();
-        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, ptr, "Original");
+        log::DumpCellsTXT(*this, cmatrix, ptr, "Original");
     }
     
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
         uint8_t * ptr = VHLIB_OPTIMAL_IFACE_BitFieldDstPtr();
-        VHLibOptimalLogger::DumpCellsTXT(*this, cmatrix, ptr, "Figure");
+        log::DumpCellsTXT(*this, cmatrix, ptr, "Figure");
     }
 
     // 
@@ -276,8 +161,9 @@ verr VHLibOptimal::ConvertFigure() {
     // if(IsSortEnabled())
     //     newfigure.Sort(cmatrix);
 
-    if(cfg.loglevel >= LOG_LEVEL_EXT)
-        VHLibOptimalLogger::DumpFigureSpans(newfigure, cmatrix, CellSize() );
+    if(cfg.loglevel >= LOG_LEVEL_EXT) {
+        log::DumpFigureSpans(newfigure, cmatrix, CellSize());
+    }
 
     int figw   = newfigure.Width (cmatrix, CellSize());
     int figh   = newfigure.Height(cmatrix, CellSize());
@@ -288,9 +174,10 @@ verr VHLibOptimal::ConvertFigure() {
     if(!(sizew && sizeh)) {
         VHLIB_OPTIMAL_IFACE_RemoveObject();
         if(cfg.loglevel >= LOG_LEVEL_EXT) {
-            std::string msg = "Figure #" + std::to_string(objid) + " skipped";
-            // VHLibOptimalLogger::lineout(msg);
-            VHLibOptimalLogger::lineout(msg.c_str());
+            log::partout("Figure #");
+            log::partint(objid);
+            log::partout(" skipped");
+            log::newlout();
         }
     }
 
@@ -300,36 +187,8 @@ verr VHLibOptimal::ConvertFigure() {
 /**
  * 
  */
-bool VHLibOptimal::CheckWhiteLevel(const std::vector<uint8_t> & arr, uint8_t whitelevel) const {
-    for(size_t i=0;i<arr.size();i++) {
-        if(arr[i] >= whitelevel) return true;
-    }
-    return false;
-}
-
-/**
- * 
- */
-bool VHLibOptimal::IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t celly, uint8_t whitelevel) {
-
-    for(int l=0;l<CellSize();l++) {
-
-        uint16_t imgposx = cellx * CellSize();
-        uint16_t imgposy = celly * CellSize() + l;
-
-        callbackGetPixels((void *)this, buffLine.data(), buffLine.size(), srcimgid, imgposx, imgposy);
-        if(CheckWhiteLevel(buffLine, whitelevel))
-            return true;
-    }
-
-    return false;
-}
-
-/**
- * 
- */
 bool VHLibOptimal::IsSortEnabled() {
-    return sortMode > 0;
+    return cfg.sortMode > 0;
 }
 
 /** 
@@ -412,11 +271,8 @@ bool VHLibOptimal::ContentV(int objn) const {
     return true;
 }
 
-/**
- * 
- */
-void VHLibOptimal::SetSortMode(uint8_t mode) {
-    sortMode = mode;
+VHMemoryLayout & VHLibOptimal::MemoryLayout() {
+    return memlay;
 }
 
 

@@ -17,10 +17,7 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
-#include "vhplatform.hpp"
-
-#include "cmatrix.hpp"
-#include "vhliboptimalstructs.hpp"
+#include "cmatrix/cmatrix.hpp"
 
 namespace vhliboptimal {
 

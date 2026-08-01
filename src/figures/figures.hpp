@@ -17,10 +17,10 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
-#include "vhliboptimalstructs.hpp"
+#include "structs/vhliboptimalstructs.hpp"
 #include "cmatrix/cmatrix.hpp"
 #include "bitfield/bitfield.hpp"
-#include "vhliboptimalcallbacks.hpp"
+#include "structs/vhliboptimalcallbacks.hpp"
 
 
 namespace vhliboptimal {

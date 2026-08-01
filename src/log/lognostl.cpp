@@ -26,6 +26,10 @@ static void append_param(const char * msg, int val) {
     printf("%s%d", msg, val);
 }
 
+static void print_param(const int val) {
+    printf("%d", val);
+}
+
 static void print_param(const char * msg, int val, bool nl=true) {
     append_param(msg, val);
     if(nl) newlout();
@@ -36,35 +40,42 @@ static void print_param(const char * msg, int val, bool nl=true) {
 /**
  * 
  */
-void VHLibOptimalLogger::newlout() {
+void log::newlout() {
     ::newlout();
 }
 
 /**
  * 
  */
-void VHLibOptimalLogger::print_param(const char *msg, int val) {
+void log::print_param(const char *msg, int val) {
     ::print_param(msg, val);
 }
 
 /**
  * 
  */
-void VHLibOptimalLogger::partout(const char *msg) {
+void log::partint(const int val) {
+    ::print_param(val);
+}
+
+/**
+ * 
+ */
+void log::partout(const char *msg) {
     ::partout(msg);
 }
 
 /**
  * 
  */
-void VHLibOptimalLogger::lineout(const char *msg) {
+void log::lineout(const char *msg) {
     ::lineout(msg);
 }
 
 /**
  * @brief General Picture Information
  */
-void VHLibOptimalLogger::PicProps(
+void log::PicProps(
     const VHLibOptimal & obj,
     const CellsMatrix & cmatrix)
 {
@@ -92,7 +103,7 @@ void VHLibOptimalLogger::PicProps(
 /**
  * 
  */
-void VHLibOptimalLogger::DumpCellsHEX(
+void log::DumpCellsHEX(
     const VHLibOptimal & obj,
     const CellsMatrix & cmatrix,
     const uint8_t * arrptr,
@@ -126,7 +137,7 @@ void VHLibOptimalLogger::DumpCellsHEX(
 }
 
 
-void VHLibOptimalLogger::DumpCellsTXT(
+void log::DumpCellsTXT(
     const VHLibOptimal & obj,
     const CellsMatrix & cmatrix,
     const uint8_t * arrptr,
@@ -155,7 +166,7 @@ void VHLibOptimalLogger::DumpCellsTXT(
 /**
  * 
  */
-void VHLibOptimalLogger::DumpSpan(
+void log::DumpSpan(
     const spanword spn,
     const CellsMatrix & cmtx,
     int cellsize,
@@ -188,7 +199,7 @@ void VHLibOptimalLogger::DumpSpan(
 /**
  * 
  */
-void VHLibOptimalLogger::DumpFigureSpans(
+void log::DumpFigureSpans(
     const VHOptimalFigure & objfig,
     const CellsMatrix & cmx,
     int cellsize)

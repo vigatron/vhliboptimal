@@ -17,13 +17,17 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
-#include "vhplatform.hpp"
-#include "vhliboptimalstructs.hpp"
-#include "vhliboptimalcallbacks.hpp"
 #include "cfg/cfg.hpp"
-#include "bitfield.hpp"
-#include "vhliboptimalfig.hpp"
-#include "vhliboptimalext.hpp"
+
+#include "structs/vhliboptimalstructs.hpp"
+#include "structs/vhliboptimalcallbacks.hpp"
+#include "structs/vhliboptimalext.hpp"
+
+#include "bitfield/bitfield.hpp"
+#include "figures/figures.hpp"
+
+#include "mem/memorylayout.hpp"
+
 
 namespace vhliboptimal {
 
@@ -33,15 +37,6 @@ constexpr int LOG_LEVEL_BASE  = 1;
 constexpr int LOG_LEVEL_EXT   = 2;
 constexpr int LOG_LEVEL_MAX   = 3;
 
-// Константы устанавливается при сборке
-
-static constexpr int VHOPTIMAL_GRID_X_LEVEL = 8;        // 256 pxls
-static constexpr int VHOPTIMAL_GRID_Y_LEVEL = 8;        // 256 pxls
-static constexpr int VHOPTIMAL_GRID_S_ORDER = 1;        //   2 pxls
-
-static constexpr int VHOPTIMAL_OBJECTS_MAX  = 128;      // F1K*4;
-static constexpr int VHOPTIMAL_SPANS_MAX    = F1K*4;    //
-
 
 class VHLibOptimal {
 
@@ -49,21 +44,15 @@ class VHLibOptimal {
 
         explicit VHLibOptimal();
 
-        // Memory Layout Setup
-        static size_t   CalcMemory();
-
-        // Memory Layout Setup
-        static verr     SetupMemory(uint8_t * ptr, size_t memsize);
-
         // Frame Setup
         verr Setup(
             const stConfig &            cfgparams,
-            CallbackGetSrcPxls          funcGetPixels,
             CallbackBorder              funcBorder,
             CallbackContent             funcContent,
             CallbackBenchmark           funcBenchmark );
 
-        verr                            Run(uint16_t srcimgid);
+        // bitfield_src should be already filled !
+        verr                            Run();
 
         const size_t                    GetObjectsCount     () const;
 
@@ -80,24 +69,17 @@ class VHLibOptimal {
         bool                            ContentH            (int objn) const;
         bool                            ContentV            (int objn) const;
 
-        void                            SetSortMode         (uint8_t mode);
+        VHMemoryLayout              &   MemoryLayout();
 
     private:
 
         const int                       ERR_InvalidParams = 1;
         const int                       ERR_PictureInitialization = 2;
 
-        // Static Memory Segments
-        uint8_t     *   _pMemBitFieldSrc;
-        uint8_t     *   _pMemBitFieldDst;
-        uint8_t     *   _pMemObjects;
-        uint8_t     *   _pMemSpans;
+        VHMemoryLayout                  memlay;
 
         // Settings
         stConfig                        cfg;
-
-        // Callback: Source Image Content / Get Pixels
-        CallbackGetSrcPxls              callbackGetPixels   = nullptr;
 
         // Callback: Moving across object border
         CallbackBorder                  callbackBorder      = nullptr;
@@ -110,16 +92,11 @@ class VHLibOptimal {
         // 2D Configuration
         CellsMatrix                     cmatrix;
 
-        // Буффер для хранения строки изображения внешнего источника
-        std::vector<uint8_t>            buffLine;
-
         // Битовое поле фрагментов
         BitField                        bitfieldSrc;
 
         // Битовое поле выбранного фрагмента
         BitField                        bitfieldDst;
-
-        uint8_t                         sortMode;
 
         verr CheckCfgParams();
 
@@ -128,10 +105,6 @@ class VHLibOptimal {
         bool FindFigure();
 
         verr ConvertFigure();
-
-        bool CheckWhiteLevel(const std::vector<uint8_t> & arr, uint8_t whitelevel) const;
-
-        bool IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t celly, uint8_t whitelevel);
 
         bool IsSortEnabled();
 

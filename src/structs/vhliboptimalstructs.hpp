@@ -17,15 +17,19 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
-#include "vhplatform.hpp"
+#include <cstddef>
+#include <cstdint>
+#include <utility>
+#include <cstring>
+#include <climits>
+#include <cstdio>
 
-#include <functional>
 
+#include "cfg/cfg.hpp"
 
 namespace vhliboptimal {
 
 using spanword  = uint32_t;
-
 
 #ifdef VHARCH_32BIT
 
@@ -34,12 +38,14 @@ using spanword  = uint32_t;
 #endif
 
 
+
 // Выносим константы в тип constexpr
 constexpr uint32_t  id_bits  = 22;  // 
 constexpr uint32_t  len_bits = 10;  // 1023 max
 
 constexpr uint32_t  id_mask  = (1U << id_bits ) - 1;        // 0x3FFFFF
 constexpr uint32_t  len_mask = (1U << len_bits) - 1;        // 0x3FF
+
 
 // Упаковка
 [[nodiscard]] constexpr inline uint32_t pack_span(uint32_t id, uint16_t len) noexcept {
@@ -64,39 +70,9 @@ class VHArea {
         uint16_t cntx;
 } __attribute__((packed));
 
-//
-typedef struct _stConfig {
-
-    // Размер картинки в пикселях, длинна
-    uint16_t    imageWidth;
-
-    // Размер картинки в пикселях, высота
-    uint16_t    imageHeight;
-
-    // Максимально допустимое количество пустых ячеек подряд в линии
-    uint16_t    spccnt;
-
-    // Размер ячейки в пикселях
-    uint8_t     cellsize;
-
-    // Подсветка цветности ячейки
-    // меньшие значения принимаем за черный
-    uint8_t     minColorVal;
-
-    // Минимальный размер объекта в пикселях
-    uint16_t    min_obj_width;
-    uint16_t    min_obj_height;
-
-    // Максимальный размер объекта в пикселях
-    uint16_t    max_obj_width;
-    uint16_t    max_obj_height;
-
-    // Режим отладки
-    uint8_t     loglevel;
-
-} stConfig;
 
 };
+
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal

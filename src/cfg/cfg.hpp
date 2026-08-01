@@ -17,8 +17,59 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
+#include <cstdint>
+
+// VHPlatform partially implemented for zero dependencies case
+#include "platform/platform.hpp"
+#include "cfg/cfg.hpp"
+
 
 namespace vhliboptimal {
+
+// Константы устанавливается при сборке
+
+static constexpr int VHOPTIMAL_GRID_X_LEVEL = 8;        // 256 pxls
+static constexpr int VHOPTIMAL_GRID_Y_LEVEL = 8;        // 256 pxls
+static constexpr int VHOPTIMAL_GRID_S_ORDER = 1;        //   2 pxls
+
+static constexpr int VHOPTIMAL_OBJECTS_MAX  = 128;      // F1K*4;
+static constexpr int VHOPTIMAL_SPANS_MAX    = F1K*4;    //
+
+
+//
+typedef struct _stConfig {
+
+    // // Размер картинки в пикселях, длинна
+    // uint16_t    imageWidth;
+
+    // // Размер картинки в пикселях, высота
+    // uint16_t    imageHeight;
+
+    // Максимально допустимое количество пустых ячеек подряд в линии
+    uint16_t    spccnt;
+
+    // Размер ячейки в пикселях
+    uint8_t     cellsize;
+
+    // Подсветка цветности ячейки
+    // меньшие значения принимаем за черный
+    uint8_t     minColorVal;
+
+    // Минимальный размер объекта в пикселях
+    uint16_t    min_obj_width;
+    uint16_t    min_obj_height;
+
+    // Максимальный размер объекта в пикселях
+    uint16_t    max_obj_width;
+    uint16_t    max_obj_height;
+
+    // Sort flags
+    uint8_t     sortMode;
+
+    // Режим отладки
+    uint8_t     loglevel;
+
+} stConfig;
 
 
 };
