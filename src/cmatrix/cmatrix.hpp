@@ -17,69 +17,13 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
-#include "structs/vhliboptimalstructs.hpp"
 
-namespace vhliboptimal {
+#if defined(VHLIB_OPTIMAL_EMBEDDED)
+#include "cmatrix_stm32.hpp"
+#else
+#include "cmatrix_mcu.hpp"
+#endif
 
-class CellsMatrix {
-
-    public:
-
-        CellsMatrix();
-
-        bool Setup(uint8_t levelx, uint8_t levely);
-
-        const size_t                        CellsX              () const;
-        const size_t                        CellsY              () const;
-        const size_t                        CellsT              () const;
-        const size_t                        CellN               (size_t x, size_t y) const;
-        const std::pair<size_t, size_t>     CellXY              (size_t n) const;
-
-        // Подсчет размера в байтах
-        const size_t                        BitMaskSizeBytes    () const;
-
-        // Стартовый индекс поиска
-        const size_t                        CellInnerFrom       () const;
-
-        //! Конечный индекс поиска
-        const size_t                        CellInnerTo         () const;
-
-    private:
-
-
-        size_t cellin;        // Within Border: Start cell
-        size_t cellout;       // Within Border: Last  cell
-
-        // TODO: Scan Window
-        size_t wndx1;
-        size_t wndy1;
-        size_t wndx2;
-        size_t wndy2;
-
-
-        #ifdef VHLIB_OPTIMAL_GRID_FIXED
-
-        static constexpr int fixedw = (1 << VHLIB_OPTIMAL_GRID_LX); 
-        static constexpr int fixedh = (1 << VHLIB_OPTIMAL_GRID_LY);
-        static constexpr int fixedt = fixedw * fixedh;
-
-        static constexpr int fixedm = fixedw-1;
-
-        #else
-
-        // Cells per H - Horizontal cells count
-        uint8_t levx;
-
-        // Cells per V - Vertical   cells count
-        uint8_t levy;
-
-        // Cells total
-        size_t cellst;
-
-        #endif
-};
-
-};
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal

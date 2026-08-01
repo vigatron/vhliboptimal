@@ -71,6 +71,9 @@ class VHMemoryLayout {
             return vok;
         }
 
+        uint8_t *   BitFieldPtr     () { return _pMemBitFieldSrc; }
+        size_t      BitFieldSize    () { return bytesPerGrid; }
+
     private:
 
         size_t          bytesPerGrid;

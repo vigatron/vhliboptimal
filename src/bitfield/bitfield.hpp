@@ -18,6 +18,7 @@
 #pragma once
 
 #include "cmatrix/cmatrix.hpp"
+#include "cfg/cfg.hpp"
 
 namespace vhliboptimal {
 

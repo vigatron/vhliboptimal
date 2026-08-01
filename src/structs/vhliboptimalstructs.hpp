@@ -29,8 +29,6 @@
 
 namespace vhliboptimal {
 
-using spanword  = uint32_t;
-
 #ifdef VHARCH_32BIT
 
 #else

@@ -21,20 +21,19 @@
 
 // VHPlatform partially implemented for zero dependencies case
 #include "platform/platform.hpp"
-#include "cfg/cfg.hpp"
-
 
 namespace vhliboptimal {
 
 // Константы устанавливается при сборке
 
-static constexpr int VHOPTIMAL_GRID_X_LEVEL = 8;        // 256 pxls
-static constexpr int VHOPTIMAL_GRID_Y_LEVEL = 8;        // 256 pxls
-static constexpr int VHOPTIMAL_GRID_S_ORDER = 1;        //   2 pxls
+static constexpr int VHOPTIMAL_GRID_X_LEVEL = VHLIB_OPTIMAL_GRID_LX;
+static constexpr int VHOPTIMAL_GRID_Y_LEVEL = VHLIB_OPTIMAL_GRID_LY;
+static constexpr int VHOPTIMAL_GRID_S_ORDER = 1;
 
-static constexpr int VHOPTIMAL_OBJECTS_MAX  = 128;      // F1K*4;
-static constexpr int VHOPTIMAL_SPANS_MAX    = F1K*4;    //
+static constexpr int VHOPTIMAL_OBJECTS_MAX  = VHLIB_OPTIMAL_OBJS_MAX;
+static constexpr int VHOPTIMAL_SPANS_MAX    = VHLIB_OPTIMAL_SPNS_MAX;
 
+using spanword  = uint32_t;
 
 //
 typedef struct _stConfig {

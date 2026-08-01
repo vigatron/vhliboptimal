@@ -87,6 +87,7 @@ class VHLibOptimal {
         // Callback: Moving across object content ( Left > Right / Up > Down )
         CallbackContent                 callbackContent     = nullptr;
 
+        // Callback: Benchmarks
         CallbackBenchmark               callbackBenchmark   = nullptr;
 
         // 2D Configuration

@@ -17,7 +17,6 @@ file(GLOB_RECURSE srcfiles
 
 target_sources(vhlib_optimal PRIVATE
     ${srcfiles}
-    src/cmatrix/cmatrix.cpp
     src/bitfield/bitfield.cpp
     src/figures/figures.cpp
     src/log/lognostl.cpp

@@ -17,6 +17,12 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #include "bitfield.hpp"
 
+#include <cstdio>
+#include <cstring>
+
+#include "structs/vhliboptimalstructs.hpp"
+
+
 using namespace vhliboptimal;
 
 /**
