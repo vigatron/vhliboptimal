@@ -50,7 +50,7 @@ verr VHLibOptimal::Run() {
     if(vok != CheckCfgParams())
         return verrmsg(ERR_InvalidParams, "VHLibOptimal: Invalid parameters");
 
-    VHLIB_OPTIMAL_IFACE_FrameReset();
+    FrameReset();
 
     if(cfg.loglevel >= LOG_LEVEL_MAX) {
         log::DumpCellsHEX(*this, cmatrix, memlay.BitFieldSrcPtr(), "Original Bitfield HEX"); }
@@ -72,7 +72,7 @@ verr VHLibOptimal::Run() {
     if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkScan, 1);
 
     if(cfg.loglevel >= LOG_LEVEL_BASE) {
-        int objcount = VHLIB_OPTIMAL_IFACE_ObjectsCount();
+        uint16_t objcount = ObjectsCount();
         log::partout("Found "); log::partint(objcount); log::partout(" objects");
         log::newlout();
     }
@@ -133,10 +133,10 @@ bool VHLibOptimal::FindFigure() {
 verr VHLibOptimal::ConvertFigure() {
 
     // Out of mem ?
-    if( !VHLIB_OPTIMAL_IFACE_AddObject() )
-        return verror(1);
+    if( !AddObject() )
+        return verrmsg(1, "VHLibOptimal::ConvertFigure() max objects count reached");
 
-    int objid = VHLIB_OPTIMAL_IFACE_ObjectsCount() - 1;
+    uint16_t objid = ObjectsCount() - 1;
 
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
         log::partout("Figure #");
@@ -154,16 +154,21 @@ verr VHLibOptimal::ConvertFigure() {
     }
 
     // 
-    VHOptimalFigure & newfigure = VHLIB_OPTIMAL_IFACE_Object(objid);
+    VHOptimalFigure & newfigure = Object(objid);
+    newfigure.Init(GlobalSpansCount());
+    arrRntSpans.Init( memlay.GlobalSpans(), GlobalSpansCount() );
 
-    newfigure.Scan(bitfieldDst, cmatrix, cfg.spccnt);
-    newfigure.CalcPosAndSize(cmatrix);
+    if(vok == newfigure.Scan(bitfieldDst, cmatrix, cfg.spccnt, arrRntSpans) ) {
+        newfigure.CalcPosAndSize(cmatrix, arrRntSpans);
+    } else {
+        RemoveObject();
+    }
 
     // if(IsSortEnabled())
     //     newfigure.Sort(cmatrix);
 
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        log::DumpFigureSpans(newfigure, cmatrix, CellSZ());
+        log::DumpFigureSpans(*this, newfigure, cmatrix, CellSZ());
     }
 
     uint16_t figw   = newfigure.Width (cmatrix, CellSZ());
@@ -172,7 +177,7 @@ verr VHLibOptimal::ConvertFigure() {
     bool sizeh = figh >= cfg.min_obj_height && figh <= cfg.max_obj_height;
 
     if(!(sizew && sizeh)) {
-        VHLIB_OPTIMAL_IFACE_RemoveObject();
+        RemoveObject();
         if(cfg.loglevel >= LOG_LEVEL_EXT) {
             log::partout("Figure #");
             log::partint(objid);
@@ -191,34 +196,17 @@ bool VHLibOptimal::IsSortEnabled() {
     return cfg.sortMode > 0;
 }
 
-/** 
- * @brief Количество фигур
- * 
- * @return общее количество
- */
-const size_t VHLibOptimal::GetObjectsCount() const {
-    return VHLIB_OPTIMAL_IFACE_ObjectsCount();
-}
-
-/** 
- * @brief Объект фигуры по индексу
- */
-const VHOptimalFigure & VHLibOptimal::GetObject(int idx) const {
-    asrts(idx < GetObjectsCount(), 0, "VHLibOptimal::GetObject out of range");
-    return VHLIB_OPTIMAL_IFACE_Object(idx);
-}
-
 /**
- * @brief Количество участков
+ * @brief Подсчет количество участков
  * 
  * @return общее количество всех фигур
 */
-const size_t VHLibOptimal::GetSpansTotal() const {
+const size_t VHLibOptimal::CalcSpansTotal() const {
 
     int r = 0;
 
-    for(int i=0; i < GetObjectsCount();i++) {
-        const VHOptimalFigure & obj = GetObject(i);
+    for(int i=0; i < ObjectsCount();i++) {
+        const VHOptimalFigure & obj = Object(i);
         r += obj.SpansCount();
     }
 
@@ -242,8 +230,8 @@ const CellsMatrix & VHLibOptimal::GetCMatrix() const {
  */
 bool VHLibOptimal::Border(int objn) const {
 
-    for(int i = 0; i < GetObjectsCount(); i++) {
-        const vhliboptimal::VHOptimalFigure & obj = GetObject(i);
+    for(int i = 0; i < ObjectsCount(); i++) {
+        const vhliboptimal::VHOptimalFigure & obj = Object(i);
         const vhliboptimal::CellsMatrix & cmtx = GetCMatrix();
         // obj.Border(cmtx, callbackBorder);
     }
@@ -255,7 +243,7 @@ bool VHLibOptimal::Border(int objn) const {
  * 
  */
 bool VHLibOptimal::ContentH(int objn) const {
-    const vhliboptimal::VHOptimalFigure & objfig = GetObject(objn);
+    const vhliboptimal::VHOptimalFigure & objfig = Object(objn);
     // objfig.ContentH(GetCMatrix(), callbackContent);
     return true;
 }
@@ -264,7 +252,7 @@ bool VHLibOptimal::ContentH(int objn) const {
  * 
  */
 bool VHLibOptimal::ContentV(int objn) const {
-    const vhliboptimal::VHOptimalFigure & objfig = GetObject(objn);
+    const vhliboptimal::VHOptimalFigure & objfig = Object(objn);
     // objfig.ContentV(GetCMatrix(), callbackContent);
     return true;
 }

@@ -18,7 +18,7 @@ file(GLOB_RECURSE srcfiles
 target_sources(vhlib_optimal PRIVATE
     ${srcfiles}
     src/bitfield/bitfield.cpp
-    src/figures/figures.cpp
+    src/figure/figure.cpp
     src/log/lognostl.cpp
     src/log/logstl.cpp
     src/sys/sys.cpp

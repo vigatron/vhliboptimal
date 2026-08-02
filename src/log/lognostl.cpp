@@ -1,3 +1,5 @@
+#ifndef VHLIB_OPTIMAL_WITHSTL
+
 #include "lognostl.hpp"
 
 using namespace vhliboptimal;
@@ -149,8 +151,25 @@ void log::DumpCellsTXT(
         partout("Dumping: ");
         lineout(msg); }
 
+    const uint8_t sep_dwords = true;
+    
+    #ifdef VHLIB_OPTIMAL_MODE_32
+    const uint8_t sep_size = 32;
+    #else
+    const uint8_t sep_size = 64;
+    #endif
+
     for(uint16_t cy=0;cy<cmatrix.CellsY();cy++) {
-        for(uint16_t cx=0; cx<cmatrix.CellsX(); cx++) {
+
+        // Show row
+        uint32_t addr = cy * cmatrix.CellsX() >> 3;
+        printf(":%-4X | %4d | ", addr, cy);
+
+        for(uint16_t cx=0; cx < cmatrix.CellsX(); cx++) {
+
+            // ARCH separator
+            if(sep_dwords && !(cx & sep_size-1)) printf(" ");
+
             size_t celln = cmatrix.CellN(cx,cy);
             if(cellMarker != -1 && celln == cellMarker) {
                 partout(strbitP);
@@ -159,6 +178,7 @@ void log::DumpCellsTXT(
                 partout(bval ? strbit1:strbit0);
             }
         }
+
         newlout();
     }
 
@@ -201,16 +221,19 @@ void log::DumpSpan(
  * 
  */
 void log::DumpFigureSpans(
-    const VHOptimalFigure & objfig,
+    const VHLibOptimal & detector,
+    const VHOptimalFigure & obj,
     const CellsMatrix & cmx,
     int cellsize)
 {
-    print_param("Spans Count = ", objfig.SpansCount());
+    print_param("Spans Count = ", obj.SpansCount());
 
-    for(int i=0; i < objfig.SpansCount(); i++) {
-        const spanword wspn = objfig.Span(i);
+    for(uint32_t i=0; i < obj.SpansCount(); i++) {
+        uint32_t globalidx = obj.StartSpanIDX() + i;
+        const spanword wspn = detector.GetGlobalSpan(globalidx);
         DumpSpan(wspn, cmx, cellsize, i);
     }
 
 }
 
+#endif

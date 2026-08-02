@@ -51,6 +51,7 @@ class log {
             int spann);
 
         static void DumpFigureSpans(
+            const VHLibOptimal & detector,
             const VHOptimalFigure & obj,
             const CellsMatrix & cmtx,
             int cellsize);

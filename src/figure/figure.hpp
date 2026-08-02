@@ -25,17 +25,62 @@
 
 namespace vhliboptimal {
 
+
+class VHLocalSpansArray {
+
+    public:
+
+        void Init(spanword *  arr, uint32_t startidx) {
+            arrlocal = arr;
+            startIdx = startIdx;
+            curIdx = 0;
+        }
+
+        bool add(spanword word) {
+            if(startIdx + curIdx >= VHOPTIMAL_SPANS_MAX) return false;
+            arrlocal[curIdx++] = word;
+            return true;
+        }
+
+        spanword get(uint32_t pos) {
+            return arrlocal[pos];
+        }
+
+        uint32_t globalstartidx() { return startIdx; }
+
+    private:
+        spanword * arrlocal;
+        uint32_t startIdx;
+        uint32_t curIdx;
+};
+
+
 class VHOptimalFigure {
 
     public:
 
         VHOptimalFigure();
 
-        verr                            Scan            (BitField & bfld, const CellsMatrix & cmtx, int skipcellsmax);
-        void                            CalcPosAndSize  (const CellsMatrix & cmtx);
+        void Init(uint32_t startidx) {
+            _startIDX = startidx;
+            _spansCount = 0;
+        }
 
-        const uint16_t                  SpansCount      () const;
-        const spanword                  Span            (int spanidx) const;
+        verr Scan(
+            BitField & bfld,
+            const CellsMatrix & cmtx,
+            int skipcellsmax,
+            VHLocalSpansArray & localspans
+        );
+
+        void CalcPosAndSize  (const CellsMatrix & cmtx, VHLocalSpansArray & arrspans);
+
+        /**
+         * @brief Количество участков фигуры
+        */
+        const uint16_t SpansCount() const { return _spansCount; }
+        const uint32_t StartSpanIDX() const { return _startIDX; }
+
         const VHArea               &    Area            () const;
         const uint16_t                  Width           (const CellsMatrix & cmtx, int cellsize) const;
         const uint16_t                  Height          (const CellsMatrix & cmtx, int cellsize) const;

@@ -30,20 +30,34 @@ class BitField {
 
         void Clear(const CellsMatrix & cmtx) noexcept;
 
-        void                            ClrCell             (int celln);
-        void                            SetCell             (int celln);
-        bool                            GetCell             (int celln) const;
+        // Принудительный инлайнинг для микро-методов доступа
+        #define VH_INLINE __attribute__((always_inline)) inline
 
-        void                            ClrCell             (const CellsMatrix & cmtx, int cellx, int celly);
-        void                            SetCell             (const CellsMatrix & cmtx, int cellx, int celly);
-        bool                            GetCell             (const CellsMatrix & cmtx, int cellx, int celly) const;
+        VH_INLINE void      ClrCell (int celln) { VHBits::BitClr(arrPtr, celln); }
+        VH_INLINE void      SetCell (int celln) { VHBits::BitSet(arrPtr, celln); }
+        VH_INLINE bool      GetCell (int celln) const { return VHBits::BitVal(arrPtr, celln); };
 
-        const int                       FindEntryCell       (const CellsMatrix & cmtx);
-        const int                       FindNearest         (const CellsMatrix & cmtx, int n) const;
-        const int                       FindPath            (const CellsMatrix & cmtx, BitField & fldfig);
-        int                             ScanSpanLen         (const CellsMatrix & cmtx, int startcell, int skipmax) const;
+        VH_INLINE void      ClrCell (const CellsMatrix & cmtx, int cellx, int celly) {
+            int n = cmtx.CellN(cellx, celly);
+            VHBits::BitClr(arrPtr, n);
+        }
 
-        void                            ClearSpan           (const spanword word);
+        VH_INLINE void      SetCell (const CellsMatrix & cmtx, int cellx, int celly) {
+            int n = cmtx.CellN(cellx, celly);
+            VHBits::BitSet(arrPtr, n);
+        }
+
+        VH_INLINE bool      GetCell (const CellsMatrix & cmtx, int cellx, int celly) const {
+            int n = cmtx.CellN(cellx, celly);
+            return GetCell(n);
+        }
+
+        const int           FindEntryCell       (const CellsMatrix & cmtx);
+        const int           FindNearest         (const CellsMatrix & cmtx, int n) const;
+        const int           FindPath            (const CellsMatrix & cmtx, BitField & fldfig);
+        int                 ScanSpanLen         (const CellsMatrix & cmtx, int startcell, int skipmax) const;
+
+        void                ClearSpan           (const spanword word);
 
         void ResetSearchIndex    (const CellsMatrix & cmtx) noexcept;
 

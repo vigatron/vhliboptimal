@@ -21,10 +21,9 @@
 
 #include "structs/vhliboptimalstructs.hpp"
 #include "structs/vhliboptimalcallbacks.hpp"
-#include "structs/vhliboptimalext.hpp"
 
 #include "bitfield/bitfield.hpp"
-#include "figures/figures.hpp"
+#include "figure/figure.hpp"
 
 #include "mem/memorylayout.hpp"
 
@@ -52,13 +51,91 @@ class VHLibOptimal {
             CallbackBenchmark           funcBenchmark );
 
         // bitfield_src should be already filled !
-        verr                            Run();
+        verr Run();
 
-        const size_t                    GetObjectsCount     () const;
 
-        const VHOptimalFigure &         GetObject           (int idx) const;
+        /**
+         *
+         */
+        void FrameReset() {
+            _objCount = 0;
+            _spnCount = 0;
+        }
 
-        const size_t                    GetSpansTotal       () const;
+        /* ************** GLOBAL OBJECTS RELATED **************** */
+
+        /** 
+         * @brief Количество фигур
+         * 
+         * @return общее количество
+         */
+        uint16_t ObjectsCount() const noexcept { 
+            return _objCount;
+        }
+
+        /** 
+         * @brief Объект фигуры по индексу
+         */        
+        VHOptimalFigure & Object(uint16_t pos) {
+            asrts(pos < ObjectsCount(), 0, "VHLibOptimal::GetObject out of range");
+            return memlay.Obj(pos);
+        }
+
+        const VHOptimalFigure & Object(uint16_t pos) const {
+            asrts(pos < ObjectsCount(), 0, "VHLibOptimal::GetObject out of range");
+            return memlay.Obj(pos);
+        }
+
+        /**
+         *
+         */
+        bool AddObject() {
+            if(_objCount>=VHOPTIMAL_OBJECTS_MAX) return false;
+            _objCount++;
+            return true;
+        }
+
+        /**
+         *
+         */
+        bool RemoveObject() {
+            if(!_objCount) return false;
+            _objCount--;
+            return true;
+        }
+
+        /* *************** GLOBAL SPANS RELATED ***************** */
+
+        /**
+         *
+         */
+        const uint32_t GlobalSpansCount() const noexcept {
+            return _spnCount;
+        }
+
+        /**
+         *
+         */
+        bool VHLIB_OPTIMAL_IFACE_AddSpan(spanword dword) {
+            if(_spnCount >= VHOPTIMAL_SPANS_MAX) return false;
+            memlay.SetSpn(dword, _spnCount);
+            _spnCount++;
+            return true;
+        }
+
+        // Calculating thru objects
+        const size_t CalcSpansTotal       () const;
+
+        /**
+         *
+         */
+        const spanword GetGlobalSpan(uint32_t pos) const {
+            if(pos >= VHOPTIMAL_SPANS_MAX) return 0;
+            return memlay.Spn(pos);
+        }
+
+
+        // TODO: direct spans count / check
 
         const CellsMatrix &             GetCMatrix          () const;
 
@@ -92,8 +169,8 @@ class VHLibOptimal {
 
     private:
 
-        const int                       ERR_InvalidParams = 1;
-        const int                       ERR_PictureInitialization = 2;
+        static constexpr int            ERR_InvalidParams = 1;
+        static constexpr int            ERR_PictureInitialization = 2;
 
         VHMemoryLayout                  memlay;
 
@@ -118,6 +195,9 @@ class VHLibOptimal {
         // Битовое поле выбранного фрагмента
         BitField                        bitfieldDst;
 
+        // Runtime array
+        VHLocalSpansArray               arrRntSpans;
+
         verr CheckCfgParams();
 
         verr InitialScanImage(uint16_t srcimgid);
@@ -127,6 +207,18 @@ class VHLibOptimal {
         verr ConvertFigure();
 
         bool IsSortEnabled();
+
+        // ==== IFACE ====
+
+        // Содержит в себе массив участков:
+        // spanlen [31 .. 21] + spanid  [20 ..  0]
+        // std::vector<uint32_t> arrSpans;
+
+        // Массив фигур
+        // static std::vector<VHOptimalFigure> arrObjects;
+
+        uint16_t _objCount;
+        uint32_t _spnCount;
 
 };
 

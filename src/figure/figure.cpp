@@ -15,7 +15,7 @@
  * Author        : Viktor Glebov / V01G04A81
  * Copyright     : © 2006–2026 Viktor Glebov
  * ========================[ BEGIN FILE CONTENT ]====================================== */
-#include "figures.hpp"
+#include "figure.hpp"
 #include "log/log.hpp"
 
 using namespace vhliboptimal;
@@ -35,11 +35,12 @@ VHOptimalFigure::VHOptimalFigure() { }
 verr VHOptimalFigure::Scan(
     BitField & bfld,
     const CellsMatrix & cmtx,
-    int skipcellsmax
+    int skipcellsmax,
+    VHLocalSpansArray & arrspans
 ) {
 
     bool loop   = true;
-    _startIDX   = VHLIB_OPTIMAL_IFACE_GetSpansCount();
+    _startIDX   = arrspans.globalstartidx();
     _spansCount = 0;
 
     // Сканируем участоки фигуры
@@ -49,16 +50,20 @@ verr VHOptimalFigure::Scan(
         int curn = bfld.FindEntryCell(cmtx);
         if(curn == -1) { loop = false; break; }
 
+        #ifdef VHLIB_OPTIMAL_DEBUG
+        auto [dbgx, dbgy] = cmtx.CellXY(curn);
+        #endif
+
         // Вычисляем длинну отрезка ( + пустые ячейки, до 3х )
         int spanid = (uint32_t)curn;
         int spanww = bfld.ScanSpanLen(cmtx, curn, skipcellsmax);
         spanword pckword = pack_span(spanid, spanww);
-        
+
         // добавляем участок в список текущей фигуры
-        if(VHLIB_OPTIMAL_IFACE_AddSpan(pckword)) {
-            return verror(1);
-        } else {
+        if(arrspans.add(pckword)) {
             _spansCount++;
+        } else {
+            return verrmsg(1, "VHOptimalFigure::Scan() spans limit reached");
         }
 
         // Удаляем участок из поля
@@ -71,13 +76,15 @@ verr VHOptimalFigure::Scan(
 /**
  * @brief Определение координат и размеров фигуры
  */
-void VHOptimalFigure::CalcPosAndSize(const CellsMatrix & cmtx) {
+void VHOptimalFigure::CalcPosAndSize(
+    const CellsMatrix & cmtx,
+    VHLocalSpansArray & arrspans) {
 
     // Empty
     if(!_spansCount) return;
 
     // Initial values from first span
-    const spanword spanw = VHLIB_OPTIMAL_IFACE_GetSpan(_startIDX + 0);
+    const spanword spanw = arrspans.get(0);
     const int spanid = get_span_id(spanw);
     const int spanln = get_span_len(spanw);
     auto [cxi1,cyi1] = cmtx.CellXY(spanid);
@@ -85,9 +92,9 @@ void VHOptimalFigure::CalcPosAndSize(const CellsMatrix & cmtx) {
 
     int cxl = cxi1, cxr = cxi2, cyt = cyi1, cyd = cyi2;
 
-    for(int i = 1; i < _spansCount; i++) {
+    for(uint32_t i = 1; i < _spansCount; i++) {
 
-        const spanword spanw = VHLIB_OPTIMAL_IFACE_GetSpan(_startIDX + i);
+        const spanword spanw = arrspans.get(i);
         const int spanid = get_span_id(spanw);
         const int spanln = get_span_len(spanw);
 
@@ -107,20 +114,6 @@ void VHOptimalFigure::CalcPosAndSize(const CellsMatrix & cmtx) {
 
 }
 
-
-/**
- * @brief Количество участков фигуры
-*/
-const uint16_t VHOptimalFigure::SpansCount() const {
-    return _spansCount;
-}
-
-/**
- * @brief выбраный участок как объект
- */
-const spanword VHOptimalFigure::Span(int spann) const {
-    return VHLIB_OPTIMAL_IFACE_GetSpan(_startIDX + spann);
-}
 
 /**
  *

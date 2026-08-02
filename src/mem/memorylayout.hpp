@@ -1,7 +1,7 @@
 #pragma once
 
 #include "structs/vhliboptimalstructs.hpp"
-#include "figures/figures.hpp"
+#include "figure/figure.hpp"
 
 namespace vhliboptimal {
 
@@ -10,6 +10,15 @@ class VHMemoryLayout {
 
     public:
 
+        static_assert(sizeof(VHOptimalFigure)   == 16, "16 bytes VHOptimalFigure"   );
+        static_assert(sizeof(spanword)          ==  4, " 4 bytes for spanword"      );
+
+        static_assert(VHOPTIMAL_GRID_X_LEVEL > 2);
+        static_assert(VHOPTIMAL_GRID_X_LEVEL < 11);
+
+        static_assert(VHOPTIMAL_GRID_Y_LEVEL > 2);
+        static_assert(VHOPTIMAL_GRID_Y_LEVEL < 11);
+
         /**
          * Memory Layout Calculation
          */
@@ -17,8 +26,8 @@ class VHMemoryLayout {
 
             bytesTotal = 0;
 
-            int gridWidth           = 1 << VHOPTIMAL_GRID_X_LEVEL;
-            int gridHeight          = 1 << VHOPTIMAL_GRID_Y_LEVEL;
+            int gridWidth       = 1 << VHOPTIMAL_GRID_X_LEVEL;
+            int gridHeight      = 1 << VHOPTIMAL_GRID_Y_LEVEL;
 
             bytesPerGrid        = (gridWidth >> 3) * gridHeight;
             bytesTotal         += bytesPerGrid * 2;
@@ -77,18 +86,41 @@ class VHMemoryLayout {
         uint8_t *   BitFieldDstPtr     () { return _pMemBitFieldDst; }
         size_t      BitFieldDstSize    () { return bytesPerGrid; }
 
+        // Безопасный доступ через reinterpret_cast
+        VHOptimalFigure& Obj(size_t pos) { 
+            return *(reinterpret_cast<VHOptimalFigure*>(_pMemObjects) + pos); 
+        }
+
+        const VHOptimalFigure & Obj(size_t pos) const noexcept { 
+            return *(reinterpret_cast<VHOptimalFigure*>(_pMemObjects) + pos); 
+        }
+
+        // Возвращаем по значению без лишнего const
+        spanword Spn(size_t pos) const { 
+            return *(reinterpret_cast<const spanword*>(_pMemSpans) + pos); 
+        }
+
+        spanword * GlobalSpans() const {
+            return reinterpret_cast<spanword*>(_pMemSpans);
+        }
+
+        // Запись элемента массива
+        void SetSpn(spanword spn, size_t pos) { 
+            *(reinterpret_cast<spanword*>(_pMemSpans) + pos) = spn; 
+        }
+
     private:
 
-        size_t          bytesPerGrid;
-        size_t          bytesObjects;
-        size_t          bytesSpans;
-        size_t          bytesTotal;
+        size_t bytesPerGrid;
+        size_t bytesObjects;
+        size_t bytesSpans;
+        size_t bytesTotal;
 
         // Static Memory Segments
-        uint8_t     *   _pMemBitFieldSrc;
-        uint8_t     *   _pMemBitFieldDst;
-        uint8_t     *   _pMemObjects;
-        uint8_t     *   _pMemSpans;
+        uint8_t * _pMemBitFieldSrc;
+        uint8_t * _pMemBitFieldDst;
+        uint8_t * _pMemObjects;
+        uint8_t * _pMemSpans;
 
 };
 

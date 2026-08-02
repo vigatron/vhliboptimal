@@ -49,50 +49,6 @@ void BitField::Clear(const CellsMatrix & cmtx) noexcept {
     ResetSearchIndex(cmtx);
 }
 
-/**
- * 
- */
-void BitField::ClrCell(int celln) {
-    VHBits::BitClr(arrPtr, celln);
-}
-
-/**
- * 
- */
-void BitField::SetCell(int celln) {
-    VHBits::BitSet(arrPtr, celln);
-}
-
-/**
- * 
- */
-bool BitField::GetCell(int celln) const {
-    return VHBits::BitVal(arrPtr, celln);
-}
-
-/**
- *
- */
-void BitField::ClrCell(const CellsMatrix & cmtx, int cellx, int celly) {
-    int n = cmtx.CellN(cellx, celly);
-    VHBits::BitClr(arrPtr, n);
-}
-
-/**
- *
- */
-void BitField::SetCell(const CellsMatrix & cmtx, int cellx, int celly) {
-    int n = cmtx.CellN(cellx, celly);
-    VHBits::BitSet(arrPtr, n);
-}
-
-/**
- * 
- */
-bool BitField::GetCell(const CellsMatrix & cmtx, int cellx, int celly) const {
-    int n = cmtx.CellN(cellx, celly);
-    return GetCell(n);
-}
 
 /**
  * @brief Find non-empty cell of the map
@@ -105,13 +61,18 @@ const int BitField::FindEntryCell(const CellsMatrix & cmtx) {
     int idxstart = FastIdxNonZero();
     if(idxstart == -1) return r;
 
-    for(int i=idxstart; i < cmtx.CellsT(); i++) {
-        if(VHBits::BitVal(arrPtr, i)) {
-            return i;
-        }
-    }
+    #ifdef VHLIB_OPTIMAL_LOG_LEVEL
+    auto [dbgx, dbgy] = cmtx.CellXY(idxstart);
+    #endif
 
-    return r;
+    return idxstart;
+
+    // for(int i=idxstart; i < cmtx.CellsT(); i++) {
+    //     if(VHBits::BitVal(arrPtr, i)) {
+    //         return i;
+    //     }
+    // }
+    // return r;
 }
 
 /**
@@ -191,8 +152,9 @@ int BitField::ScanSpanLen(const CellsMatrix & cmtx, int startcell, int skipmax) 
 void BitField::ClearSpan(const spanword word)  {
     int spanid = get_span_id(word);
     int spanln = get_span_len(word);
-    for(size_t i=0; i < spanln; i++) {
-        ClrCell(spanid+i);
+    int end = spanid + spanln;
+    for(size_t i=spanid; i < end; i++) {
+        ClrCell(i);
     }
 }
 
@@ -221,20 +183,23 @@ int BitField::FastIdxNonZero() {
         uint32_t word = p32[i];
         if (word != 0) {
             curSearchWord = i;
-            // позиция первого установленного бита
-            int bitPos = __builtin_ctz(word);
-            size_t byteIndex = i * sizeof(uint32_t) + (bitPos / CHAR_BIT);
-            return static_cast<int>(byteIndex * CHAR_BIT);
+            #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+                word = __builtin_bswap32(word);
+            #endif
+
+            int bitPos = __builtin_clz(word);
+            size_t byteIndex = i * sizeof(uint32_t) * CHAR_BIT + bitPos;
+            return static_cast<int>(byteIndex);
         }
     }
 
-    // Хвост (если размер массива не кратен 8)
-    const size_t processedBytes = numWords * sizeof(uint32_t);
-    for (size_t i = processedBytes; i < lastSearchsByte; ++i) {
-        if (arrPtr[i] != 0) {
-            return static_cast<int>(i * CHAR_BIT);
-        }
-    }
+    // // Хвост (если размер массива не кратен 8)
+    // const size_t processedBytes = numWords * sizeof(uint32_t);
+    // for (size_t i = processedBytes; i < lastSearchsByte; ++i) {
+    //     if (arrPtr[i] != 0) {
+    //         return static_cast<int>(i * CHAR_BIT);
+    //     }
+    // }
 
     return -1;
 }
@@ -264,20 +229,23 @@ int BitField::FastIdxNonZero() {
         uint64_t word = p64[i];
         if (word != 0ULL) {
             curSearchWord = i;
-            // первый установленный бит в слове
-            int bitPos = __builtin_ctzll(word);
-            size_t byteIndex = i * sizeof(uint64_t) + (bitPos / CHAR_BIT);
-            return static_cast<int>(byteIndex * CHAR_BIT);
+            #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+            word = __builtin_bswap64(word);
+            #endif
+
+            int bitPos = __builtin_clzll(word);
+            size_t byteIndex = i * sizeof(uint64_t) * CHAR_BIT + bitPos;
+            return static_cast<int>(byteIndex);
         }
     }
 
-    // Хвост (если размер массива не кратен 8)
-    const size_t processedBytes = numWords * sizeof(uint64_t);
-    for (size_t i = processedBytes; i < lastSearchsByte; ++i) {
-        if (arrPtr[i] != 0) {
-            return static_cast<int>(i * CHAR_BIT);
-        }
-    }
+    // // Хвост (если размер массива не кратен 8)
+    // const size_t processedBytes = numWords * sizeof(uint64_t);
+    // for (size_t i = processedBytes; i < lastSearchsByte; ++i) {
+    //     if (arrPtr[i] != 0) {
+    //         return static_cast<int>(i * CHAR_BIT);
+    //     }
+    // }
 
     return -1;
 }
