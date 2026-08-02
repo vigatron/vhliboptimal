@@ -30,9 +30,10 @@ class VHLocalSpansArray {
 
     public:
 
-        void Init(spanword *  arr, uint32_t startidx) {
+        void Init(spanword *  arr, uint32_t sidx) {
             arrlocal = arr;
-            startIdx = startIdx;
+            arrlocal += sidx;
+            startIdx = sidx;
             curIdx = 0;
         }
 
@@ -46,7 +47,8 @@ class VHLocalSpansArray {
             return arrlocal[pos];
         }
 
-        uint32_t globalstartidx() { return startIdx; }
+        uint32_t globalstartidx()   { return startIdx; }
+        uint32_t localspanscnt()    { return curIdx; }
 
     private:
         spanword * arrlocal;

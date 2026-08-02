@@ -160,6 +160,7 @@ verr VHLibOptimal::ConvertFigure() {
 
     if(vok == newfigure.Scan(bitfieldDst, cmatrix, cfg.spccnt, arrRntSpans) ) {
         newfigure.CalcPosAndSize(cmatrix, arrRntSpans);
+        _spnCount += arrRntSpans.localspanscnt();
     } else {
         RemoveObject();
     }

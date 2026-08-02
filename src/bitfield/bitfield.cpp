@@ -193,14 +193,6 @@ int BitField::FastIdxNonZero() {
         }
     }
 
-    // // Хвост (если размер массива не кратен 8)
-    // const size_t processedBytes = numWords * sizeof(uint32_t);
-    // for (size_t i = processedBytes; i < lastSearchsByte; ++i) {
-    //     if (arrPtr[i] != 0) {
-    //         return static_cast<int>(i * CHAR_BIT);
-    //     }
-    // }
-
     return -1;
 }
 
@@ -238,14 +230,6 @@ int BitField::FastIdxNonZero() {
             return static_cast<int>(byteIndex);
         }
     }
-
-    // // Хвост (если размер массива не кратен 8)
-    // const size_t processedBytes = numWords * sizeof(uint64_t);
-    // for (size_t i = processedBytes; i < lastSearchsByte; ++i) {
-    //     if (arrPtr[i] != 0) {
-    //         return static_cast<int>(i * CHAR_BIT);
-    //     }
-    // }
 
     return -1;
 }

@@ -97,7 +97,7 @@ class VHMemoryLayout {
 
         // Возвращаем по значению без лишнего const
         spanword Spn(size_t pos) const { 
-            return *(reinterpret_cast<const spanword*>(_pMemSpans) + pos); 
+            return *(reinterpret_cast<spanword*>(_pMemSpans) + pos); 
         }
 
         spanword * GlobalSpans() const {

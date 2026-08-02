@@ -113,15 +113,6 @@ class VHLibOptimal {
             return _spnCount;
         }
 
-        /**
-         *
-         */
-        bool VHLIB_OPTIMAL_IFACE_AddSpan(spanword dword) {
-            if(_spnCount >= VHOPTIMAL_SPANS_MAX) return false;
-            memlay.SetSpn(dword, _spnCount);
-            _spnCount++;
-            return true;
-        }
 
         // Calculating thru objects
         const size_t CalcSpansTotal       () const;
