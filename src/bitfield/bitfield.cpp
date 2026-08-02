@@ -61,18 +61,11 @@ const int BitField::FindEntryCell(const CellsMatrix & cmtx) {
     int idxstart = FastIdxNonZero();
     if(idxstart == -1) return r;
 
-    #ifdef VHLIB_OPTIMAL_LOG_LEVEL
+    #ifdef VHLIB_OPTIMAL_DEBUG
     auto [dbgx, dbgy] = cmtx.CellXY(idxstart);
     #endif
 
     return idxstart;
-
-    // for(int i=idxstart; i < cmtx.CellsT(); i++) {
-    //     if(VHBits::BitVal(arrPtr, i)) {
-    //         return i;
-    //     }
-    // }
-    // return r;
 }
 
 /**
@@ -184,12 +177,11 @@ int BitField::FastIdxNonZero() {
         if (word != 0) {
             curSearchWord = i;
             #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-                word = __builtin_bswap32(word);
+            word = __builtin_bswap32(word);
             #endif
 
             int bitPos = __builtin_clz(word);
-            size_t byteIndex = i * sizeof(uint32_t) * CHAR_BIT + bitPos;
-            return static_cast<int>(byteIndex);
+            return static_cast<int>((i << 5) + static_cast<size_t>(bitPos));
         }
     }
 
@@ -226,8 +218,7 @@ int BitField::FastIdxNonZero() {
             #endif
 
             int bitPos = __builtin_clzll(word);
-            size_t byteIndex = i * sizeof(uint64_t) * CHAR_BIT + bitPos;
-            return static_cast<int>(byteIndex);
+            return static_cast<int>((i << 6) + static_cast<size_t>(bitPos));
         }
     }
 

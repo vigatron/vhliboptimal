@@ -67,6 +67,10 @@ class VHMemoryLayout {
          */
         verr SetupMemory(uint8_t * ptr, size_t memsize) {
 
+            bool flagalign = (reinterpret_cast<std::uintptr_t>(ptr) & 3) == 0;
+            if(!flagalign)
+                return verrmsg(100, "MemoryLayout::SetupMemory() alignment issue");
+
             size_t offs = 0;
 
             _pMemBitFieldSrc        = ptr + offs; offs += bytesPerGrid;

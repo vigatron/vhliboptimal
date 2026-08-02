@@ -72,8 +72,16 @@ verr VHLibOptimal::Run() {
     if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkScan, 1);
 
     if(cfg.loglevel >= LOG_LEVEL_BASE) {
+
         uint16_t objcount = ObjectsCount();
         log::partout("Found "); log::partint(objcount); log::partout(" objects");
+
+        uint32_t spncount1 = GlobalSpansCount();
+        uint32_t spncount2 = CalcSpansTotal();
+    
+        log::partout(", Spans "); log::partint(spncount1);
+        log::partout(", Cecl-check "); log::partint(spncount2);
+
         log::newlout();
     }
 

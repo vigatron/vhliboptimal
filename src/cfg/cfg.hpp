@@ -24,8 +24,8 @@
 
 #if defined(VHLIB_OPTIMAL_EMBEDDED)
 
-    // #define VHLIB_OPTIMAL_MODE_32
-    #define VHLIB_OPTIMAL_MODE_64
+    #define VHLIB_OPTIMAL_MODE_32
+    // #define VHLIB_OPTIMAL_MODE_64
 
 #else
 
