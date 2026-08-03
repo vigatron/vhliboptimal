@@ -56,10 +56,8 @@ It excels at processing binary or high-contrast images and gracefully handles sm
 ## Key Features
 
 * Zero heavy third-party dependencies (OpenCV, etc.)
-* Built on a lightweight, dedicated platform layer (vhlibplatform)
-* Three raw C-style callbacks for maximum interoperability (C, Python, Rust FFI-friendly) and predictable execution behavior
-* Support for multiple image sources via `srcimgid`
 * Highly optimized grid-based scanning with bit-packing
+* Three raw C-style callbacks for maximum interoperability (C, Python, Rust FFI-friendly) and predictable execution behavior
 * Configurable cell size and noise tolerance
 * Real-time contour and content processing via callbacks
 
@@ -428,6 +426,15 @@ int main() {
 }
 ```
 
+---
+#### Compiler Tags
+
+* VHLIBOPTIMAL_MCU32    - Build for PC / 32-bit version
+* VHLIBOPTIMAL_MCU64    - Build for PC / 64-bit version
+* VHLIBOPTIMAL_OPI      - Orange Pi
+* VHLIBOPTIMAL_RPI      - RaspberryPi
+* VHLIBOPTIMAL_STM32    - STM32 F4/F7/H7
+* VHLIBOPTIMAL_ESP32    - ESP32 Xtensa
 
 ---
 

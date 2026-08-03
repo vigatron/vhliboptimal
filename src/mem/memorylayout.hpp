@@ -14,10 +14,10 @@ class VHMemoryLayout {
         static_assert(sizeof(spanword)          ==  4, " 4 bytes for spanword"      );
 
         static_assert(VHOPTIMAL_GRID_X_LEVEL > 2);
-        static_assert(VHOPTIMAL_GRID_X_LEVEL < 11);
+        static_assert(VHOPTIMAL_GRID_X_LEVEL < 13);
 
         static_assert(VHOPTIMAL_GRID_Y_LEVEL > 2);
-        static_assert(VHOPTIMAL_GRID_Y_LEVEL < 11);
+        static_assert(VHOPTIMAL_GRID_Y_LEVEL < 13);
 
         /**
          * Memory Layout Calculation

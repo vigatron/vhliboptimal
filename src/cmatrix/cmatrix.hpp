@@ -18,7 +18,7 @@
 #pragma once
 
 
-#if defined(VHLIB_OPTIMAL_EMBEDDED)
+#if defined(VHLIB_OPTIMAL_GRID_FIXED)
 #include "cmatrix_stm32.hpp"
 #else
 #include "cmatrix_mcu.hpp"

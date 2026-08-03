@@ -43,16 +43,18 @@ class VHLibOptimal {
 
         explicit VHLibOptimal();
 
-        // Frame Setup
+        // 
         verr Setup(
             const stConfig &            cfgparams,
             CallbackBorder              funcBorder,
             CallbackContent             funcContent,
             CallbackBenchmark           funcBenchmark );
 
+        // Pass Frame Content
+        verr FrameSourceBMP(uint8_t * pBMP);
+
         // bitfield_src should be already filled !
         verr Run();
-
 
         /**
          *

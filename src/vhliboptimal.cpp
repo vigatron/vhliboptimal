@@ -80,7 +80,7 @@ verr VHLibOptimal::Run() {
         uint32_t spncount2 = CalcSpansTotal();
     
         log::partout(", Spans "); log::partint(spncount1);
-        log::partout(", Cecl-check "); log::partint(spncount2);
+        log::partout(", Rnt check "); log::partint(spncount2);
 
         log::newlout();
     }
@@ -171,6 +171,7 @@ verr VHLibOptimal::ConvertFigure() {
         _spnCount += arrRntSpans.localspanscnt();
     } else {
         RemoveObject();
+        return verrmsg(2, "VHLibOptimal::ConvertFigure() failed, no spans avail");
     }
 
     // if(IsSortEnabled())
@@ -180,6 +181,7 @@ verr VHLibOptimal::ConvertFigure() {
         log::DumpFigureSpans(*this, newfigure, cmatrix, CellSZ());
     }
 
+    // Applying size filter
     uint16_t figw   = newfigure.Width (cmatrix, CellSZ());
     uint16_t figh   = newfigure.Height(cmatrix, CellSZ());
     bool sizew = figw >= cfg.min_obj_width && figw <= cfg.max_obj_width;
