@@ -97,7 +97,7 @@ class VHOptimalFigure {
         // void                                Sort            (const CellsMatrix & cmtx);
         // const int                           FindPosLRByY    (const CellsMatrix & cmtx, uint16_t spancy, int sideFlag ) const;
         // const int                           FindPosUDByX    (const CellsMatrix & cmtx, uint16_t spancx, int sideFlag ) const;
-        // void                                Border          (const CellsMatrix & cmtx, CallbackBorder callbackBorder ) const;
+        void                                Border          (const CellsMatrix & cmtx, CallbackBorder callbackBorder ) const;
 
         // void                                ContentH        (const CellsMatrix & cmtx, CallbackContent callbackContentH) const;
         // void                                ContentV        (const CellsMatrix & cmtx, CallbackContent callbackContentV) const;

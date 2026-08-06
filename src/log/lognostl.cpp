@@ -163,15 +163,15 @@ void log::DumpCellsTXT(
 
         // Show row
         uint32_t addr = cy * cmatrix.CellsX() >> 3;
-        printf(":%-4X | %4d | ", addr, cy);
+        printf(":%-4X | %4d | ", (unsigned int)addr, (unsigned int)cy);
 
         for(uint16_t cx=0; cx < cmatrix.CellsX(); cx++) {
 
             // ARCH separator
-            if(sep_dwords && !(cx & sep_size-1)) printf(" ");
+            if(sep_dwords && !(cx & (sep_size-1))) printf(" ");
 
             size_t celln = cmatrix.CellN(cx,cy);
-            if(cellMarker != -1 && celln == cellMarker) {
+            if(cellMarker != -1 && celln == (uint16_t)cellMarker) {
                 partout(strbitP);
             } else {
                 bool bval = VHBits::BitVal(arrptr, celln);
@@ -196,7 +196,7 @@ void log::DumpSpan(
 
     {
         int spanid = get_span_id  (spann);
-        int spanwd = get_span_len (spann);
+        // int spanwd = get_span_len (spann);
         printf("# %5d ", spanid);
     }
 

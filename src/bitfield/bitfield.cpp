@@ -74,7 +74,7 @@ const int BitField::FindEntryCell(const CellsMatrix & cmtx) {
 const int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
 
     int wx = cmtx.CellsX();
-    int wy = cmtx.CellsY();
+    // int wy = cmtx.CellsY();
     int tryn;
 
     { tryn = n + 1;         if(GetCell(tryn)) return tryn; } // 6
@@ -98,7 +98,7 @@ const int BitField::FindPath(const CellsMatrix & cmtx, BitField & fldfig) {
     int idxstart = fldfig.FastIdxNonZero();
     if(idxstart == -1) return -1;
 
-    for(int i=idxstart;i<cmtx.CellsT();i++) {
+    for(uint32_t i=idxstart;i<cmtx.CellsT();i++) {
         if(fldfig.GetCell(i)) {
             int r = FindNearest(cmtx, i);
             if(r != -1) {
@@ -143,10 +143,10 @@ int BitField::ScanSpanLen(const CellsMatrix & cmtx, int startcell, int skipmax) 
  * 
  */
 void BitField::ClearSpan(const spanword word)  {
-    int spanid = get_span_id(word);
-    int spanln = get_span_len(word);
-    int end = spanid + spanln;
-    for(size_t i=spanid; i < end; i++) {
+    uint32_t spanid = get_span_id(word);
+    uint32_t spanln = get_span_len(word);
+    uint32_t end = spanid + spanln;
+    for(uint32_t i=spanid; i < end; i++) {
         ClrCell(i);
     }
 }

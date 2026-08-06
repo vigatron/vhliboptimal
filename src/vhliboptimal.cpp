@@ -244,7 +244,7 @@ bool VHLibOptimal::Border(int objn) const {
     for(int i = 0; i < ObjectsCount(); i++) {
         const vhliboptimal::VHOptimalFigure & obj = Object(i);
         const vhliboptimal::CellsMatrix & cmtx = GetCMatrix();
-        // obj.Border(cmtx, callbackBorder);
+        obj.Border(cmtx, callbackBorder);
     }
 
     return true;
@@ -254,7 +254,7 @@ bool VHLibOptimal::Border(int objn) const {
  * 
  */
 bool VHLibOptimal::ContentH(int objn) const {
-    const vhliboptimal::VHOptimalFigure & objfig = Object(objn);
+    // const vhliboptimal::VHOptimalFigure & objfig = Object(objn);
     // objfig.ContentH(GetCMatrix(), callbackContent);
     return true;
 }
@@ -263,7 +263,7 @@ bool VHLibOptimal::ContentH(int objn) const {
  * 
  */
 bool VHLibOptimal::ContentV(int objn) const {
-    const vhliboptimal::VHOptimalFigure & objfig = Object(objn);
+    // const vhliboptimal::VHOptimalFigure & objfig = Object(objn);
     // objfig.ContentV(GetCMatrix(), callbackContent);
     return true;
 }

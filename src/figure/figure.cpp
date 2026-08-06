@@ -367,7 +367,7 @@ const uint16_t VHOptimalFigure::Height(const CellsMatrix & cmtx, int cellsize) c
 /**
  * @brief Обход по контуру
  */
-// void VHOptimalFigure::Border(const CellsMatrix & cmtx, CallbackBorder callbackBorder) const {
+void VHOptimalFigure::Border(const CellsMatrix & cmtx, CallbackBorder callbackBorder) const {
 
 //     // Empty, exit ...
 //     if(!arrspans.size()) return;
@@ -401,7 +401,7 @@ const uint16_t VHOptimalFigure::Height(const CellsMatrix & cmtx, int cellsize) c
 //         }
 //     }
 
-// }
+}
 
 /**
  * @brief габариты фигуры по горизонтали
