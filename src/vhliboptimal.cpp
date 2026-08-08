@@ -106,12 +106,11 @@ verr VHLibOptimal::CheckCfgParams() {
 bool VHLibOptimal::FindFigure() {
 
     // Clearing figure before processing
-    bitfieldDst.Clear(cmatrix);
+    bitfieldDst.ClearArea(cmatrix);
 
     // find entry point of figure
     int celln = bitfieldSrc.FindEntryCell(cmatrix);
     if(celln < 0) return false;
-
 
     bool flagLoopCells = true;
 
@@ -234,11 +233,6 @@ const CellsMatrix & VHLibOptimal::GetCMatrix() const {
 /**
  * 
  */
-// const size_t VHLibOptimal::CellSize    () const { return cfg.cellsize; }
-
-/**
- * 
- */
 bool VHLibOptimal::Border(int objn) const {
 
     for(int i = 0; i < ObjectsCount(); i++) {
@@ -267,15 +261,6 @@ bool VHLibOptimal::ContentV(int objn) const {
     // objfig.ContentV(GetCMatrix(), callbackContent);
     return true;
 }
-
-VHMemoryLayout & VHLibOptimal::MemoryLayout() {
-    return memlay;
-}
-
-BitField & VHLibOptimal::BitFieldSrc() {
-    return bitfieldSrc;
-}
-
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal

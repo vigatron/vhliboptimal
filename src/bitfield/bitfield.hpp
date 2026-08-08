@@ -26,9 +26,10 @@ class BitField {
 
     public:
 
-        bool                            Setup               (const CellsMatrix & cmtx, uint8_t * arrptr, uint32_t limbytes);
+        bool Setup(const CellsMatrix & cmtx, uint8_t * arrptr, uint32_t limbytes);
 
-        void Clear(const CellsMatrix & cmtx) noexcept;
+        void ClearArea      (const CellsMatrix & cmtx) noexcept;
+        void ClearBorder    (const CellsMatrix & cmtx) noexcept;
 
         // Принудительный инлайнинг для микро-методов доступа
         #define VH_INLINE __attribute__((always_inline)) inline
@@ -59,7 +60,7 @@ class BitField {
 
         void                ClearSpan           (const spanword word);
 
-        void ResetSearchIndex    (const CellsMatrix & cmtx) noexcept;
+        void                ResetSearchIndex    (const CellsMatrix & cmtx) noexcept;
 
     private:
 

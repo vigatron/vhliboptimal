@@ -44,9 +44,28 @@ bool BitField::Setup(const CellsMatrix & cmtx, uint8_t * arrptr, uint32_t limbyt
 /**
  * 
  */
-void BitField::Clear(const CellsMatrix & cmtx) noexcept {
+void BitField::ClearArea(const CellsMatrix & cmtx) noexcept {
     std::memset(arrPtr, 0, arrSizeInBytes);
     ResetSearchIndex(cmtx);
+}
+
+/**
+ * 
+ */
+void BitField::ClearBorder(const CellsMatrix & cmtx) noexcept {
+    uint16_t ex = cmtx.CellsX() - 1;
+    uint16_t ey = cmtx.CellsY() - 1;
+
+    for(uint16_t x=0; x <= ex;x++) {
+        ClrCell(cmtx, x, 0);
+        ClrCell(cmtx, x, ey);
+    }
+
+    for(uint16_t y=0; y <= ey;y++) {
+        ClrCell(cmtx,  0, y);
+        ClrCell(cmtx, ex, y);
+    }
+
 }
 
 

@@ -108,13 +108,10 @@ class VHLibOptimal {
         /**
          *
          */
-        const uint32_t GlobalSpansCount() const noexcept {
-            return _spnCount;
-        }
-
+        const uint32_t  GlobalSpansCount        () const noexcept { return _spnCount; }
 
         // Calculating thru objects
-        const size_t CalcSpansTotal       () const;
+        const size_t    CalcSpansTotal          () const;
 
         /**
          *
@@ -137,12 +134,12 @@ class VHLibOptimal {
         bool                            ContentH            (int objn) const;
         bool                            ContentV            (int objn) const;
 
-        BitField                    &   BitFieldSrc();
-
-        inline uint8_t                  FilterLevel() const noexcept { return cfg.minColorVal; }
+        BitField                    &   BitFieldSrc() noexcept { return bitfieldSrc; }
 
         // Forwarding Memory layout interface
-        VHMemoryLayout              &   MemoryLayout();
+        VHMemoryLayout              &   MemoryLayout() noexcept { return memlay; }
+
+        inline uint8_t                  FilterLevel() const noexcept { return cfg.minColorVal; }
 
         size_t  CalcMemory() { return memlay.CalcMemory(); }
 
@@ -169,7 +166,7 @@ class VHLibOptimal {
         /**
          * 
          */
-        verr BMPParserByte(uint8_t v) {
+        verr BMPParserByte(uint8_t v, uint8_t lvscale) {
 
             verr r;
 
@@ -188,7 +185,7 @@ class VHLibOptimal {
                     break;
 
                 case eBMPParserData:
-                    r = BMPParserData(v);
+                    r = BMPParserData(v, lvscale);
                     break;
 
                 default: { r = verror(101); } break;
@@ -260,9 +257,10 @@ class VHLibOptimal {
             eBMPParserData
         };
 
-        uint8_t  bmpParseStage  = 0;
-        uint16_t bmpParsePos    = 0;
-        uint16_t bmpLineY       = 0;
+        uint8_t  bmpParseStage      = 0;
+        uint16_t bmpParsePos        = 0;
+        uint16_t bmpLineY           = 0;
+        uint16_t bmpBytesPerLine    = 0;
 
         BMPFileHeader   sBMPFileHDR;
         BMPInfoHeader   sBMPInfoHDR;
@@ -302,6 +300,9 @@ class VHLibOptimal {
 
             if(bmpParsePos < sizeof(BMPInfoHeader)) {
                 return vok;
+            } else {
+                if(!validate_bmp())
+                    return verror(1);
             }
 
             bmpParseStage++;
@@ -329,11 +330,79 @@ class VHLibOptimal {
         /**
          * 
          */
-        verr BMPParserData(uint8_t v) {
+        verr BMPParserData(uint8_t v, uint8_t lvscale) {
+
+            const BMPInfoHeader & hdr = sBMPInfoHDR;
+
+            // Vertical UP/DU mode
+            bool flagup = hdr.height < 0;
+            uint16_t h = flagup ? (hdr.height  * -1) : hdr.height;
+
+            // Check X-Y range
+            if(bmpParsePos >= hdr.width) return verror(1);
+            if(bmpLineY >= h) return verror(2);
+
+            uint16_t posx = bmpParsePos << 3;
+            uint16_t posy = flagup ? bmpLineY : (h - bmpLineY -1);
+
+            if(v & 0x80) setBitSrcBitfield(posx+0, posy, lvscale);
+            if(v & 0x40) setBitSrcBitfield(posx+1, posy, lvscale);
+            if(v & 0x20) setBitSrcBitfield(posx+2, posy, lvscale);
+            if(v & 0x10) setBitSrcBitfield(posx+3, posy, lvscale);
+
+            if(v & 0x08) setBitSrcBitfield(posx+4, posy, lvscale);
+            if(v & 0x04) setBitSrcBitfield(posx+5, posy, lvscale);
+            if(v & 0x02) setBitSrcBitfield(posx+6, posy, lvscale);
+            if(v & 0x01) setBitSrcBitfield(posx+7, posy, lvscale);
+
+            bmpParsePos++;
+            if(bmpParsePos >= bmpBytesPerLine) {
+                bmpParsePos = 0;
+                bmpLineY++;
+            }
 
             return vok;
         }
 
+        /**
+         * 
+         */
+        bool validate_bmp() {
+
+            BMPInfoHeader & hdr = sBMPInfoHDR;
+            bool b1 = hdr.planes == 1;
+            bool b2 = hdr.bit_count == 1;
+            bool b3 = hdr.compression == 0;
+            bool b4 = hdr.colors_used == 2;
+            bool b = b1 && b2 && b3 && b4;
+            if(!b) return false;
+
+            uint8_t align = sizeof(uint32_t);
+            bmpBytesPerLine  = hdr.width / align;
+            bmpBytesPerLine += (hdr.width % align) ? align:0;
+
+            // TODO: Check limits X-Y
+            return true;
+        }
+
+        /**
+         * 
+         */
+        void setBitSrcBitfield(uint16_t bmpx, uint16_t bmpy, uint8_t lvscale) {
+
+            const CellsMatrix & cmtx = GetCMatrix();
+
+            // Scaller
+            uint16_t cx = bmpx >> lvscale;
+            uint16_t cy = bmpy >> lvscale;
+
+            if(cx >= cmtx.CellsX()) return;
+            if(cy >= cmtx.CellsY()) return;
+
+            // Set bit
+            bitfieldSrc.SetCell(GetCMatrix(), cx, cy);
+
+        }
 };
 
 };
