@@ -61,6 +61,38 @@ class VHArea {
 } __attribute__((packed));
 
 
+#pragma pack(push, 1)
+
+struct BMPFileHeader {
+    uint16_t file_type;          // Сигнатура ("BM")
+    uint32_t file_size;          // Размер файла
+    uint16_t reserved1;          // Всегда 0
+    uint16_t reserved2;          // Всегда 0
+    uint32_t offset_data;        // Смещение до пикселей
+};
+
+struct BMPInfoHeader {
+    uint32_t size;               // Размер структуры (40)
+    int32_t width;               // Ширина
+    int32_t height;              // Высота
+    uint16_t planes;             // Количество плоскостей (1)
+    uint16_t bit_count;          // Глубина цвета (например, 24)
+    uint32_t compression;        // Сжатие (0)
+    uint32_t size_image;         // Размер массива пикселей
+    int32_t x_pixels_per_meter;  // Разрешение по X
+    int32_t y_pixels_per_meter;  // Разрешение по Y
+    uint32_t colors_used;        // Цветов в палитре
+    uint32_t colors_important;   // Важных цветов
+};
+
+struct PixelRGB {
+    uint8_t blue;                // Порядок BGR
+    uint8_t green;
+    uint8_t red;
+};
+
+#pragma pack(pop)
+
 };
 
 

@@ -50,9 +50,6 @@ class VHLibOptimal {
             CallbackContent             funcContent,
             CallbackBenchmark           funcBenchmark );
 
-        // Pass Frame Content
-        verr FrameSourceBMP(uint8_t * pBMP);
-
         // bitfield_src should be already filled !
         verr Run();
 
@@ -160,6 +157,51 @@ class VHLibOptimal {
             return vok;
         }
 
+        /**
+         * 
+         */
+        void BMPParserReset() {
+            bmpParseStage = 0;
+            bmpParsePos = 0;
+            bmpLineY = 0;
+        }
+
+        /**
+         * 
+         */
+        verr BMPParserByte(uint8_t v) {
+
+            verr r;
+
+            switch(bmpParseStage) {
+
+                case eBMPParserFileHeader:
+                    r = BMPParserFileHeader(v);
+                    break;
+
+                case eBMPParserInfoHeader:
+                    r = BMPParserInfoHeader(v);
+                    break;
+
+                case eBMPParserPalette:
+                    r = BMPParserPalette(v);
+                    break;
+
+                case eBMPParserData:
+                    r = BMPParserData(v);
+                    break;
+
+                default: { r = verror(101); } break;
+            }
+
+            if(r) {
+                BMPParserReset();
+            }
+
+            return r;
+        }
+
+
     private:
 
         static constexpr int            ERR_InvalidParams = 1;
@@ -202,16 +244,95 @@ class VHLibOptimal {
         bool IsSortEnabled();
 
         // ==== IFACE ====
-
+        // Массив фигур
         // Содержит в себе массив участков:
         // spanlen [31 .. 21] + spanid  [20 ..  0]
         // std::vector<uint32_t> arrSpans;
 
-        // Массив фигур
-        // static std::vector<VHOptimalFigure> arrObjects;
-
         uint16_t _objCount;
         uint32_t _spnCount;
+
+        // BMP Parser
+        enum enBMPParserPhase {
+            eBMPParserFileHeader = 0,
+            eBMPParserInfoHeader,
+            eBMPParserPalette,
+            eBMPParserData
+        };
+
+        uint8_t  bmpParseStage  = 0;
+        uint16_t bmpParsePos    = 0;
+        uint16_t bmpLineY       = 0;
+
+        BMPFileHeader   sBMPFileHDR;
+        BMPInfoHeader   sBMPInfoHDR;
+
+        /**
+         * 
+         */
+        verr BMPParserFileHeader(uint8_t v) {
+
+            if(!bmpParsePos) {
+                if(v!='B')
+                    return verror(1);
+            }
+            else if(bmpParsePos == 1) {
+                if(v!='M')
+                    return verror(2);
+            }
+            
+            ((uint8_t *) &sBMPFileHDR)[bmpParsePos++] = v;
+            
+            if(bmpParsePos < sizeof(BMPFileHeader)) {
+                return vok;
+            }
+
+            bmpParseStage++;
+            bmpParsePos = 0;
+
+            return vok;
+        }
+
+        /**
+         * 
+         */
+        verr BMPParserInfoHeader(uint8_t v) {
+
+            ((uint8_t *) &sBMPInfoHDR)[bmpParsePos++] = v;
+
+            if(bmpParsePos < sizeof(BMPInfoHeader)) {
+                return vok;
+            }
+
+            bmpParseStage++;
+            bmpParsePos = 0;
+
+            return vok;
+        }
+
+        /**
+         * palette ignored in B&W mode
+         */
+        verr BMPParserPalette   (uint8_t v) {
+            size_t sz = sizeof(BMPFileHeader) + sizeof(BMPInfoHeader);
+            bmpParsePos++;
+            while( (sz + bmpParsePos) < (sBMPFileHDR.offset_data)) {
+                return vok;
+            }
+
+            bmpParseStage++;
+            bmpParsePos = 0;
+
+            return vok;
+        }
+
+        /**
+         * 
+         */
+        verr BMPParserData(uint8_t v) {
+
+            return vok;
+        }
 
 };
 
