@@ -57,10 +57,18 @@ verr VHLibOptimal::Run() {
     FrameReset();
 
     if(cfg.loglevel >= LOG_LEVEL_MAX) {
-        log::DumpCellsHEX(*this, cmatrix, memlay.BitFieldSrcPtr(), "Original Bitfield HEX"); }
+        log::DumpCellsHEX(
+            *this,
+            cmatrix,
+            memlay.BitFieldSrcPtr(),
+            "Original Bitfield HEX"); }
 
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        log::DumpCellsTXT(*this, cmatrix, memlay.BitFieldSrcPtr(), "Original Bitfield TXT"); }
+        log::DumpCellsTXT(
+            *this,
+            cmatrix,
+            memlay.BitFieldSrcPtr(),
+            "Original Bitfield TXT"); }
 
     // Important!
     bitfieldSrc.ResetSearchIndex(cmatrix);

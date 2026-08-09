@@ -362,6 +362,7 @@ class VHLibOptimal {
             if(bmpParsePos >= bmpBytesPerLine) {
                 bmpParsePos = 0;
                 bmpLineY++;
+                if(bmpLineY >= h) BMPParserReset();
             }
 
             return vok;
