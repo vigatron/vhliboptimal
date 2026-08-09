@@ -24,11 +24,15 @@ VHLibOptimal::VHLibOptimal() { }
 
 
 verr VHLibOptimal::Setup(
-    const stConfig      &       cfgparams,
-    CallbackBorder              funcBorder,
-    CallbackContent             funcContent,
-    CallbackBenchmark           funcBenchmark
+    const stConfig & cfgparams,
+    const VHMemoryLayout::stMemLayout & sMemlayout,
+    CallbackBorder funcBorder,
+    CallbackContent funcContent,
+    CallbackBenchmark funcBenchmark
 ) {
+
+    if(SetupMemory(sMemlayout))
+        return verrmsg(104, "Memory Layout Initialization failed");
 
     // Setup callbacks
     callbackBorder          = funcBorder;

@@ -45,12 +45,15 @@ class VHLibOptimal {
 
         // 
         verr Setup(
-            const stConfig &            cfgparams,
-            CallbackBorder              funcBorder,
-            CallbackContent             funcContent,
-            CallbackBenchmark           funcBenchmark );
+            const stConfig & cfgparams,
+            const VHMemoryLayout::stMemLayout & sMemlayout,
+            CallbackBorder funcBorder,
+            CallbackContent funcContent,
+            CallbackBenchmark funcBenchmark );
 
-        // bitfield_src should be already filled !
+        /**
+         * bitfield_src should be already filled !
+         */
         verr Run();
 
         /**
@@ -80,6 +83,9 @@ class VHLibOptimal {
             return memlay.Obj(pos);
         }
 
+        /**
+         *
+         */
         const VHOptimalFigure & Object(uint16_t pos) const {
             asrts(pos < ObjectsCount(), 0, "VHLibOptimal::GetObject out of range");
             return memlay.Obj(pos);
@@ -121,7 +127,6 @@ class VHLibOptimal {
             return memlay.Spn(pos);
         }
 
-
         // TODO: direct spans count / check
 
         const CellsMatrix &             GetCMatrix          () const;
@@ -140,19 +145,6 @@ class VHLibOptimal {
         VHMemoryLayout              &   MemoryLayout() noexcept { return memlay; }
 
         inline uint8_t                  FilterLevel() const noexcept { return cfg.minColorVal; }
-
-        size_t  CalcMemory() { return memlay.CalcMemory(); }
-
-        verr    SetupMemory(uint8_t * ptr, size_t memsize) {
-
-            if(memlay.SetupMemory(ptr, memsize)) return verror(1);
-
-            // Init Src & Dst BitFields
-            bitfieldSrc.Setup(cmatrix, memlay.BitFieldSrcPtr(), memlay.BitFieldSrcSize());
-            bitfieldDst.Setup(cmatrix, memlay.BitFieldDstPtr(), memlay.BitFieldDstSize());
-
-            return vok;
-        }
 
         /**
          * 
@@ -248,6 +240,17 @@ class VHLibOptimal {
 
         uint16_t _objCount;
         uint32_t _spnCount;
+
+        verr SetupMemory(const VHMemoryLayout::stMemLayout & sMemlayout) {
+
+            if(memlay.SetupMemory(sMemlayout)) return verror(1);
+
+            // Init Src & Dst BitFields
+            bitfieldSrc.Setup(cmatrix, memlay.BitFieldSrcPtr(), memlay.BitFieldSrcSize());
+            bitfieldDst.Setup(cmatrix, memlay.BitFieldDstPtr(), memlay.BitFieldDstSize());
+
+            return vok;
+        }
 
         // BMP Parser
         enum enBMPParserPhase {

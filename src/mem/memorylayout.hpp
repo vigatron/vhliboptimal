@@ -5,6 +5,19 @@
 
 namespace vhliboptimal {
 
+static constexpr size_t DEF_GRID_WIDTH              = 1 << VHOPTIMAL_GRID_X_LEVEL;
+static constexpr size_t DEF_GRID_HEIGHT             = 1 << VHOPTIMAL_GRID_Y_LEVEL;
+
+static constexpr size_t CFG_MEMSIZE_BYTES_PerGrid   = (DEF_GRID_WIDTH >> 3) * DEF_GRID_HEIGHT;
+static constexpr size_t CFG_MEMSIZE_BYTES_Objects   = sizeof(VHOptimalFigure) * VHOPTIMAL_OBJECTS_MAX;
+static constexpr size_t CFG_MEMSIZE_BYTES_Spans     = sizeof(spanword) * VHOPTIMAL_SPANS_MAX;
+
+static constexpr size_t CFG_MEMSIZE_BYTES_Total = 
+    CFG_MEMSIZE_BYTES_PerGrid * 2 +
+    CFG_MEMSIZE_BYTES_Objects + 
+    CFG_MEMSIZE_BYTES_Spans;
+
+
 //
 class VHMemoryLayout {
 
@@ -19,112 +32,129 @@ class VHMemoryLayout {
         static_assert(VHOPTIMAL_GRID_Y_LEVEL > 2);
         static_assert(VHOPTIMAL_GRID_Y_LEVEL < 13);
 
-        /**
-         * Memory Layout Calculation
-         */
-        size_t CalcMemory() {
+        //
+        struct stMemWindow {
+            uint8_t *   ptr;
+            size_t      size;
+        };
 
-            bytesTotal = 0;
+        //
+        struct stMemLayout {
+            stMemWindow memSrcGrid;
+            stMemWindow memDstGrid;
+            stMemWindow memObject;
+            stMemWindow memSpans;
+        };
+
+        /**
+         * Memory Layout Stat
+         */
+        void ShowMemoryStat() {
 
             int gridWidth       = 1 << VHOPTIMAL_GRID_X_LEVEL;
             int gridHeight      = 1 << VHOPTIMAL_GRID_Y_LEVEL;
 
-            bytesPerGrid        = (gridWidth >> 3) * gridHeight;
-            bytesTotal         += bytesPerGrid * 2;
-
-            bytesObjects        = sizeof(VHOptimalFigure) * VHOPTIMAL_OBJECTS_MAX;
-            bytesTotal         += bytesObjects;
-
-            bytesSpans          = sizeof(spanword) * VHOPTIMAL_SPANS_MAX;
-            bytesTotal         += bytesSpans;
-
-            // Memory Layout Stat
             printf("\n=== VHLibOptimal::CalcMemory() === \n");
             printf("sizeof(VHOptimalFigure) = %d bytes\n",  (int)sizeof(VHOptimalFigure));
             printf("sizeof(spanword) = %d bytes\n",         (int)sizeof(spanword));
             printf("Grid size: %d x %d\n",  gridWidth, gridHeight);
-            printf("x1 grid  = %d bytes\n", (int)bytesPerGrid);
-            printf("x2 grids = %d bytes\n", (int)bytesPerGrid * 2);
+            printf("x1 grid  = %d bytes\n", (int)CFG_MEMSIZE_BYTES_PerGrid);
+            printf("x2 grids = %d bytes\n", (int)CFG_MEMSIZE_BYTES_PerGrid * 2);
 
             printf("%d objects x %d bytes = %d bytes\n",
-                (int)sizeof(VHOptimalFigure),
                 (int)VHOPTIMAL_OBJECTS_MAX,
-                (int)bytesObjects );
+                (int)sizeof(VHOptimalFigure),
+                (int)CFG_MEMSIZE_BYTES_Objects );
 
             printf("%d spans x %d bytes = %d bytes\n",
-                (int)sizeof(spanword),
                 (int)VHOPTIMAL_SPANS_MAX,
-                (int)bytesSpans );
+                (int)sizeof(spanword),
+                (int)CFG_MEMSIZE_BYTES_Spans );
 
-            printf(">>> VHLIBOptimal Memory Layout Total: %d bytes\n", (int)bytesTotal);
+            // Dump memory segments
+
             printf("\n");
 
-            return bytesTotal;
+            printf("%-20s : @ %p %d bytes\n", "Address SRC_GRID",
+                _mlay.memSrcGrid.ptr, _mlay.memSrcGrid.size);
+
+            printf("%-20s : @ %p %d bytes\n", "Address DST_GRID",
+                _mlay.memDstGrid.ptr, _mlay.memDstGrid.size);
+
+            printf("%-20s : @ %p %d bytes\n", "Address Objects",
+                _mlay.memObject.ptr, _mlay.memObject.size);
+
+            printf("%-20s : @ %p %d bytes\n", "Address Spans",
+                _mlay.memSpans.ptr, _mlay.memSpans.size);
+
+            printf("\n");
+            printf(">>> VHLIBOptimal Memory Layout Total: %d bytes\n", (int)CFG_MEMSIZE_BYTES_Total);
+            printf("\n");
+
         }
 
         /**
          * Memory Layout Setup
          */
-        verr SetupMemory(uint8_t * ptr, size_t memsize) {
+        verr SetupMemory(const stMemLayout & memlay) {
 
-            bool flagalign = (reinterpret_cast<std::uintptr_t>(ptr) & 3) == 0;
-            if(!flagalign)
+            bool align1 = checkAlignment(memlay.memSrcGrid.ptr);
+            bool align2 = checkAlignment(memlay.memDstGrid.ptr);
+            bool align3 = checkAlignment(memlay.memObject.ptr);
+            bool align4 = checkAlignment(memlay.memSpans.ptr);
+
+            if(!(align1 && align2 && align3 && align4))
                 return verrmsg(100, "MemoryLayout::SetupMemory() alignment issue");
 
-            size_t offs = 0;
+            bool csize1 = memlay.memSrcGrid.size == CFG_MEMSIZE_BYTES_PerGrid;
+            bool csize2 = memlay.memDstGrid.size == CFG_MEMSIZE_BYTES_PerGrid;
+            bool csize3 = memlay.memObject.size == CFG_MEMSIZE_BYTES_Objects;
+            bool csize4 = memlay.memSpans.size == CFG_MEMSIZE_BYTES_Spans;
 
-            _pMemBitFieldSrc        = ptr + offs; offs += bytesPerGrid;
-            _pMemBitFieldDst        = ptr + offs; offs += bytesPerGrid;
-            _pMemObjects            = ptr + offs; offs += bytesObjects;
-            _pMemSpans              = ptr + offs; offs += bytesSpans;
+            if(!(csize1 && csize2 && csize3 && csize4))
+                return verrmsg(101, "MemoryLayout::SetupMemory() size issue");
 
-            if(memsize != bytesTotal || memsize != offs)
-                return verrmsg(1, "vhliboptimal::SetupMemory() : Invalid block size");
+            memcpy( &_mlay, &memlay, sizeof(stMemLayout));
 
             return vok;
         }
 
-        uint8_t *   BitFieldSrcPtr     () { return _pMemBitFieldSrc; }
-        size_t      BitFieldSrcSize    () { return bytesPerGrid; }
+        uint8_t *   BitFieldSrcPtr     () { return _mlay.memSrcGrid.ptr; }
+        size_t      BitFieldSrcSize    () { return _mlay.memSrcGrid.size; }
 
-        uint8_t *   BitFieldDstPtr     () { return _pMemBitFieldDst; }
-        size_t      BitFieldDstSize    () { return bytesPerGrid; }
+        uint8_t *   BitFieldDstPtr     () { return _mlay.memDstGrid.ptr; }
+        size_t      BitFieldDstSize    () { return _mlay.memDstGrid.size; }
 
         // Безопасный доступ через reinterpret_cast
         VHOptimalFigure& Obj(size_t pos) { 
-            return *(reinterpret_cast<VHOptimalFigure*>(_pMemObjects) + pos); 
+            return *(reinterpret_cast<VHOptimalFigure*>(_mlay.memObject.ptr) + pos); 
         }
 
         const VHOptimalFigure & Obj(size_t pos) const noexcept { 
-            return *(reinterpret_cast<VHOptimalFigure*>(_pMemObjects) + pos); 
+            return *(reinterpret_cast<VHOptimalFigure*>(_mlay.memObject.ptr) + pos); 
         }
 
         // Возвращаем по значению без лишнего const
         spanword Spn(size_t pos) const { 
-            return *(reinterpret_cast<spanword*>(_pMemSpans) + pos); 
+            return *(reinterpret_cast<spanword*>(_mlay.memSpans.ptr) + pos); 
         }
 
         spanword * GlobalSpans() const {
-            return reinterpret_cast<spanword*>(_pMemSpans);
+            return reinterpret_cast<spanword*>(_mlay.memSpans.ptr);
         }
 
         // Запись элемента массива
         void SetSpn(spanword spn, size_t pos) { 
-            *(reinterpret_cast<spanword*>(_pMemSpans) + pos) = spn; 
+            *(reinterpret_cast<spanword*>(_mlay.memSpans.ptr) + pos) = spn; 
         }
 
     private:
 
-        size_t bytesPerGrid;
-        size_t bytesObjects;
-        size_t bytesSpans;
-        size_t bytesTotal;
+        bool checkAlignment(uint8_t * ptr) {
+            return (reinterpret_cast<std::uintptr_t>(ptr) & (sizeof(uint32_t)-1)) == 0;
+        }
 
-        // Static Memory Segments
-        uint8_t * _pMemBitFieldSrc;
-        uint8_t * _pMemBitFieldDst;
-        uint8_t * _pMemObjects;
-        uint8_t * _pMemSpans;
+        stMemLayout _mlay;
 
 };
 
