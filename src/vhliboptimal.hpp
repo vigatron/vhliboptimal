@@ -131,10 +131,6 @@ class VHLibOptimal {
 
         const CellsMatrix &             GetCMatrix          () const;
 
-        const uint8_t                   CellSZLevel         () const noexcept { return cfg.levelcs; }
-
-        const uint8_t                   CellSZ              () const noexcept { return 1 << cfg.levelcs; }
-
         bool                            Border              (int objn) const;
         bool                            ContentH            (int objn) const;
         bool                            ContentV            (int objn) const;
@@ -143,8 +139,6 @@ class VHLibOptimal {
 
         // Forwarding Memory layout interface
         VHMemoryLayout              &   MemoryLayout() noexcept { return memlay; }
-
-        inline uint8_t                  FilterLevel() const noexcept { return cfg.minColorVal; }
 
         /**
          * 
@@ -195,6 +189,8 @@ class VHLibOptimal {
 
         static constexpr int            ERR_InvalidParams = 1;
         static constexpr int            ERR_PictureInitialization = 2;
+
+        static constexpr uint8_t        DEF_CELL_SIZE = 1;
 
         VHMemoryLayout                  memlay;
 
@@ -410,6 +406,10 @@ class VHLibOptimal {
 };
 
 };
+
+// const uint8_t                   CellSZLevel         () const noexcept { return cfg.levelcs; }
+// const uint8_t                   CellSZ              () const noexcept { return 1 << cfg.levelcs; }
+
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal

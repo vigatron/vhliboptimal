@@ -81,9 +81,9 @@ void log::PicProps(
     const VHLibOptimal & obj,
     const CellsMatrix & cmatrix)
 {
-    int cs = obj.CellSZ();
-    int w = cmatrix.CellsX() * cs;
-    int h = cmatrix.CellsY() * cs;
+    int cs  = 1;
+    int w   = cmatrix.CellsX() * cs;
+    int h   = cmatrix.CellsY() * cs;
 
     partout("Picture Props:");
     append_param(" W=", w);

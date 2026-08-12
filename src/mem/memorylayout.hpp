@@ -76,16 +76,16 @@ class VHMemoryLayout {
             printf("\n");
 
             printf("%-20s : @ %p %d bytes\n", "Address SRC_GRID",
-                _mlay.memSrcGrid.ptr, _mlay.memSrcGrid.size);
+                _mlay.memSrcGrid.ptr, (int) _mlay.memSrcGrid.size);
 
             printf("%-20s : @ %p %d bytes\n", "Address DST_GRID",
-                _mlay.memDstGrid.ptr, _mlay.memDstGrid.size);
+                _mlay.memDstGrid.ptr, (int) _mlay.memDstGrid.size);
 
             printf("%-20s : @ %p %d bytes\n", "Address Objects",
-                _mlay.memObject.ptr, _mlay.memObject.size);
+                _mlay.memObject.ptr, (int) _mlay.memObject.size);
 
             printf("%-20s : @ %p %d bytes\n", "Address Spans",
-                _mlay.memSpans.ptr, _mlay.memSpans.size);
+                _mlay.memSpans.ptr, (int) _mlay.memSpans.size);
 
             printf("\n");
             printf(">>> VHLIBOptimal Memory Layout Total: %d bytes\n", (int)CFG_MEMSIZE_BYTES_Total);

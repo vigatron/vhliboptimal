@@ -84,8 +84,8 @@ class VHOptimalFigure {
         const uint32_t StartSpanIDX() const { return _startIDX; }
 
         const VHArea & Area     () const;
-        const uint16_t Width    (const CellsMatrix & cmtx, int cellsize) const;
-        const uint16_t Height   (const CellsMatrix & cmtx, int cellsize) const;
+        const uint16_t Width    () const;
+        const uint16_t Height   () const;
 
         // const strect                &       PosCells        () const;
         // const strect                        PosAbs          (const CellsMatrix & cmtx) const;

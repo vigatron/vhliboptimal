@@ -105,9 +105,6 @@ verr VHLibOptimal::Run() {
  */
 verr VHLibOptimal::CheckCfgParams() {
 
-    if(cfg.levelcs > 10)
-        return verrmsg(3, "VHLibOptimal: Invalid settings: cell size > 10");
-
     // Initial parameters valid
     return vok;
 }
@@ -189,12 +186,12 @@ verr VHLibOptimal::ConvertFigure() {
     //     newfigure.Sort(cmatrix);
 
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        log::DumpFigureSpans(*this, newfigure, cmatrix, CellSZ());
+        log::DumpFigureSpans(*this, newfigure, cmatrix, DEF_CELL_SIZE);
     }
 
     // Applying size filter
-    uint16_t figw   = newfigure.Width (cmatrix, CellSZ());
-    uint16_t figh   = newfigure.Height(cmatrix, CellSZ());
+    uint16_t figw   = newfigure.Width ();
+    uint16_t figh   = newfigure.Height();
     bool sizew = figw >= cfg.min_obj_width && figw <= cfg.max_obj_width;
     bool sizeh = figh >= cfg.min_obj_height && figh <= cfg.max_obj_height;
 

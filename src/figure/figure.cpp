@@ -125,15 +125,15 @@ const VHArea & VHOptimalFigure::Area() const {
 /**
  * 
  */
-const uint16_t VHOptimalFigure::Width (const CellsMatrix & cmtx, int cellsize) const {
-    return _area.cntx * cellsize;
+const uint16_t VHOptimalFigure::Width () const {
+    return _area.cntx;
 }
 
 /**
  * 
  */
-const uint16_t VHOptimalFigure::Height(const CellsMatrix & cmtx, int cellsize) const {
-    return _area.cnty * cellsize;
+const uint16_t VHOptimalFigure::Height() const {
+    return _area.cnty;
 }
 
 // auto [cx, cy] = cmtx.CellXY(_area.cellid);

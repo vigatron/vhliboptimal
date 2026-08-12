@@ -20,7 +20,9 @@
 #include <cstdint>
 
 // VHPlatform partially implemented for zero dependencies case
+#ifndef VHPLATFORM_INCLUDED
 #include "platform/platform.hpp"
+#endif
 
 #if defined(VHLIB_OPTIMAL_EMBEDDED)
 
@@ -57,13 +59,6 @@ typedef struct _stConfig {
 
     // Максимально допустимое количество пустых ячеек подряд в линии
     uint16_t    spccnt;
-
-    // 2 в степени: вычисление размера ячейки в пикселях
-    uint8_t     levelcs;
-
-    // Подсветка цветности ячейки
-    // меньшие значения принимаем за черный
-    uint8_t     minColorVal;
 
     // Минимальный размер объекта в пикселях
     uint16_t    min_obj_width;
