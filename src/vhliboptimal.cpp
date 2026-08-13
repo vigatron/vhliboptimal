@@ -71,7 +71,8 @@ verr VHLibOptimal::Run() {
     if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkScan, 0);
 
     while(FindFigure()) {
-        if(vok != ConvertFigure()) break;
+        if(vok != ConvertFigure())
+            return verrmsg(111, "object scanning: conversion failed");
     }
 
     // Scan objects task completed
