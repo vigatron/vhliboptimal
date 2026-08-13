@@ -130,7 +130,6 @@ class VHLibOptimal {
         // TODO: direct spans count / check
 
         const CellsMatrix &             GetCMatrix          () const;
-
         bool                            Border              (int objn) const;
         bool                            ContentH            (int objn) const;
         bool                            ContentV            (int objn) const;
@@ -174,7 +173,9 @@ class VHLibOptimal {
                     r = BMPParserData(v, lvscale);
                     break;
 
-                default: { r = verror(101); } break;
+                default: {
+                    r = verror(101);
+                } break;
             }
 
             if(r) {
@@ -184,6 +185,10 @@ class VHLibOptimal {
             return r;
         }
 
+        /**
+         * 
+         */
+        void DumpBitfield(bool hexmode=false);
 
     private:
 
@@ -337,22 +342,26 @@ class VHLibOptimal {
             bool flagup = hdr.height < 0;
             uint16_t h = flagup ? (hdr.height  * -1) : hdr.height;
 
-            // Check X-Y range
-            if(bmpParsePos >= hdr.width) return verror(1);
-            if(bmpLineY >= h) return verror(2);
-
             uint16_t posx = bmpParsePos << 3;
             uint16_t posy = flagup ? bmpLineY : (h - bmpLineY -1);
 
-            if(v & 0x80) setBitSrcBitfield(posx+0, posy, lvscale);
-            if(v & 0x40) setBitSrcBitfield(posx+1, posy, lvscale);
-            if(v & 0x20) setBitSrcBitfield(posx+2, posy, lvscale);
-            if(v & 0x10) setBitSrcBitfield(posx+3, posy, lvscale);
+            // Check X-Y range
+            if(bmpLineY >= h)
+                return verror(2);
 
-            if(v & 0x08) setBitSrcBitfield(posx+4, posy, lvscale);
-            if(v & 0x04) setBitSrcBitfield(posx+5, posy, lvscale);
-            if(v & 0x02) setBitSrcBitfield(posx+6, posy, lvscale);
-            if(v & 0x01) setBitSrcBitfield(posx+7, posy, lvscale);
+            if(posx < hdr.width) {
+
+                if(v & 0x80) setBitSrcBitfield(posx+0, posy, lvscale);
+                if(v & 0x40) setBitSrcBitfield(posx+1, posy, lvscale);
+                if(v & 0x20) setBitSrcBitfield(posx+2, posy, lvscale);
+                if(v & 0x10) setBitSrcBitfield(posx+3, posy, lvscale);
+
+                if(v & 0x08) setBitSrcBitfield(posx+4, posy, lvscale);
+                if(v & 0x04) setBitSrcBitfield(posx+5, posy, lvscale);
+                if(v & 0x02) setBitSrcBitfield(posx+6, posy, lvscale);
+                if(v & 0x01) setBitSrcBitfield(posx+7, posy, lvscale);
+
+            }
 
             bmpParsePos++;
             if(bmpParsePos >= bmpBytesPerLine) {
@@ -378,8 +387,12 @@ class VHLibOptimal {
             if(!b) return false;
 
             uint8_t align = sizeof(uint32_t);
-            bmpBytesPerLine  = hdr.width / align;
-            bmpBytesPerLine += (hdr.width % align) ? align:0;
+            bmpBytesPerLine  = hdr.width / CHAR_BIT;
+            uint8_t delta = bmpBytesPerLine % align;
+            if(delta) {
+                bmpBytesPerLine &= ~(align - 1);
+                bmpBytesPerLine += align;
+            }
 
             // TODO: Check limits X-Y
             return true;
@@ -406,10 +419,6 @@ class VHLibOptimal {
 };
 
 };
-
-// const uint8_t                   CellSZLevel         () const noexcept { return cfg.levelcs; }
-// const uint8_t                   CellSZ              () const noexcept { return 1 << cfg.levelcs; }
-
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal

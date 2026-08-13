@@ -57,18 +57,12 @@ verr VHLibOptimal::Run() {
     FrameReset();
 
     if(cfg.loglevel >= LOG_LEVEL_MAX) {
-        log::DumpCellsHEX(
-            *this,
-            cmatrix,
-            memlay.BitFieldSrcPtr(),
-            "Original Bitfield HEX"); }
+        DumpBitfield(true);
+    }
 
     if(cfg.loglevel >= LOG_LEVEL_EXT) {
-        log::DumpCellsTXT(
-            *this,
-            cmatrix,
-            memlay.BitFieldSrcPtr(),
-            "Original Bitfield TXT"); }
+        DumpBitfield();
+    }
 
     // Important!
     bitfieldSrc.ResetSearchIndex(cmatrix);
@@ -82,20 +76,6 @@ verr VHLibOptimal::Run() {
 
     // Scan objects task completed
     if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkScan, 1);
-
-    if(cfg.loglevel >= LOG_LEVEL_BASE) {
-
-        uint16_t objcount = ObjectsCount();
-        log::partout("Found "); log::partint(objcount); log::partout(" objects");
-
-        uint32_t spncount1 = GlobalSpansCount();
-        uint32_t spncount2 = CalcSpansTotal();
-    
-        log::partout(", Spans "); log::partint(spncount1);
-        log::partout(", Rnt check "); log::partint(spncount2);
-
-        log::newlout();
-    }
 
     return vok;
 }
@@ -269,6 +249,28 @@ bool VHLibOptimal::ContentV(int objn) const {
     // const vhliboptimal::VHOptimalFigure & objfig = Object(objn);
     // objfig.ContentV(GetCMatrix(), callbackContent);
     return true;
+}
+
+void VHLibOptimal::DumpBitfield(bool hexmode) {
+
+    if(hexmode) {
+
+        log::DumpCellsHEX(
+            *this,
+            cmatrix,
+            memlay.BitFieldSrcPtr(),
+            "Original Bitfield HEX");
+
+    } else {
+
+        log::DumpCellsTXT(
+            *this,
+            cmatrix,
+            memlay.BitFieldSrcPtr(),
+            "Original Bitfield TXT");
+
+    }
+
 }
 
 /* ========================[  END FILE CONTENT  ]========================
