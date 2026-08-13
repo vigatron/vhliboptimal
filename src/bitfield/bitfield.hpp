@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0-beta
+ * Revision      : 0.8.0-draft
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/bitfield/bitfield.hpp
- * Content size  : 1903
- * Date / Time   : 30-07-2026 21:53:54
- * MD5           : 365b4ad00048a4f22357dbb7e950f1ca
+ * Content size  : 2318
+ * Date / Time   : 13-08-2026 20:05:21
+ * MD5           : bf122824274a8dca25f3a44bfdbf08dc
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -82,9 +82,9 @@ class BitField {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/bitfield/bitfield.hpp
- * Revision         : 0.8.0-beta
- * Content size     : 1903
- * Date / Time      : 30-07-2026 21:53:54
- * MD5              : 365b4ad00048a4f22357dbb7e950f1ca
+ * Revision         : 0.8.0-draft
+ * Content size     : 2318
+ * Date / Time      : 13-08-2026 20:05:21
+ * MD5              : bf122824274a8dca25f3a44bfdbf08dc
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

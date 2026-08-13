@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0-beta
+ * Revision      : 0.8.0-draft
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
- * File          : src/figures/vhliboptimalfig.cpp
- * Content size  : 11975
- * Date / Time   : 30-07-2026 21:53:54
- * MD5           : 46ff575121a2f8e496578f8eb6d245a7
+ * File          : src/figure/figure.cpp
+ * Content size  : 11883
+ * Date / Time   : 13-08-2026 20:05:21
+ * MD5           : e9bab5d77abc9c24d49bd34386348461
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -453,10 +453,10 @@ void VHOptimalFigure::Border(const CellsMatrix & cmtx, CallbackBorder callbackBo
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
- * File             : src/figures/vhliboptimalfig.cpp
- * Revision         : 0.8.0-beta
- * Content size     : 11975
- * Date / Time      : 30-07-2026 21:53:54
- * MD5              : 46ff575121a2f8e496578f8eb6d245a7
+ * File             : src/figure/figure.cpp
+ * Revision         : 0.8.0-draft
+ * Content size     : 11883
+ * Date / Time      : 13-08-2026 20:05:21
+ * MD5              : e9bab5d77abc9c24d49bd34386348461
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
