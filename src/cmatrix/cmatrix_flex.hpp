@@ -37,6 +37,7 @@ class CellsMatrix {
             cellst      = CellsX() * CellsY();
             cellin      = CellsX() + 1;
             cellout     = cellst - CellsX() - 2;
+            return true;
         }
 
         inline constexpr size_t CellsX () const noexcept { return 1 << levx; }

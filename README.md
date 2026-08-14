@@ -5,7 +5,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Cross--platform-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-red.svg)
 ![Version](https://img.shields.io/badge/Version-0.8.0--beta-orange.svg)
-![Author](https://img.shields.io/badge/License-Viktor%20Glebov%20(V01G04A81)-green.svg)
+![Author](https://img.shields.io/badge/Author-Viktor%20Glebov%20(V01G04A81)-green.svg)
 
 ---
 
@@ -36,31 +36,39 @@ A lightweight, zero-dependency C++17 library focused exclusively on identifying 
 ## Project Overview
 
 
-`vhliboptimal` is a high-performance C++ library for fast shape contour detection and image outline recognition.  
+`vhliboptimal` is a high-performance C++ library for fast shape detection, object counting and outer boundary estimation.
 
-Originally developed in plain C (starting in 2006) for commercial embedded projects on ARM and AVR platforms. Later evolved through an FPGA-accelerated era (2016). It has been completely modernized in 2026 with a clean object-oriented C++ interface while preserving its efficiency-focused philosophy.  
-It uses an optimized grid-based approach: the image is divided into a configurable **Cells Matrix**, and connectivity is tracked using compact **BitFields**. This design delivers excellent performance with very low memory and CPU usage, making it ideal for embedded systems and real-time applications. Unlike general-purpose computer vision frameworks such as OpenCV, `vhliboptimal` focuses exclusively on contour extraction and therefore remains lightweight and easy to integrate. It excels at processing binary or high-contrast images and gracefully handles small gaps and noise thanks to tunable parameters.  
+Originally developed in plain C (starting in 2006) for commercial embedded projects on ARM and AVR platforms. Later evolved through an FPGA-accelerated era (2016). It has been completely modernized in 2026 with a clean object-oriented C++17 interface while preserving its efficiency-focused philosophy.
+
+It uses an optimized grid-based approach: the image is divided into a configurable **Cells Matrix**, and connectivity is tracked using compact **BitFields**. This design delivers excellent performance with very low memory and CPU usage, making it ideal for embedded systems and real-time applications. Unlike general-purpose computer vision frameworks such as OpenCV, `vhliboptimal` focuses exclusively on shape extraction and therefore remains lightweight and easy to integrate. It excels at processing binary or high-contrast images and gracefully handles small gaps and noise thanks to tunable parameters.
 
 ---
 
 ## 🛠 Technical Specifications
 
-- **Language**: C++17 (Strict requirement. *Note: Legacy C implementations for 8-bit/32-bit MCUs are not part of this codebase.*)
+- **Language**: C++17 
 - **Target Platforms**: 
   - **Desktop/OS**: Linux (Primary), Windows, macOS.
-  - **Modern SBCs**: Raspberry Pi (3/4/5), Orange Pi (Zero/3/5), Jetson Nano, Rock Pi, and similar ARM Cortex-A/M based boards.
+  - **Modern SBCs**:
+    * Raspberry Pi (3/4/5)
+    * Orange Pi (Zero/3/5)
+    * Jetson Nano
+    * Rock Pi
+    * ... and similar ARM Cortex-A/M based boards.
   - **Modern MCUs**: STM32MP1 and other modern ARM Cortex-M/A cores with C++ compiler support.
-    *(STM32F4, STM32F7, STM32H7, ESP32 Under development/Experimental until v1.0.0 zero-allocation release).*
-  - *(Legacy bare-metal targets like AVR or older STM32 families are not supported in this C++ rewrite).*
+    * STM32F4 / STM32F7 / STM32H7 (zero-allocation + FIXED_GRID release)
+    * ESP32 (zero-allocation + FIXED_GRID release)
 - **Build System**: CMake 3.16+
 - **License**: MIT
+
 
 ---
 
 ## Key Features
 
 * Zero third-party dependencies (OpenCV, etc.)
-* Zero memory allocation / ready for FreeRTOS etc ..
+* Zero-allocation (FIXED_GRID) mode — ready for FreeRTOS / bare-metal
+* Optional dynamic allocation for desktop/SBC convenience
 * Highly optimized grid-based scanning with bit-packing
 * Three raw C-style callbacks for maximum interoperability (C, Python, Rust FFI-friendly) and predictable execution behavior
 * Configurable cell size and noise tolerance
@@ -191,8 +199,8 @@ The library operates completely abstracted from raw graphic decoders or UI frame
 - **Image Type**: Best suited for binary or high-contrast images (a direct inheritance from its B&W display origins).
 - **Threading**: Currently single-threaded (multi-threading support is planned for future releases).
 - **Resolution vs. Performance**: To achieve real-time FPS on SBCs, the algorithm relies on grid-based downsampling (`cellsize` typically 8-16px for real-time SBC profiles). Fine image details smaller than the configured cell size will be intentionally lost to preserve CPU cycles.
-- **Memory Profile**: In the current 0.7.x beta, dynamic allocations are used during processing, making it highly efficient for SBCs (Raspberry Pi, Orange Pi) and PCs.
-- **Strict zero-allocation (fully pre-allocated memory) for bare-metal RTOS environments is guaranteed and targeted for the stable v1.0.0 release.**
+- **Memory Profile**: Supports both dynamic allocation (convenient for SBCs/PCs) 
+  and strict zero-allocation / FIXED_GRID mode (for bare-metal RTOS, STM32, ESP32) starting from v0.8.0.
 
 
 > **⚠️ Best Practices for Optimal Results**  

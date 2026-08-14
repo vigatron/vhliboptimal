@@ -19,9 +19,9 @@
 
 
 #if defined(VHLIB_OPTIMAL_GRID_FIXED)
-#include "cmatrix_stm32.hpp"
+#include "cmatrix_fixed.hpp"
 #else
-#include "cmatrix_mcu.hpp"
+#include "cmatrix_flex.hpp"
 #endif
 
 

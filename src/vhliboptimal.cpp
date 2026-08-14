@@ -20,12 +20,13 @@
 
 using namespace vhliboptimal;
 
-VHLibOptimal::VHLibOptimal() { }
+VHLibOptimal::VHLibOptimal() : _initialized(false) { }
 
 
 verr VHLibOptimal::Setup(
     const stConfig & cfgparams,
     const VHMemoryLayout::stMemLayout & sMemlayout,
+    void * callbackparent,
     CallbackBorder funcBorder,
     CallbackContent funcContent,
     CallbackBenchmark funcBenchmark
@@ -34,7 +35,11 @@ verr VHLibOptimal::Setup(
     if(SetupMemory(sMemlayout))
         return verrmsg(104, "Memory Layout Initialization failed");
 
+    if(callbackparent == nullptr)
+        return verrmsg(105, "callback: invalid parent caller ");
+
     // Setup callbacks
+    callback_caller         = callbackparent;
     callbackBorder          = funcBorder;
     callbackContent         = funcContent;
     callbackBenchmark       = funcBenchmark;
@@ -43,7 +48,13 @@ verr VHLibOptimal::Setup(
     cfg = cfgparams;
 
     // Return check status
-    return CheckCfgParams();
+    verr vcheck = CheckCfgParams();
+    if(vok != vcheck)
+        return verrmsg(1000, "VHLibOptimal::Setup() not completed");
+    
+    _initialized = true;
+
+    return vok;
 }
 
 /**
@@ -51,10 +62,12 @@ verr VHLibOptimal::Setup(
  */
 verr VHLibOptimal::Run() {
 
-    if(vok != CheckCfgParams())
-        return verrmsg(ERR_InvalidParams, "VHLibOptimal: Invalid parameters");
+    if(!_initialized)
+        return verrmsg(ERR_InvalidParams, "VHLibOptimal: Not initialized correctly");
 
     FrameReset();
+
+    bitfieldSrc.ClearBorder(GetCMatrix());
 
     if(cfg.loglevel >= LOG_LEVEL_MAX) {
         DumpBitfield(true);
@@ -70,7 +83,7 @@ verr VHLibOptimal::Run() {
     // Scan objects task started
     if(callbackBenchmark != nullptr) callbackBenchmark(nullptr, eCmdBenchmarkScan, 0);
 
-    while(FindFigure()) {
+    while(ScanAndFindFigure()) {
         if(vok != ConvertFigure())
             return verrmsg(111, "object scanning: conversion failed");
     }
@@ -93,7 +106,7 @@ verr VHLibOptimal::CheckCfgParams() {
 /**
  * 
  */
-bool VHLibOptimal::FindFigure() {
+bool VHLibOptimal::ScanAndFindFigure() {
 
     // Clearing figure before processing
     bitfieldDst.ClearArea(cmatrix);

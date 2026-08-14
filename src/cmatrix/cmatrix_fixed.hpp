@@ -32,7 +32,6 @@ class CellsMatrix {
 
     public:
 
-        // Легковесная структура для координат вместо тяжелого std::pair
         struct Point {
             uint16_t x;
             uint16_t y;

@@ -20,72 +20,78 @@
 #include "structs/vhliboptimalstructs.hpp"
 #include "cmatrix/cmatrix.hpp"
 #include "bitfield/bitfield.hpp"
+#include "spans/spans.hpp"
 #include "structs/vhliboptimalcallbacks.hpp"
 
+namespace vhliboptimal
+{
 
-namespace vhliboptimal {
-
-
-class VHLocalSpansArray {
-
-    public:
-
-        void Init(spanword *  arr, uint32_t sidx) {
-            arrlocal = arr;
-            arrlocal += sidx;
-            startIdx = sidx;
-            curIdx = 0;
-        }
-
-        bool add(spanword word) {
-            if(startIdx + curIdx >= VHOPTIMAL_SPANS_MAX) return false;
-            arrlocal[curIdx++] = word;
-            return true;
-        }
-
-        spanword get(uint32_t pos) {
-            return arrlocal[pos];
-        }
-
-        uint32_t globalstartidx()   { return startIdx; }
-        uint32_t localspanscnt()    { return curIdx; }
-
-    private:
-        spanword * arrlocal;
-        uint32_t startIdx;
-        uint32_t curIdx;
-};
-
-
-class VHOptimalFigure {
+    class VHOptimalFigure
+    {
 
     public:
 
+        static const uint8_t                cmdStart   = 0;
+        static const uint8_t                cmdMove    = 1;
+        static const uint8_t                cmdStop    = 2;
+
+        static const uint8_t                dirLeft    = 1;
+        static const uint8_t                dirRight   = 2;
+        static const uint8_t                dirUp      = 3;
+        static const uint8_t                dirDown    = 4;
+
+        /**
+         *
+         */
         VHOptimalFigure();
 
-        void Init(uint32_t startidx) {
+        /**
+         * 
+         */
+        void Init(uint32_t startidx)
+        {
             _startIDX = startidx;
             _spansCount = 0;
         }
 
+        /**
+         *
+         */
         verr Scan(
-            BitField & bfld,
-            const CellsMatrix & cmtx,
+            BitField &bfld,
+            const CellsMatrix &cmtx,
             int skipcellsmax,
-            VHLocalSpansArray & localspans
-        );
+            VHLocalSpansArray &localspans);
 
-        void CalcPosAndSize  (const CellsMatrix & cmtx, VHLocalSpansArray & arrspans);
+        /**
+         *
+         */
+        void CalcPosAndSize(const CellsMatrix &cmtx, VHLocalSpansArray &arrspans);
 
         /**
          * @brief Количество участков фигуры
-        */
+         */
         const uint16_t SpansCount() const { return _spansCount; }
+
+        /**
+         *
+         */
         const uint32_t StartSpanIDX() const { return _startIDX; }
 
-        const VHArea & Area     () const;
-        const uint16_t Width    () const;
-        const uint16_t Height   () const;
+        /**
+         *
+         */
+        const VHArea &Area() const;
+
+        /**
+         *
+         */
+        const uint16_t Width() const;
+
+        /**
+         *
+         */
+        const uint16_t Height() const;
 
         // const strect                &       PosCells        () const;
         // const strect                        PosAbs          (const CellsMatrix & cmtx) const;
@@ -96,33 +102,28 @@ class VHOptimalFigure {
         // void                                Sort            (const CellsMatrix & cmtx);
         // const int                           FindPosLRByY    (const CellsMatrix & cmtx, uint16_t spancy, int sideFlag ) const;
         // const int                           FindPosUDByX    (const CellsMatrix & cmtx, uint16_t spancx, int sideFlag ) const;
-        void                                Border          (const CellsMatrix & cmtx, CallbackBorder callbackBorder ) const;
+
+        /**
+         * 
+         */
+        void Border(const CellsMatrix &cmtx, CallbackBorder callbackBorder) const;
 
         // void                                ContentH        (const CellsMatrix & cmtx, CallbackContent callbackContentH) const;
         // void                                ContentV        (const CellsMatrix & cmtx, CallbackContent callbackContentV) const;
 
-        // static const uint8_t                cmdStart   = 0;
-        // static const uint8_t                cmdMove    = 1;
-        // static const uint8_t                cmdStop    = 2;
 
-        // static const uint8_t                dirLeft    = 1;
-        // static const uint8_t                dirRight   = 2;
-        // static const uint8_t                dirUp      = 3;
-        // static const uint8_t                dirDown    = 4;
 
     private:
-
         // Позиция и размеры фигуры
-        VHArea      _area;
+        VHArea _area;
 
-        uint32_t    _reserved;
+        uint32_t _reserved;
 
         // Стартовый индекс отрезков фигур
-        uint16_t    _startIDX;
+        uint16_t _startIDX;
 
         // Количество отрезков
-        uint16_t    _spansCount;
-
+        uint16_t _spansCount;
 
         // // Calculate Distance
 
@@ -142,7 +143,7 @@ class VHOptimalFigure {
 
         // void SortSequental(const CellsMatrix & cmtx);
 
-} __attribute__((packed));
+    } __attribute__((packed));
 
 };
 
