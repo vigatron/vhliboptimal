@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0-draft
+ * Revision      : 0.8.0-draft-2
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figure/figure.hpp
- * Content size  : 4035
- * Date / Time   : 13-08-2026 20:05:21
- * MD5           : 430594ccd78e626960fe5f4d1294e192
+ * Content size  : 3185
+ * Date / Time   : 15-08-2026 02:03:05
+ * MD5           : 1b5b2d1f8a5105995311bd87d87b0bda
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -95,11 +95,6 @@ namespace vhliboptimal
          */
         const uint16_t Height() const;
 
-        // const strect                &       PosCells        () const;
-        // const strect                        PosAbs          (const CellsMatrix & cmtx) const;
-        // const std::vector<stspan>   &       Spans           () const;
-        // strect                              SpanRect        (int spanidx, const CellsMatrix & cmtx) const;
-        // void                                Sort            (const CellsMatrix & cmtx);
 
         /**
          * 
@@ -151,6 +146,7 @@ namespace vhliboptimal
         // Позиция и размеры фигуры
         VHArea _area;
 
+        //
         uint32_t _reserved;
 
         // Стартовый индекс отрезков фигур
@@ -159,24 +155,6 @@ namespace vhliboptimal
         // Количество отрезков
         uint16_t _spansCount;
 
-        // // Calculate Distance
-
-        // int QDistance(
-        //     const stspan & p1,
-        //     const stspan & p2,
-        //     const CellsMatrix & cmtx) const;
-
-        // // Find Closest Span
-
-        // int FindClosestSpan(
-        //     const stspan & span,
-        //     const std::vector<stspan> & arr,
-        //     const CellsMatrix & cmtx) const;
-
-        // // Optimization: Sorting parts
-
-        // void SortSequental(const CellsMatrix & cmtx);
-
     } __attribute__((packed));
 
 };
@@ -184,9 +162,9 @@ namespace vhliboptimal
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/figure/figure.hpp
- * Revision         : 0.8.0-draft
- * Content size     : 4035
- * Date / Time      : 13-08-2026 20:05:21
- * MD5              : 430594ccd78e626960fe5f4d1294e192
+ * Revision         : 0.8.0-draft-2
+ * Content size     : 3185
+ * Date / Time      : 15-08-2026 02:03:05
+ * MD5              : 1b5b2d1f8a5105995311bd87d87b0bda
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

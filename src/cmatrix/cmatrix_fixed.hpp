@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0-draft
+ * Revision      : 0.8.0-draft-2
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
- * File          : src/cmatrix/cmatrix_stm32.hpp
- * Content size  : 2173
- * Date / Time   : 13-08-2026 20:05:21
- * MD5           : d614d1cd0c78ed8fbbe04fd21bbc1829
+ * File          : src/cmatrix/cmatrix_fixed.hpp
+ * Content size  : 2054
+ * Date / Time   : 15-08-2026 02:03:05
+ * MD5           : 32ac0d9252d6b7a67652265b7486cd59
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -96,10 +96,10 @@ class CellsMatrix {
 };
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
- * File             : src/cmatrix/cmatrix_stm32.hpp
- * Revision         : 0.8.0-draft
- * Content size     : 2173
- * Date / Time      : 13-08-2026 20:05:21
- * MD5              : d614d1cd0c78ed8fbbe04fd21bbc1829
+ * File             : src/cmatrix/cmatrix_fixed.hpp
+ * Revision         : 0.8.0-draft-2
+ * Content size     : 2054
+ * Date / Time      : 15-08-2026 02:03:05
+ * MD5              : 32ac0d9252d6b7a67652265b7486cd59
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

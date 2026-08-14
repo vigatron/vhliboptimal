@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0-draft
+ * Revision      : 0.8.0-draft-2
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/mem/memorylayout.hpp
- * Content size  : 5751
- * Date / Time   : 13-08-2026 20:05:21
- * MD5           : fe57e9925fe5b16d342a07c5a95a2cbf
+ * Content size  : 6029
+ * Date / Time   : 15-08-2026 02:03:05
+ * MD5           : 83693fc42ca4f540a98a189a0588ff2f
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -209,9 +209,9 @@ namespace vhliboptimal
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/mem/memorylayout.hpp
- * Revision         : 0.8.0-draft
- * Content size     : 5751
- * Date / Time      : 13-08-2026 20:05:21
- * MD5              : fe57e9925fe5b16d342a07c5a95a2cbf
+ * Revision         : 0.8.0-draft-2
+ * Content size     : 6029
+ * Date / Time      : 15-08-2026 02:03:05
+ * MD5              : 83693fc42ca4f540a98a189a0588ff2f
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

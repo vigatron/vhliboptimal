@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0-draft
+ * Revision      : 0.8.0-draft-2
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.cpp
- * Content size  : 5854
- * Date / Time   : 13-08-2026 20:05:21
- * MD5           : 36bfd28df470c015ea230b197187603a
+ * Content size  : 6705
+ * Date / Time   : 15-08-2026 02:03:05
+ * MD5           : 0f6e254d2c1290ed25ac12bf0a864b7b
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -248,7 +248,7 @@ bool VHLibOptimal::Border(int objn) const {
     for(int i = 0; i < ObjectsCount(); i++) {
         const vhliboptimal::CellsMatrix & cmtx = GetCMatrix();
         const vhliboptimal::VHOptimalFigure & obj = Object(i);
-        arrspans.Init(memlay.GlobalSpans() + obj.StartSpanIDX(), obj.SpansCount() );
+        arrspans.Init(memlay.GlobalSpans(), obj.StartSpanIDX());
         obj.Border(cmtx, arrspans, callback_caller, callbackBorder);
     }
 
@@ -313,9 +313,9 @@ void VHLibOptimal::DumpBitfield(bool hexmode) {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.cpp
- * Revision         : 0.8.0-draft
- * Content size     : 5854
- * Date / Time      : 13-08-2026 20:05:21
- * MD5              : 36bfd28df470c015ea230b197187603a
+ * Revision         : 0.8.0-draft-2
+ * Content size     : 6705
+ * Date / Time      : 15-08-2026 02:03:05
+ * MD5              : 0f6e254d2c1290ed25ac12bf0a864b7b
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
