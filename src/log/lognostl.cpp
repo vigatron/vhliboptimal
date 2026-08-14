@@ -244,6 +244,7 @@ void log::DumpFigureSpans(
     int cellsize)
 {
     print_param("Spans Count = ", obj.SpansCount());
+    print_param("StartSpanIDX # ", obj.StartSpanIDX());
 
     for(uint32_t i=0; i < obj.SpansCount(); i++) {
         uint32_t globalidx = obj.StartSpanIDX() + i;

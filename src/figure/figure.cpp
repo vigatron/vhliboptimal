@@ -21,38 +21,43 @@
 using namespace vhliboptimal;
 
 /**
- * 
+ *
  */
-VHOptimalFigure::VHOptimalFigure() { }
+VHOptimalFigure::VHOptimalFigure() {}
 
 /**
  * @brief Сканирование битового поля и сохранение участков фигуры
- * 
+ *
  * @param bfld BitField
  * @param cmtx 2D Area config
  * @param skipcellsmax макс количество пустых ячеек подряд
  */
 verr VHOptimalFigure::Scan(
-    BitField & bfld,
-    const CellsMatrix & cmtx,
+    BitField &bfld,
+    const CellsMatrix &cmtx,
     int skipcellsmax,
-    VHLocalSpansArray & arrspans
-) {
+    VHLocalSpansArray &arrspans)
+{
 
-    bool loop   = true;
-    _startIDX   = arrspans.globalstartidx();
+    bool loop = true;
+    _startIDX = arrspans.globalstartidx();
     _spansCount = 0;
 
     // Сканируем участоки фигуры
-    while(loop) {
+    while (loop)
+    {
 
         // начальная ячейка
         int curn = bfld.FindEntryCell(cmtx);
-        if(curn == -1) { loop = false; break; }
+        if (curn == -1)
+        {
+            loop = false;
+            break;
+        }
 
-        #ifdef VHLIB_OPTIMAL_DEBUG
+#ifdef VHLIB_OPTIMAL_DEBUG
         auto [dbgx, dbgy] = cmtx.CellXY(curn);
-        #endif
+#endif
 
         // Вычисляем длинну отрезка ( + пустые ячейки, до 3х )
         int spanid = (uint32_t)curn;
@@ -60,9 +65,12 @@ verr VHOptimalFigure::Scan(
         spanword pckword = pack_span(spanid, spanww);
 
         // добавляем участок в список текущей фигуры
-        if(arrspans.add(pckword)) {
+        if (arrspans.add(pckword))
+        {
             _spansCount++;
-        } else {
+        }
+        else
+        {
             return verrmsg(1, "VHOptimalFigure::Scan() spans limit reached");
         }
 
@@ -77,22 +85,25 @@ verr VHOptimalFigure::Scan(
  * @brief Определение координат и размеров фигуры
  */
 void VHOptimalFigure::CalcPosAndSize(
-    const CellsMatrix & cmtx,
-    VHLocalSpansArray & arrspans) {
+    const CellsMatrix &cmtx,
+    const VHLocalSpansArray &arrspans)
+{
 
     // Empty
-    if(!_spansCount) return;
+    if (!_spansCount)
+        return;
 
     // Initial values from first span
     const spanword spanw = arrspans.get(0);
     const int spanid = get_span_id(spanw);
     const int spanln = get_span_len(spanw);
-    auto [cxi1,cyi1] = cmtx.CellXY(spanid);
-    auto [cxi2,cyi2] = cmtx.CellXY(spanid + spanln - 1);
+    auto [cxi1, cyi1] = cmtx.CellXY(spanid);
+    auto [cxi2, cyi2] = cmtx.CellXY(spanid + spanln - 1);
 
     int cxl = cxi1, cxr = cxi2, cyt = cyi1, cyd = cyi2;
 
-    for(uint32_t i = 1; i < _spansCount; i++) {
+    for (uint32_t i = 1; i < _spansCount; i++)
+    {
 
         const spanword spanw = arrspans.get(i);
         const int spanid = get_span_id(spanw);
@@ -101,38 +112,51 @@ void VHOptimalFigure::CalcPosAndSize(
         auto [cx1, cy1] = cmtx.CellXY(spanid);
         auto [cx2, cy2] = cmtx.CellXY(spanid + spanln - 1);
 
-        if(cxl > cx1) { cxl = cx1; }
-        if(cyt > cy1) { cyt = cy1; }
-        if(cxr < cx2) { cxr = cx2; }
-        if(cyd < cy2) { cyd = cy2; }
+        if (cxl > cx1)
+        {
+            cxl = cx1;
+        }
+        if (cyt > cy1)
+        {
+            cyt = cy1;
+        }
+        if (cxr < cx2)
+        {
+            cxr = cx2;
+        }
+        if (cyd < cy2)
+        {
+            cyd = cy2;
+        }
     }
 
     // Define pos & size
     _area.cellid = cmtx.CellN(cxl, cyt);
-    _area.cntx   = cxr - cxl + 1;
-    _area.cnty   = cyd - cyt + 1;
-
+    _area.cntx = cxr - cxl + 1;
+    _area.cnty = cyd - cyt + 1;
 }
-
 
 /**
  *
  */
-const VHArea & VHOptimalFigure::Area() const {
+const VHArea &VHOptimalFigure::Area() const
+{
     return _area;
 }
 
 /**
- * 
+ *
  */
-const uint16_t VHOptimalFigure::Width () const {
+const uint16_t VHOptimalFigure::Width() const
+{
     return _area.cntx;
 }
 
 /**
- * 
+ *
  */
-const uint16_t VHOptimalFigure::Height() const {
+const uint16_t VHOptimalFigure::Height() const
+{
     return _area.cnty;
 }
 
@@ -140,14 +164,14 @@ const uint16_t VHOptimalFigure::Height() const {
 
 /**
  * @brief Размер фигуры в ячейках
-*/
+ */
 // const strect & VHOptimalFigure::PosCells() const {
 //     return objrect;
 // }
 
 /**
  * @brief Размер фигуры в пикселях
-*/
+ */
 // const strect VHOptimalFigure::PosAbs(const CellsMatrix & cmtx) const {
 //     strect r;
 //     int cs = cmtx.CellSize();
@@ -158,14 +182,12 @@ const uint16_t VHOptimalFigure::Height() const {
 //     return r;
 // }
 
-
 /**
  * @brief Все участки фигуры
  */
 // const std::vector<stspan> & VHOptimalFigure::Spans() const {
 //     return arrspans;
 // }
-
 
 /**
  * @brief Участок # spann фигуры в пикселях
@@ -194,20 +216,19 @@ const uint16_t VHOptimalFigure::Height() const {
  */
 // void VHOptimalFigure::Sort(const CellsMatrix & cmtx) {
 
-    // // Cортировка соседей последовательно
-    // if(cfg.loglevel >= LOG_LEVEL_EXT) {
-    //     std::string msg = "Figure #" + std::to_string(objid) + ", Sorting Sequental";
-    //     VHLibOptimalLogger::lineout(msg);
-    // }
+// // Cортировка соседей последовательно
+// if(cfg.loglevel >= LOG_LEVEL_EXT) {
+//     std::string msg = "Figure #" + std::to_string(objid) + ", Sorting Sequental";
+//     VHLibOptimalLogger::lineout(msg);
+// }
 
 //     SortSequental(cmtx);
 
 // }
 
-
 /**
  * @brief Квадрат расстояния между прямоугольниками ( по начальной точке )
-*/
+ */
 // int VHOptimalFigure::QDistance(
 //     const stspan & p1,
 //     const stspan & p2,
@@ -260,7 +281,6 @@ const uint16_t VHOptimalFigure::Height() const {
 //     return n;
 // }
 
-
 /**
  * @brief Для каждой фигуры - сортировка линий
  */
@@ -288,168 +308,231 @@ const uint16_t VHOptimalFigure::Height() const {
 /**
  * @brief Найти ячейку слева либо справа ( sideFlag 0-Left/1-Right )
  */
-// const int VHOptimalFigure::FindPosLRByY(const CellsMatrix & cmtx, uint16_t spancy, int sideFlag) const {
+const int VHOptimalFigure::FindPosLRByY(
+    const CellsMatrix &cmtx,
+    const VHLocalSpansArray &arrspans,
+    uint16_t spancy,
+    int sideFlag) const
+{
 
-//     int r = -1;
-//     uint16_t cellx;
+    int ret = -1;
+    uint16_t cellx;
 
-//     for(int i=0; i < arrspans.size();i++) {
+    for (int i = 0; i < _spansCount; i++)
+    {
+        const spanword spanw = arrspans.get(i);
+        const int spanid = get_span_id(spanw);
+        const int spanln = get_span_len(spanw);
 
-//         auto [ cx, cy ] = cmtx.CellXY(arrspans[i].n);
-//         if(cy != spancy) continue;
+        // Проверяем spancy на принадлежность
+        auto [cx, cy] = cmtx.CellXY(spanid);
+        if (cy != spancy)
+            continue;
 
-//         if(r == -1) {
-//             r = i;
-//             cellx = cx;
-//         } else {
-//             bool cond = !sideFlag ? (cx < cellx) : (cx > cellx);
-//             r = cond ? i : r;
-//             cellx = cond ? cx : cellx;
-//         }
-//     }
+        if (ret == -1)
+        {
+            ret = i;
+            cellx = cx;
+        }
+        else
+        {
+            bool cond = !sideFlag ? (cx < cellx) : (cx > cellx);
+            ret = cond ? i : ret;
+            cellx = cond ? cx : cellx;
+        }
+    }
 
-//     // Not found
-//     if(r == -1) return r;
+    // Not found
+    if (ret == -1)
+        return ret;
 
-//     // Return Left or Right celln
-//     int cellLeft  = arrspans[r].n;
-//     int cellRight = arrspans[r].n + arrspans[r].l - 1;
+    // Return Left or Right celln
+    const spanword spanw = arrspans.get(ret);
+    const int spanid = get_span_id(spanw);
+    const int spanln = get_span_len(spanw);
 
-//     return !sideFlag ? cellLeft : cellRight;
-// }
+    int cellLeft = spanid;
+    int cellRight = spanid + spanln - 1;
+
+    return !sideFlag ? cellLeft : cellRight;
+}
 
 /**
  * @brief Найти ячейку сверху либо снизу ( sideFlag 0-Up / 1-Down )
- * 
+ *
  * @param spancx        Позиция ячейки по x
  * @param sideFlag      0: Поиск верхней координаты 1: Поиск нижней координаты
  */
-// const int VHOptimalFigure::FindPosUDByX(const CellsMatrix & cmtx, uint16_t spancx, int sideFlag ) const {
+const int VHOptimalFigure::FindPosUDByX(
+    const CellsMatrix &cmtx,
+    const VHLocalSpansArray &arrspans,
+    uint16_t spancx,
+    int sideFlag) const
+{
 
-//     int r = -1;
-//     uint16_t posy;
+    int r = -1;
+    uint16_t posy;
 
-//     for(int i=0; i < arrspans.size();i++) {
+    for (int i = 0; i < _spansCount; i++)
+    {
+        const spanword spanw = arrspans.get(i);
+        const int spanid = get_span_id(spanw);
+        const int spanln = get_span_len(spanw);
 
-//         // Проверяем spancx на принадлежность
-//         auto [cfx, cfy]     = cmtx.CellXY(arrspans[i].n);
-//         auto [ctx, cty]     = cmtx.CellXY(arrspans[i].n + arrspans[i].l - 1);
+        // Проверяем spancx на принадлежность
+        auto [cfx, cfy] = cmtx.CellXY(spanid);
+        auto [ctx, cty] = cmtx.CellXY(spanid + spanln - 1);
 
-//         // spancx вне диапазона участка ?
-//         bool inside = spancx >= cfx && spancx <= ctx;
-//         if(!inside) continue;
+        // spancx вне диапазона участка ?
+        bool inside = spancx >= cfx && spancx <= ctx;
+        if (!inside)
+            continue;
 
-//         // Первый обнаруженый участок ?
-//         if(r == -1) {
-//             r = i;
-//             posy = !sideFlag ? cfy : cty;
-//             continue;
-//         }
+        // Первый обнаруженый участок ?
+        if (r == -1)
+        {
+            r = i;
+            posy = !sideFlag ? cfy : cty;
+            continue;
+        }
 
-//         if(!sideFlag) {
-//             // Поиск верхней координаты ячейки
-//             if(cfy < posy) { posy = cfy; r = i; }
-//         } else {
-//             // Поиск нижней координаты ячейки
-//             if(cty > posy) { posy = cty; r = i; }
-//         }
+        if (!sideFlag)
+        {
+            // Поиск верхней координаты ячейки
+            if (cfy < posy)
+            {
+                posy = cfy;
+                r = i;
+            }
+        }
+        else
+        {
+            // Поиск нижней координаты ячейки
+            if (cty > posy)
+            {
+                posy = cty;
+                r = i;
+            }
+        }
+    }
 
-//     }
+    // Not found
+    if (r == -1)
+        return r;
 
-//     // Not found
-//     if(r == -1) return r;
-
-//     // Return Top ot Bottom celln
-//     return cmtx.CellN( spancx, posy);
-// }
-
+    // Return Top ot Bottom celln
+    return cmtx.CellN(spancx, posy);
+}
 
 /**
  * @brief Обход по контуру
  */
-void VHOptimalFigure::Border(const CellsMatrix & cmtx, CallbackBorder callbackBorder) const {
+void VHOptimalFigure::Border(
+    const CellsMatrix &cmtx,
+    const VHLocalSpansArray &arrspans,
+    void *caller,
+    CallbackBorder callbackBorder) const
+{
 
-//     // Empty, exit ...
-//     if(!arrspans.size()) return;
+    //     // Empty, exit ...
+    //     if(!arrspans.size()) return;
 
-//     if(callbackBorder == nullptr) return;
+    //     if(callbackBorder == nullptr) return;
 
-//     uint16_t rows = objrect.y2 - objrect.y1 + 1;
-//     int cs = cmtx.CellSize();
+    //     uint16_t rows = objrect.y2 - objrect.y1 + 1;
+    //     int cs = cmtx.CellSize();
 
-//     // Direction DOWN
-//     for(int i=0; i < rows; i++) {
-//         int n = FindPosLRByY(cmtx, objrect.y1 + i, 0);
-//         if(n != -1 ) {
-//             auto [cx, cy] = cmtx.CellXY(n);
-//             uint16_t pxlx = cx * cs;
-//             uint16_t pxly = cy * cs; // + (cs >> 1);
-//             uint8_t cmd = !i ? cmdStart : cmdMove;
-//             callbackBorder((void *)this, cmd, dirLeft, dirDown, cx, cy, pxlx, pxly);
-//         }
-//     }
+    //     // Direction DOWN
+    //     for(int i=0; i < rows; i++) {
+    //         int n = FindPosLRByY(cmtx, objrect.y1 + i, 0);
+    //         if(n != -1 ) {
+    //             auto [cx, cy] = cmtx.CellXY(n);
+    //             uint16_t pxlx = cx * cs;
+    //             uint16_t pxly = cy * cs; // + (cs >> 1);
+    //             uint8_t cmd = !i ? cmdStart : cmdMove;
+    //             callbackBorder((void *)this, cmd, dirLeft, dirDown, cx, cy, pxlx, pxly);
+    //         }
+    //     }
 
-//     // Direction UP
-//     for(int i=0; i < rows; i++) {
-//         int n = FindPosLRByY(cmtx, objrect.y2 - i, 1);
-//         if(n != -1) {
-//             auto [cx, cy] = cmtx.CellXY(n);
-//             uint16_t pxlx = cx * cs + cs;
-//             uint16_t pxly = (cy + 1) * cs - 1; //  + (cs >> 1);
-//             uint8_t cmd = (i == rows - 1) ? cmdStop : cmdMove;
-//             callbackBorder((void *)this, cmd, dirRight, dirUp, cx, cy, pxlx, pxly);
-//         }
-//     }
-
+    //     // Direction UP
+    //     for(int i=0; i < rows; i++) {
+    //         int n = FindPosLRByY(cmtx, objrect.y2 - i, 1);
+    //         if(n != -1) {
+    //             auto [cx, cy] = cmtx.CellXY(n);
+    //             uint16_t pxlx = cx * cs + cs;
+    //             uint16_t pxly = (cy + 1) * cs - 1; //  + (cs >> 1);
+    //             uint8_t cmd = (i == rows - 1) ? cmdStop : cmdMove;
+    //             callbackBorder((void *)this, cmd, dirRight, dirUp, cx, cy, pxlx, pxly);
+    //         }
+    //     }
 }
 
 /**
  * @brief габариты фигуры по горизонтали
  */
-// void VHOptimalFigure::ContentH(const CellsMatrix & cmtx, CallbackContent callbackContent) const {
+void VHOptimalFigure::ContentH(
+    const CellsMatrix &cmtx,
+    const VHLocalSpansArray &arrspans,
+    void *caller,
+    CallbackContent callbackContent) const
+{
 
-//     // Empty, exit ...
-//     if(!arrspans.size()) return;
+    // Empty, exit ...
+    if (!_spansCount)
+        return;
 
-//     if(callbackContent == nullptr) return;
+    // Feature not linked ?
+    if (callbackContent == nullptr)
+        return;
 
-//     uint16_t rows = objrect.y2 - objrect.y1 + 1;
-//     int cs = cmtx.CellSize();
+    auto [scx, scy] = cmtx.CellXY(_area.cellid);
 
-//     // Direction from Up to DOWN
-//     for(int i=0; i < rows; i++) {
-//         int nl = FindPosLRByY(cmtx, objrect.y1 + i, 0);
-//         if(nl != -1) {
-//             int nr = FindPosLRByY(cmtx, objrect.y1 + i, 1);
-//             callbackContent((void *)this, nl, nr == -1 ? nl:nr, 0);
-//         }
-//     }
-
-// }
+    // Direction from Up to DOWN
+    for (int i = 0; i < _area.cnty; i++)
+    {
+        int nl = FindPosLRByY(cmtx, arrspans, scy + i, 0);
+        if (nl != -1)
+        {
+            int nr = FindPosLRByY(cmtx, arrspans, scy + i, 1);
+            callbackContent(caller, nl, nr == -1 ? nl : nr, 0);
+        }
+    }
+}
 
 /**
  * @brief габариты фигуры по вертикали
  */
-// void VHOptimalFigure::ContentV(const CellsMatrix & cmtx, CallbackContent callbackContent) const {
+void VHOptimalFigure::ContentV(
+    const CellsMatrix &cmtx,
+    const VHLocalSpansArray &arrspans,
+    void *caller,
+    CallbackContent callbackContent) const
+{
 
-//     // Empty, exit ...
-//     if(!arrspans.size()) return;
+    // Empty, exit ...
+    if (!_spansCount)
+        return;
 
-//     if(callbackContent == nullptr) return;
+    // Feature not linked ?
+    if (callbackContent == nullptr)
+        return;
 
-//     uint16_t cols = objrect.x2 - objrect.x1 + 1;
-//     int cs = cmtx.CellSize();
+    auto [scx, scy] = cmtx.CellXY(_area.cellid);
 
-//     // Direction from Left to Right
-//     for(int i=0; i < cols; i++) {
-//         int nu = FindPosUDByX(cmtx, objrect.x1 + i, 0);
-//         if(nu != -1) {
-//             int nd = FindPosUDByX(cmtx, objrect.x1 + i, 1);
-//             callbackContent((void *)this, nu, nd == -1 ? nu:nd, 1);
-//         }
-//     }
-
-// }
+    // Direction from Left to Right
+    for (int i = 0; i < _area.cntx; i++)
+    {
+        int nu = FindPosUDByX(cmtx, arrspans, scx + i, 0);
+        if (nu != -1)
+        {
+            int nd = FindPosUDByX(cmtx, arrspans, scx + i, 1);
+            if(nd >= (1<<VHLIB_OPTIMAL_GRID_LX) * (1<<VHLIB_OPTIMAL_GRID_LX)) { 
+                asm("nop");
+            }
+            callbackContent(caller, nu, nd == -1 ? nu : nd, 1);
+        }
+    }
+}
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal

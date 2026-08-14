@@ -5,13 +5,15 @@
 namespace vhliboptimal
 {
 
+    /**
+     *  массив локальных участков в виде
+     *  spanlen [31 .. 21] + spanid  [20 ..  0]
+     */
+
     class VHLocalSpansArray
     {
 
     public:
-
-        // массив участков:
-        // spanlen [31 .. 21] + spanid  [20 ..  0]
 
         void Init(spanword *arr, uint32_t sidx)
         {
@@ -29,17 +31,17 @@ namespace vhliboptimal
             return true;
         }
 
-        spanword get(uint32_t pos)
+        spanword get(uint32_t pos) const
         {
             return arrlocal[pos];
         }
 
-        uint32_t globalstartidx()
+        uint32_t globalstartidx() const
         {
             return startIdx;
         }
 
-        uint32_t localspanscnt()
+        uint32_t localspanscnt() const
         {
             return curIdx;
         }

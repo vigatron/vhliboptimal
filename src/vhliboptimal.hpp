@@ -264,10 +264,6 @@ namespace vhliboptimal
         // Битовое поле выбранного фрагмента
         BitField bitfieldDst;
 
-        // Runtime array
-        VHLocalSpansArray arrRntSpans;
-       
-
         // =============== PRIVATE ROUTINES =========================
 
         verr CheckCfgParams();

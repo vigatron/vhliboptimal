@@ -52,7 +52,9 @@ constexpr uint32_t  len_mask = (1U << len_bits) - 1;        // 0x3FF
     return packed & id_mask;
 }
 
-//
+/**
+ * Координата UL, cntx, cnty
+ */
 class VHArea {
     public:
         uint32_t cellid;

@@ -66,7 +66,9 @@ namespace vhliboptimal
         /**
          *
          */
-        void CalcPosAndSize(const CellsMatrix &cmtx, VHLocalSpansArray &arrspans);
+        void CalcPosAndSize(
+            const CellsMatrix &cmtx,
+            const VHLocalSpansArray &arrspans);
 
         /**
          * @brief Количество участков фигуры
@@ -95,22 +97,54 @@ namespace vhliboptimal
 
         // const strect                &       PosCells        () const;
         // const strect                        PosAbs          (const CellsMatrix & cmtx) const;
-
         // const std::vector<stspan>   &       Spans           () const;
         // strect                              SpanRect        (int spanidx, const CellsMatrix & cmtx) const;
-
         // void                                Sort            (const CellsMatrix & cmtx);
-        // const int                           FindPosLRByY    (const CellsMatrix & cmtx, uint16_t spancy, int sideFlag ) const;
-        // const int                           FindPosUDByX    (const CellsMatrix & cmtx, uint16_t spancx, int sideFlag ) const;
 
         /**
          * 
          */
-        void Border(const CellsMatrix &cmtx, CallbackBorder callbackBorder) const;
+        const int FindPosLRByY(
+            const CellsMatrix & cmtx,
+            const VHLocalSpansArray &arrspans,
+            uint16_t spancy,
+            int sideFlag ) const;
 
-        // void                                ContentH        (const CellsMatrix & cmtx, CallbackContent callbackContentH) const;
-        // void                                ContentV        (const CellsMatrix & cmtx, CallbackContent callbackContentV) const;
+        /**
+         * 
+         */
+        const int FindPosUDByX(
+            const CellsMatrix & cmtx,
+            const VHLocalSpansArray &arrspans,
+            uint16_t spancx,
+            int sideFlag ) const;
 
+        /**
+         * 
+         */
+        void Border(
+            const CellsMatrix &cmtx,
+            const VHLocalSpansArray &arrspans,
+            void *caller,
+            CallbackBorder callbackBorder) const;
+
+        /**
+         * 
+         */
+        void ContentH(
+            const CellsMatrix & cmtx,
+            const VHLocalSpansArray &arrspans,
+            void *caller,
+            CallbackContent callbackContentH) const;
+
+        /**
+         * 
+         */
+        void ContentV(
+            const CellsMatrix & cmtx,
+            const VHLocalSpansArray &arrspans,
+            void *caller,
+            CallbackContent callbackContentV) const;
 
 
     private:
