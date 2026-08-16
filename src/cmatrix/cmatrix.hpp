@@ -93,11 +93,11 @@ namespace vhliboptimal
             _cellsw = gridw;
             _cellsh = gridh;
             _cellst = CellsX() * CellsY();
-            // cellin = CellsX() + 1;
-            // cellout = cellst - CellsX() - 2;
 #endif
 
 #ifdef VHLIB_OPTIMAL_GRID_FIXED
+            // check-only corresponded parameters
+            // because params for GRID_FIXED are const
             uint8_t levelx = bits_needed(gridw - 1);
             uint8_t levely = bits_needed(gridh - 1);
             bool flageqx = (levelx == VHLIB_OPTIMAL_GRID_LX);

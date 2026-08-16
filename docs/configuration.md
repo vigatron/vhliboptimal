@@ -6,8 +6,6 @@
 
 `VHLIB_OPTIMAL_PLATFORM_EMBEDDED`
 
-sds3#dfdfdfdfdfdfdf
-
 #### Before the startup procedure, image source parameters and settings are specified
 
 - image width   pixels      For example 800 / 1024 / 1600 / custom

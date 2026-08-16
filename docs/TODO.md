@@ -6,6 +6,6 @@
 
 ### DONE
 
-0.8.0-rc1
+0.8.0-beta
 * Additional check VHMemoryLayout::SetupMemory() for crossed memory regions
 
