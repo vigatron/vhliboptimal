@@ -21,6 +21,9 @@
 // Check is VHPlatform already included
 #ifndef VHPLATFORM_INCLUDED
 
+#include <cstdint>
+#include <cstddef>
+
 using verr = uint32_t;
 constexpr verr vok = 0;
 constexpr verr verror(uint32_t code) noexcept { return code; }
