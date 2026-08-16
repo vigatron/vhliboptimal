@@ -25,6 +25,8 @@ VHLibOptimal::VHLibOptimal() : _initialized(false) { }
 
 verr VHLibOptimal::Setup(
     const stConfig & cfgparams,
+    const uint16_t gridw,
+    const uint16_t gridh,
     const VHMemRegion &regGridSrc,
     const VHMemRegion &regGridDst,
     const VHMemRegion &regObjects,
@@ -35,17 +37,25 @@ verr VHLibOptimal::Setup(
     CallbackBenchmark funcBenchmark
 ) {
 
-    if(SetupMemory(
-        regGridSrc,
-        regGridDst,
-        regObjects,
-        regSpans))
+    if(!cmatrix.Setup(gridw, gridh))
+        return verrmsg(101, "Invalid Grid settings");
+
+    if (memlay.SetupMemory(regGridSrc, regGridDst, regObjects, regSpans))
         return verrmsg(104, "Memory Layout Initialization failed");
+        
+    // Init Src Bitfield
+    if(!bitfieldSrc.Setup(cmatrix, memlay.BitFieldSrcPtr(), memlay.BitFieldSrcSize()))
+        return verrmsg(100, "BitFieldSrc Setup issue");
+
+    // Init Dst Bitfield
+    if(!bitfieldDst.Setup(cmatrix, memlay.BitFieldDstPtr(), memlay.BitFieldDstSize()))
+        return verrmsg(100, "BitFieldDst Setup issue");
+
+    // Setup callbacks
 
     if(callbackparent == nullptr)
         return verrmsg(105, "callback: invalid parent caller ");
 
-    // Setup callbacks
     callback_caller         = callbackparent;
     callbackBorder          = funcBorder;
     callbackContent         = funcContent;

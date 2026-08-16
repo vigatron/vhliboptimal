@@ -20,7 +20,7 @@
 #include "cfg/cfg.hpp"
 
 // * GRID TYPE *
-// 
+//
 // - VHLIB_OPTIMAL_GRID_FLEX
 // - VHLIB_OPTIMAL_GRID_FIXED
 
@@ -31,7 +31,6 @@
 #endif
 
 #endif
-
 
 #ifdef VHLIB_OPTIMAL_PLATFORM_EMBEDDED
 
@@ -45,7 +44,6 @@
 #endif
 
 #endif
-
 
 // if not set default value is 8 (256 pxls)
 #ifndef VHLIB_OPTIMAL_GRID_LX
@@ -64,8 +62,6 @@ static_assert(VHLIB_OPTIMAL_GRID_LX < 13);
 // Max grid size 12 ( 4096 )
 static_assert(VHLIB_OPTIMAL_GRID_LY > 2);
 static_assert(VHLIB_OPTIMAL_GRID_LY < 13);
-
-
 
 namespace vhliboptimal
 {
@@ -90,17 +86,20 @@ namespace vhliboptimal
         /**
          *
          */
-        bool Setup(uint8_t levelx, uint8_t levely)
+        bool Setup(uint16_t gridw, uint16_t gridh)
         {
+
 #ifdef VHLIB_OPTIMAL_GRID_FLEX
-            levx = levelx;
-            levy = levely;
-            cellst = CellsX() * CellsY();
-            cellin = CellsX() + 1;
-            cellout = cellst - CellsX() - 2;
+            _cellsw = gridw;
+            _cellsh = gridh;
+            _cellst = CellsX() * CellsY();
+            // cellin = CellsX() + 1;
+            // cellout = cellst - CellsX() - 2;
 #endif
 
 #ifdef VHLIB_OPTIMAL_GRID_FIXED
+            uint8_t levelx = bits_needed(gridw - 1);
+            uint8_t levely = bits_needed(gridh - 1);
             bool flageqx = (levelx == VHLIB_OPTIMAL_GRID_LX);
             bool flageqy = (levely == VHLIB_OPTIMAL_GRID_LY);
 
@@ -115,34 +114,22 @@ namespace vhliboptimal
 
         inline constexpr size_t CellsX() const noexcept
         {
-            return 1 << levx;
+            return _cellsw;
         }
 
         inline constexpr size_t CellsY() const noexcept
         {
-            return 1 << levy;
+            return _cellsh;
         }
 
         inline constexpr size_t CellsT() const noexcept
         {
-            return cellst;
+            return _cellst;
         }
 
         inline constexpr size_t CellN(size_t x, size_t y) const noexcept
         {
             return y * CellsX() + x;
-        }
-
-        // Стартовый индекс поиска
-        inline constexpr size_t CellInnerFrom() const noexcept
-        {
-            return cellin;
-        }
-
-        //! Конечный индекс поиска
-        inline constexpr size_t CellInnerTo() const noexcept
-        {
-            return cellout;
         }
 
         //
@@ -211,36 +198,41 @@ namespace vhliboptimal
 
     private:
         // TODO: Scan Window
-        struct stScanWnd {
+        struct stScanWnd
+        {
             size_t sx;
-            size_t sy1;
+            size_t sy;
             size_t ex;
             size_t ey;
         };
 
-
 #ifdef VHLIB_OPTIMAL_GRID_FLEX
-        uint8_t levx;   // Cells per H - Horizontal cells count
-        uint8_t levy;   // Cells per V - Vertical   cells count
-        size_t cellst;  // Cells total
-        size_t cellin;  // Within Border: Start cell
-        size_t cellout; // Within Border: Last  cell
+        uint16_t _cellsw; // Cells per H - Horizontal cells count
+        uint16_t _cellsh; // Cells per V - Vertical   cells count
+        size_t _cellst;   // Cells total
 #endif
 
 #ifdef VHLIB_OPTIMAL_GRID_FIXED
 
-        // static constexpr int VHOPTIMAL_GRID_X_LEVEL = VHLIB_OPTIMAL_GRID_LX;
-        // static constexpr int VHOPTIMAL_GRID_Y_LEVEL = VHLIB_OPTIMAL_GRID_LY;
-        // static constexpr int VHOPTIMAL_GRID_S_ORDER = 1;
-
         static constexpr size_t fixedw = (1 << VHLIB_OPTIMAL_GRID_LX);
         static constexpr size_t fixedh = (1 << VHLIB_OPTIMAL_GRID_LY);
         static constexpr size_t fixedt = fixedw * fixedh;
-        
+
         // mask for fast AND
         static constexpr size_t fixedm = fixedw - 1;
 
 #endif
+
+        uint8_t bits_needed(uint16_t value)
+        {
+            uint8_t bits = 0;
+            while (value)
+            {
+                ++bits;
+                value >>= 1;
+            }
+            return bits ? bits : 1;
+        }
 
     }; // CellsMatrix
 

@@ -41,6 +41,8 @@ namespace vhliboptimal
         //
         verr Setup(
             const stConfig &cfgparams,
+            const uint16_t gridw,
+            const uint16_t gridh,
             const VHMemRegion &regGridSrc,
             const VHMemRegion &regGridDst,
             const VHMemRegion &regObjects,
@@ -273,26 +275,6 @@ namespace vhliboptimal
         verr ConvertFigure();
 
         bool IsSortEnabled();
-
-        verr SetupMemory(
-            const VHMemRegion &memGridSrc,
-            const VHMemRegion &memGridDst,
-            const VHMemRegion &memObjects,
-            const VHMemRegion &memSpans)
-        {
-
-            if (memlay.SetupMemory(memGridSrc, memGridDst, memObjects, memSpans))
-                return verror(1);
-
-            // Init Src & Dst BitFields
-            if(!bitfieldSrc.Setup(cmatrix, memlay.BitFieldSrcPtr(), memlay.BitFieldSrcSize()))
-                return verrmsg(100, "BitFieldSrc Setup issue");
-            
-            if(!bitfieldDst.Setup(cmatrix, memlay.BitFieldDstPtr(), memlay.BitFieldDstSize()))
-                return verrmsg(100, "BitFieldDst Setup issue");
-
-            return vok;
-        }
 
         // BMP Parser
         enum enBMPParserPhase
