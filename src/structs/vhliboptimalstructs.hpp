@@ -52,18 +52,14 @@ constexpr uint32_t  len_mask = (1U << len_bits) - 1;        // 0x3FF
     return packed & id_mask;
 }
 
-/**
- * Координата UL, cntx, cnty
- */
-class VHArea {
-    public:
-        uint32_t cellid;
-        uint16_t cnty;
-        uint16_t cntx;
-} __attribute__((packed));
-
-
 #pragma pack(push, 1)
+
+struct VHArea {
+    public:
+        uint32_t cellid;        // Координата UpperLeftCorner
+        uint16_t cntx;          // Длинна
+        uint16_t cnty;          // Высота
+};
 
 struct BMPFileHeader {
     uint16_t file_type;          // Сигнатура ("BM")

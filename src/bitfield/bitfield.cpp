@@ -93,7 +93,6 @@ const int BitField::FindEntryCell(const CellsMatrix & cmtx) {
 const int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
 
     int wx = cmtx.CellsX();
-    // int wy = cmtx.CellsY();
     int tryn;
 
     { tryn = n + 1;         if(GetCell(tryn)) return tryn; } // 6

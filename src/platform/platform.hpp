@@ -15,14 +15,11 @@
  * Author        : Viktor Glebov / V01G04A81
  * Copyright     : © 2006–2026 Viktor Glebov
  * ========================[ BEGIN FILE CONTENT ]====================================== */
+
 #pragma once
 
+// Check is VHPlatform already included
 #ifndef VHPLATFORM_INCLUDED
-
-#include <cstdint>
-#include <cstddef>
-
-#ifndef verror
 
 using verr = uint32_t;
 constexpr verr vok = 0;
@@ -31,20 +28,17 @@ constexpr verr verror(uint32_t code) noexcept { return code; }
 constexpr size_t F1K = 1024;
 constexpr size_t F1M = 1024 * 1024;
 
-verr verrmsg(int x, const char * msg);
+verr verrmsg(int x, const char *msg);
 
-namespace vhliboptimal {
-void asrts(bool cond, int module, const char * msg);
+namespace vhliboptimal
+{
+    void asrts(bool cond, int module, const char *msg);
 };
 
-#endif
-
-
-#ifndef VHBits
 #include "bits/vhbitsmini.hpp"
-#endif
 
 #endif
+
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/platform/platform.hpp

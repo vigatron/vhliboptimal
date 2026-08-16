@@ -1,147 +1,245 @@
-## Quick Start & Integration Example
+## Quick Start & Integration Example (v0.8.0+)
 
-### Callbacks Architecture
+### Важные изменения относительно 0.7.x
 
-The library is completely decoupled from image sources and result processing.
+- `CallbackGetSrcPxls` **убран**. Библиотека больше не ходит за пикселями сама.
+- Пользователь сам заполняет `BitFieldSrc` (или использует встроенный BMP-парсер).
+- `Setup()` теперь принимает **memory layout** + `callbackparent` + три колбэка.
+- `Run()` вызывается без параметров (битфилд уже должен быть готов).
+- Появился zero-allocation / FIXED_GRID режим через `VHMemoryLayout`.
 
-**1. CallbackGetSrcPxls — Fetch source image pixels**
+---
 
-```cpp
-/**
- * CallbackGetSrcPxls - Read a horizontal line of pixels from source image
- * 
- * @param userData   User context pointer (passed through from Setup)
- * @param dstptr     Destination buffer to fill
- * @param bytescnt   Number of bytes to read
- * @param srcid      Source image ID
- * @param srcx       Starting X coordinate
- * @param srcy       Starting Y coordinate
- */
-typedef void (*CallbackGetSrcPxls)(void *userData, uint8_t *dstptr, 
-                                   uint16_t bytescnt, uint16_t srcid, 
-                                   uint16_t srcx, uint16_t srcy);
-```
-
-**2. CallbackBorder — Process figure border (contour)**
+### Callbacks (новый стиль)
 
 ```cpp
 /**
- * CallbackBorder - Called during border tracing of a detected shape
- * 
- * @param userData   User context pointer
- * @param cmd        Command: cmdStart / cmdMove / cmdStop
- * @param dirh       Horizontal direction
- * @param dirv       Vertical direction
- * @param cellx      Cell X coordinate
- * @param celly      Cell Y coordinate
- * @param imgx       Image X coordinate (pixels)
- * @param imgy       Image Y coordinate (pixels)
+ * CallbackBorder — обход контура фигуры
  */
-typedef void (*CallbackBorder)(void *userData, uint8_t cmd, uint8_t dirh, 
-                               uint8_t dirv, uint16_t cellx, uint16_t celly, 
-                               uint16_t imgx, uint16_t imgy);
-```
+typedef void (*CallbackBorder)(
+    void*     userData,
+    uint8_t   cmd,      // cmdStart / cmdMove / cmdStop
+    uint8_t   dirh,     // dirLeft / dirRight
+    uint8_t   dirv,     // dirUp / dirDown
+    uint16_t  cellx,
+    uint16_t  celly
+);
 
-**3. CallbackContent — Process horizontal spans inside the figure**
-
-```cpp
 /**
- * CallbackContent - Called for each horizontal span inside the object
- * 
- * @param userData   User context pointer
- * @param cell1      Left / Top cell index
- * @param cell2      Right / Bottom cell index
- * @param dir        Direction 0: LR 1: UD
+ * CallbackContent — горизонтальные / вертикальные spans внутри объекта
  */
-typedef void (*CallbackContent)(void *userData, uint32_t cell1, uint32_t cell2, uint8_t dir);
+typedef void (*CallbackContent)(
+    void*     userData,
+    uint32_t  cell1,
+    uint32_t  cell2,
+    uint8_t   dir       // 0 = Horizontal (L→R), 1 = Vertical (U→D)
+);
+
+/**
+ * CallbackBenchmark — опциональные точки замеров
+ */
+typedef void (*CallbackBenchmark)(
+    void*  userData,
+    int    cmd,
+    int    param
+);
 ```
 
-### Basic Usage Example
+### Минимальный рабочий пример (dynamic allocation)
 
 ```cpp
-#include <iostream>
 #include "vhliboptimal.hpp"
+#include <vector>
+#include <cstdint>
+#include <cstdio>
 
-namespace vhliboptimal {
+using namespace vhliboptimal;
 
-// Callback to fetch pixels from your framebuffer/camera
-void MyGetPixels(void* userData, uint8_t* dstptr, uint16_t bytescnt,
-                 uint16_t srcid, uint16_t srcx, uint16_t srcy) {
-    // TODO: Fill dstptr with real image data
-    // Example (dummy):
-    // std::memset(dstptr, 0, bytescnt); // all black
+// ===================== CALLBACKS =====================
+
+void MyBorder(
+    void* userData,
+    uint8_t cmd, uint8_t dirh, uint8_t dirv,
+    uint16_t cellx, uint16_t celly)
+{
+    // Здесь можно рисовать контур, собирать точки и т.д.
+    // printf("Border cmd=%u cell(%u,%u)\n", cmd, cellx, celly);
 }
 
-// Callback for shape border tracing
-void MyBorderCallback(void* userData, uint8_t cmd, uint8_t dirh, uint8_t dirv,
-                      uint16_t cellx, uint16_t celly, uint16_t imgx, uint16_t imgy) {
-    std::cout << "Border [cmd=" << (int)cmd 
-              << ", dir=" << (int)dirh << "/" << (int)dirv 
-              << "] cell(" << cellx << "," << celly 
-              << ") px(" << imgx << "," << imgy << ")\n";
+void MyContent(
+    void* userData,
+    uint32_t cell1, uint32_t cell2, uint8_t dir)
+{
+    // Здесь можно копировать spans / заполнять маску объекта
 }
 
-// Callback for internal content spans
-void MyContentCallback(void* userData, uint32_t cell1, uint32_t cell2, uint8_t dir) {
-    std::cout << "Content span: cells " << cell1 << " to " << cell2 << "\n";
+void MyBenchmark(void* userData, int cmd, int param)
+{
+    // Опционально: замеры времени
 }
 
-} // namespace vhliboptimal
+// ===================== MAIN =====================
 
-int main() {
-
-    using namespace vhliboptimal;
-
+int main()
+{
     VHLibOptimal detector;
 
-    // 1. Configuration
-    stConfig cfg;
+    // 1. Конфигурация сканирования
+    const stConfig cfg = {
+        .spccnt         = 0,        // допустимые пустые ячейки в span
+        .min_obj_width  = 2,
+        .min_obj_height = 2,
+        .max_obj_width  = 512,
+        .max_obj_height = 512,
+        .sortMode       = 0,
+        .loglevel       = LOG_LEVEL_BASE
+    };
 
-    cfg.imageWidth      = 800;
-    cfg.imageHeight     = 600;
+    // 2. Выделяем буферы (динамический режим)
+    //    Размеры можно узнать после создания детектора
+    std::vector<uint8_t> mem_gridsrc (detector.MemBytesPerGrid());
+    std::vector<uint8_t> mem_griddst (detector.MemBytesPerGrid());
+    std::vector<uint8_t> mem_objects (detector.MemBytesPerObjs());
+    std::vector<uint8_t> mem_spans   (detector.MemBytesPerSpns());
 
-    cfg.cellsize        = 8;        // Grid cell size in pixels
-    cfg.spccnt          = 2;        // Max consecutive empty cells (noise tolerance)
-    cfg.minColorVal     = 128;      // Brightness threshold
+    const VHMemoryLayout::stMemLayout memcfg = {
+        .memSrcGrid = { .ptr = mem_gridsrc.data(), .size = mem_gridsrc.size() },
+        .memDstGrid = { .ptr = mem_griddst.data(), .size = mem_griddst.size() },
+        .memObject  = { .ptr = mem_objects.data(), .size = mem_objects.size() },
+        .memSpans   = { .ptr = mem_spans.data(),   .size = mem_spans.size()   }
+    };
 
-    cfg.min_obj_width   = 32;
-    cfg.min_obj_height  = 32;
+    // 3. Инициализация
+    verr r = detector.Setup(
+        cfg,
+        memcfg,
+        nullptr,                // userData (можно передать this / контекст)
+        MyBorder,
+        MyContent,
+        MyBenchmark
+    );
 
-    cfg.max_obj_width   = 256;
-    cfg.max_obj_height  = 256;
-
-    cfg.loglevel        = vhliboptimal::LOG_LEVEL_BASE;
-
-
-    // 2. Setup with callbacks
-    verr result = detector.Setup(cfg, 
-                                 MyGetPixels, 
-                                 MyBorderCallback, 
-                                 MyContentCallback);
-
-    if (result != vok) {
-        std::cerr << "Setup failed!" << std::endl;
-        return -1;
+    if (r != vok) {
+        printf("Setup failed\n");
+        return 1;
     }
 
-    // 3. Run processing
-    result = detector.Run(0);   // srcimgid = 0 (you can use multiple IDs)
+    // 4. Заполняем BitFieldSrc самостоятельно
+    //    (пример: из своего бинарного/threshold изображения)
+    BitField& bf = detector.BitFieldSrc();
+    const CellsMatrix& cmtx = detector.GetCMatrix();
 
-    if (result == vok) {
-        std::cout << "Scan completed successfully!\n";
-        std::cout << "Objects found: " << detector.GetObjectsCount() << "\n";
-        
-        for (size_t i = 0; i < detector.GetObjectsCount(); ++i) {
-            const VHOptimalFigure& fig = detector.GetObject(i);
-            std::cout << "  Figure " << i 
-                      << ": " << fig.SpansCount() << " spans, "
-                      << "rect (" << fig.PosCells().x1 << "," 
-                      << fig.PosCells().y1 << ") - ("
-                      << fig.PosCells().x2 << "," 
-                      << fig.PosCells().y2 << ")\n";
+    bf.ClearArea(cmtx);
+
+    // Допустим, у вас есть width/height исходной картинки
+    // и функция isFilled(x, y)
+    /*
+    uint16_t levelcs = ...; // сколько раз сдвинуть (cell size = 1 << levelcs)
+
+    for (uint16_t y = 0; y < img_h; y++) {
+        for (uint16_t x = 0; x < img_w; x++) {
+            if (isFilled(x, y)) {
+                uint16_t cx = x >> levelcs;
+                uint16_t cy = y >> levelcs;
+                bf.SetCell(cmtx, cx, cy);
+            }
         }
+    }
+    */
+
+    // 5. Запуск
+    detector.FrameReset();          // сбросить счётчики объектов/спанов
+    r = detector.Run();
+
+    if (r != vok) {
+        printf("Run failed\n");
+        return 2;
+    }
+
+    // 6. Результаты
+    printf("Objects found: %u\n", detector.ObjectsCount());
+
+    for (uint16_t i = 0; i < detector.ObjectsCount(); i++) {
+        // Можно вызвать Border / ContentH / ContentV,
+        // чтобы снова пройтись колбэками по уже найденной фигуре
+        detector.Border(i);
+        detector.ContentH(i);
+        detector.ContentV(i);
+
+        const VHOptimalFigure& fig = detector.Object(i);
+        // fig.PosCells() и т.д.
     }
 
     return 0;
+}
+```
+
+### Как заполнять BitFieldSrc (реальный паттерн из приложения)
+
+```cpp
+verr PrepareBitField(VHLibOptimal& detector, /* ваш источник пикселей */)
+{
+    const CellsMatrix& cmtx = detector.GetCMatrix();
+    BitField& bf = detector.BitFieldSrc();
+
+    bf.ClearArea(cmtx);
+
+    // Автоопределение скейлера (если cellsize не равен 1)
+    // uint16_t levelcs = CalcScaller(img_width, cmtx.CellsX());
+
+    for (uint16_t y = 0; y < img_height; y++) {
+        for (uint16_t x = 0; x < img_width; x++) {
+            if (/* пиксель "заполнен" */) {
+                uint16_t cx = x >> levelcs;
+                uint16_t cy = y >> levelcs;
+                bf.SetCell(cmtx, cx, cy);
+            }
+        }
+    }
+    return vok;
+}
+```
+
+После этого просто:
+
+```cpp
+detector.FrameReset();
+detector.Run();
+```
+
+### FIXED_GRID / zero-allocation режим (STM32 / ESP32)
+
+В CMake:
+
+```cmake
+target_compile_definitions(vhlib_optimal PUBLIC
+    VHLIB_OPTIMAL_GRID_FIXED
+    VHLIB_OPTIMAL_GRID_LX=8
+    VHLIB_OPTIMAL_GRID_LY=8
+    VHLIB_OPTIMAL_OBJS_MAX=256
+    VHLIB_OPTIMAL_SPNS_MAX=4096
+)
+```
+
+Тогда буферы можно держать статически (или в .bss), а stMemLayout заполнять указателями на эти массивы. Динамических new/vector внутри библиотеки не будет.
+
+
+### Типичный цикл обработки кадра
+
+```cpp
+// 1. Подготовить битфилд из камеры / фильтра / BMP
+PrepareBitField(...);
+
+// 2. Сбросить счётчики
+detector.FrameReset();
+
+// 3. Запустить поиск
+detector.Run();
+
+// 4. Пройтись по найденным объектам
+for (uint16_t i = 0; i < detector.ObjectsCount(); ++i) {
+    detector.Border(i);    // вызовет CallbackBorder
+    detector.ContentH(i);  // вызовет CallbackContent (горизонталь)
+    detector.ContentV(i);  // вызовет CallbackContent (вертикаль)
 }
 ```

@@ -99,7 +99,7 @@ namespace vhliboptimal
         /**
          * 
          */
-        const int FindPosLRByY(
+        int FindPosLRByY(
             const CellsMatrix & cmtx,
             const VHLocalSpansArray &arrspans,
             uint16_t spancy,
@@ -108,7 +108,7 @@ namespace vhliboptimal
         /**
          * 
          */
-        const int FindPosUDByX(
+        int FindPosUDByX(
             const CellsMatrix & cmtx,
             const VHLocalSpansArray &arrspans,
             uint16_t spancx,

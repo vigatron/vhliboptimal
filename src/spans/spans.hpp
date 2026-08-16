@@ -17,6 +17,7 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
+#include "cfg/cfg.hpp"
 #include "structs/vhliboptimalstructs.hpp"
 
 namespace vhliboptimal
@@ -42,7 +43,7 @@ namespace vhliboptimal
 
         bool add(spanword word)
         {
-            if (startIdx + curIdx >= VHOPTIMAL_SPANS_MAX)
+            if (startIdx + curIdx >= VHLIB_OPTIMAL_SPNS_MAX)
                 return false;
             arrlocal[curIdx++] = word;
             return true;

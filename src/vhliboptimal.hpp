@@ -18,13 +18,10 @@
 #pragma once
 
 #include "cfg/cfg.hpp"
-
 #include "structs/vhliboptimalstructs.hpp"
 #include "structs/vhliboptimalcallbacks.hpp"
-
 #include "bitfield/bitfield.hpp"
 #include "figure/figure.hpp"
-
 #include "mem/memorylayout.hpp"
 
 namespace vhliboptimal
@@ -44,7 +41,10 @@ namespace vhliboptimal
         //
         verr Setup(
             const stConfig &cfgparams,
-            const VHMemoryLayout::stMemLayout &sMemlayout,
+            const VHMemRegion &regGridSrc,
+            const VHMemRegion &regGridDst,
+            const VHMemRegion &regObjects,
+            const VHMemRegion &regSpans,
             void *callbackparent,
             CallbackBorder funcBorder,
             CallbackContent funcContent,
@@ -99,7 +99,7 @@ namespace vhliboptimal
          */
         bool AddObject()
         {
-            if (_objCount >= VHOPTIMAL_OBJECTS_MAX)
+            if (_objCount >= VHLIB_OPTIMAL_OBJS_MAX)
                 return false;
             _objCount++;
             return true;
@@ -133,7 +133,7 @@ namespace vhliboptimal
          */
         const spanword GetGlobalSpan(uint32_t pos) const
         {
-            if (pos >= VHOPTIMAL_SPANS_MAX)
+            if (pos >= VHLIB_OPTIMAL_SPNS_MAX)
                 return 0;
             return memlay.Spn(pos);
         }
@@ -157,7 +157,7 @@ namespace vhliboptimal
 
         size_t MemBytesPerGrid() { return CFG_MEMSIZE_BYTES_PerGrid; }
         size_t MemBytesPerObjs() { return CFG_MEMSIZE_BYTES_Objects; }
-        size_t MemBytesPerSpns() { return CFG_MEMSIZE_BYTES_Spans;   }
+        size_t MemBytesPerSpns() { return CFG_MEMSIZE_BYTES_Spans; }
 
         /**
          *
@@ -268,23 +268,28 @@ namespace vhliboptimal
 
         verr CheckCfgParams();
 
-        verr InitialScanImage(uint16_t srcimgid);
-
         bool ScanAndFindFigure();
 
         verr ConvertFigure();
 
         bool IsSortEnabled();
 
-        verr SetupMemory(const VHMemoryLayout::stMemLayout &sMemlayout)
+        verr SetupMemory(
+            const VHMemRegion &memGridSrc,
+            const VHMemRegion &memGridDst,
+            const VHMemRegion &memObjects,
+            const VHMemRegion &memSpans)
         {
 
-            if (memlay.SetupMemory(sMemlayout))
+            if (memlay.SetupMemory(memGridSrc, memGridDst, memObjects, memSpans))
                 return verror(1);
 
             // Init Src & Dst BitFields
-            bitfieldSrc.Setup(cmatrix, memlay.BitFieldSrcPtr(), memlay.BitFieldSrcSize());
-            bitfieldDst.Setup(cmatrix, memlay.BitFieldDstPtr(), memlay.BitFieldDstSize());
+            if(!bitfieldSrc.Setup(cmatrix, memlay.BitFieldSrcPtr(), memlay.BitFieldSrcSize()))
+                return verrmsg(100, "BitFieldSrc Setup issue");
+            
+            if(!bitfieldDst.Setup(cmatrix, memlay.BitFieldDstPtr(), memlay.BitFieldDstSize()))
+                return verrmsg(100, "BitFieldDst Setup issue");
 
             return vok;
         }
@@ -436,7 +441,6 @@ namespace vhliboptimal
          */
         bool validate_bmp()
         {
-
             BMPInfoHeader &hdr = sBMPInfoHDR;
             bool b1 = hdr.planes == 1;
             bool b2 = hdr.bit_count == 1;
@@ -444,6 +448,12 @@ namespace vhliboptimal
             bool b4 = hdr.colors_used == 2;
             bool b = b1 && b2 && b3 && b4;
             if (!b)
+                return false;
+
+            if (!(hdr.width >= 8 && hdr.width <= 4096))
+                return false;
+
+            if (!(hdr.height >= 8 && hdr.height <= 4096))
                 return false;
 
             uint8_t align = sizeof(uint32_t);
@@ -455,7 +465,6 @@ namespace vhliboptimal
                 bmpBytesPerLine += align;
             }
 
-            // TODO: Check limits X-Y
             return true;
         }
 

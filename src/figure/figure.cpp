@@ -163,7 +163,7 @@ const uint16_t VHOptimalFigure::Height() const
 /**
  * @brief Найти ячейку слева либо справа ( sideFlag 0-Left/1-Right )
  */
-const int VHOptimalFigure::FindPosLRByY(
+int VHOptimalFigure::FindPosLRByY(
     const CellsMatrix &cmtx,
     const VHLocalSpansArray &arrspans,
     uint16_t spancy,
@@ -218,7 +218,7 @@ const int VHOptimalFigure::FindPosLRByY(
  * @param spancx        Позиция ячейки по x
  * @param sideFlag      0: Поиск верхней координаты 1: Поиск нижней координаты
  */
-const int VHOptimalFigure::FindPosUDByX(
+int VHOptimalFigure::FindPosUDByX(
     const CellsMatrix &cmtx,
     const VHLocalSpansArray &arrspans,
     uint16_t spancx,

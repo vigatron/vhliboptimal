@@ -18,46 +18,77 @@
 #pragma once
 
 #include <cstdint>
+#include <cstddef>
+#include <climits>
 
-// VHPlatform partially implemented for zero dependencies case
-#ifndef VHPLATFORM_INCLUDED
-#include "platform/platform.hpp"
+// === Platform selection ===
+
+// VHLIB_OPTIMAL_PLATFORM_PC
+// * Default for PC
+// * Default for SBC
+
+// VHLIB_OPTIMAL_PLATFORM_EMBEDDED
+// Optimized for speed:
+// * STM32F4/F7/H7
+// * ESP32
+
+// Default is VHLIB_OPTIMAL_PLATFORM_PC if not specified
+#ifndef VHLIB_OPTIMAL_PLATFORM_PC
+
+#ifndef VHLIB_OPTIMAL_PLATFORM_EMBEDDED
+#define VHLIB_OPTIMAL_PLATFORM_PC
+#else
+#define VHLIB_OPTIMAL_PLATFORM_EMBEDDED
 #endif
 
-#if defined(VHLIB_OPTIMAL_EMBEDDED)
+#endif
 
-    #define VHLIB_OPTIMAL_MODE_32
-    // #define VHLIB_OPTIMAL_MODE_64
+
+#if defined(VHLIB_OPTIMAL_PLATFORM_EMBEDDED)
+
+#define VHLIB_OPTIMAL_MODE_32
+// #define VHLIB_OPTIMAL_MODE_64
 
 #else
 
-    #if !defined(__x86_64__)
-    #define VHLIB_OPTIMAL_MODE_32
-    #else
-    #define VHLIB_OPTIMAL_MODE_64
-    #endif
+#if !defined(__x86_64__)
+#define VHLIB_OPTIMAL_MODE_32
+#else
+#define VHLIB_OPTIMAL_MODE_64
+#endif
 
+#endif
+
+
+// Default config
+#ifndef VHLIB_OPTIMAL_OBJS_MAX
+#define VHLIB_OPTIMAL_OBJS_MAX 256
+#endif
+
+#ifndef VHLIB_OPTIMAL_SPNS_MAX
+#define VHLIB_OPTIMAL_SPNS_MAX 4096
+#endif
+
+
+// Partial implementation of VHPlatform 
+// (for zero dependencies case)
+
+#ifndef VHPLATFORM_INCLUDED
+#include "platform/platform.hpp"
 #endif
 
 
 
 namespace vhliboptimal {
 
-// Константы устанавливается при сборке
-
-static constexpr int VHOPTIMAL_GRID_X_LEVEL = VHLIB_OPTIMAL_GRID_LX;
-static constexpr int VHOPTIMAL_GRID_Y_LEVEL = VHLIB_OPTIMAL_GRID_LY;
-static constexpr int VHOPTIMAL_GRID_S_ORDER = 1;
-
-static constexpr int VHOPTIMAL_OBJECTS_MAX  = VHLIB_OPTIMAL_OBJS_MAX;
-static constexpr int VHOPTIMAL_SPANS_MAX    = VHLIB_OPTIMAL_SPNS_MAX;
 
 using spanword  = uint32_t;
 
 //
 typedef struct _stConfig {
 
-    // Максимально допустимое количество пустых ячеек подряд в линии
+    // Максимально допустимое количество
+    // пустых ячеек подряд в линии
     uint16_t    spccnt;
 
     // Минимальный размер объекта в пикселях

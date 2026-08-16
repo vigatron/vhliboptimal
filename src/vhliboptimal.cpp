@@ -25,14 +25,21 @@ VHLibOptimal::VHLibOptimal() : _initialized(false) { }
 
 verr VHLibOptimal::Setup(
     const stConfig & cfgparams,
-    const VHMemoryLayout::stMemLayout & sMemlayout,
+    const VHMemRegion &regGridSrc,
+    const VHMemRegion &regGridDst,
+    const VHMemRegion &regObjects,
+    const VHMemRegion &regSpans,
     void * callbackparent,
     CallbackBorder funcBorder,
     CallbackContent funcContent,
     CallbackBenchmark funcBenchmark
 ) {
 
-    if(SetupMemory(sMemlayout))
+    if(SetupMemory(
+        regGridSrc,
+        regGridDst,
+        regObjects,
+        regSpans))
         return verrmsg(104, "Memory Layout Initialization failed");
 
     if(callbackparent == nullptr)

@@ -17,8 +17,8 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
-#include "cmatrix/cmatrix.hpp"
 #include "cfg/cfg.hpp"
+#include "cmatrix/cmatrix.hpp"
 
 namespace vhliboptimal {
 

@@ -10,25 +10,16 @@ configure_file(
 
 add_library(vhlib_optimal STATIC)
 
-file(GLOB_RECURSE srcfiles
-    src/*
-    src/cfg/*
-)
-
 target_sources(vhlib_optimal PRIVATE
-    ${srcfiles}
     src/bitfield/bitfield.cpp
     src/figure/figure.cpp
     src/log/lognostl.cpp
     src/log/logstl.cpp
     src/sys/sys.cpp
+    src/vhliboptimal.cpp
 )
 
 target_include_directories(vhlib_optimal PUBLIC
     src
     "${CMAKE_CURRENT_BINARY_DIR}/generated"
-)
-
-target_compile_definitions(vhlib_platform PUBLIC 
-    VHLIB_PLATFORM_STL=0
 )
