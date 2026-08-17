@@ -177,7 +177,7 @@ int VHOptimalFigure::FindPosLRByY(
     {
         const spanword spanw = arrspans.get(i);
         const int spanid = get_span_id(spanw);
-        const int spanln = get_span_len(spanw);
+        // const int spanln = get_span_len(spanw);
 
         // Проверяем spancy на принадлежность
         auto [cx, cy] = cmtx.CellXY(spanid);

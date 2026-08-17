@@ -39,6 +39,9 @@ namespace vhliboptimal
         explicit VHLibOptimal();
 
         //
+        bool isInitialized() { return _initialized; }
+
+        //
         verr Setup(
             const stConfig &cfgparams,
             const uint16_t gridw,
