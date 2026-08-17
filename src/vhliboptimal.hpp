@@ -17,12 +17,22 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
+#include "version_vhliboptimal.h"
 #include "cfg/cfg.hpp"
 #include "structs/vhliboptimalstructs.hpp"
 #include "structs/vhliboptimalcallbacks.hpp"
 #include "bitfield/bitfield.hpp"
 #include "figure/figure.hpp"
 #include "mem/memorylayout.hpp"
+
+#define VHMACRO_STR2(x) #x
+#define VHMACRO_STR(x) VHMACRO_STR2(x)
+
+#define VHLIB_OPTIMAL_VERSION_STRING \
+    "v" VHMACRO_STR(VHLIB_OPTIMAL_VERSION_MAJOR) "." \
+        VHMACRO_STR(VHLIB_OPTIMAL_VERSION_MINOR) "." \
+        VHMACRO_STR(VHLIB_OPTIMAL_VERSION_PATCH)
+
 
 namespace vhliboptimal
 {
@@ -37,6 +47,15 @@ namespace vhliboptimal
 
     public:
         explicit VHLibOptimal();
+
+        static const char *VersionString()
+        {
+            return VHLIB_OPTIMAL_VERSION_STRING
+            #ifdef VHLIB_OPTIMAL_PREFIX
+            "-" VHLIB_OPTIMAL_PREFIX
+            #endif
+            ;
+        }
 
         //
         bool isInitialized() { return _initialized; }
