@@ -25,14 +25,6 @@
 #include "figure/figure.hpp"
 #include "mem/memorylayout.hpp"
 
-#define VHMACRO_STR2(x) #x
-#define VHMACRO_STR(x) VHMACRO_STR2(x)
-
-#define VHLIB_OPTIMAL_VERSION_STRING \
-    "v" VHMACRO_STR(VHLIB_OPTIMAL_VERSION_MAJOR) "." \
-        VHMACRO_STR(VHLIB_OPTIMAL_VERSION_MINOR) "." \
-        VHMACRO_STR(VHLIB_OPTIMAL_VERSION_PATCH)
-
 
 namespace vhliboptimal
 {
