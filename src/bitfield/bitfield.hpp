@@ -35,25 +35,38 @@ namespace vhliboptimal
         VHLIB_OPTIMAL_FASTFUNC
         void ClearBorder(const CellsMatrix &cmtx) noexcept;
 
-        VH_ALWAYS_INLINE void ClrCell(int celln) { VHBits::BitClr(arrPtr, celln); }
+        VH_ALWAYS_INLINE
+        void ClrCell(int celln) noexcept
+        {
+            VHBits::BitClr(arrPtr, celln);
+        }
 
-        VH_ALWAYS_INLINE void SetCell(int celln) { VHBits::BitSet(arrPtr, celln); }
+        VH_ALWAYS_INLINE
+        void SetCell(int celln) noexcept
+        {
+            VHBits::BitSet(arrPtr, celln);
+        }
 
-        VH_ALWAYS_INLINE bool GetCell(int celln) const { return VHBits::BitVal(arrPtr, celln); };
+        VH_ALWAYS_INLINE
+        bool GetCell(int celln) const noexcept
+        {
+            return VHBits::BitVal(arrPtr, celln);
+        };
 
-        VH_ALWAYS_INLINE void ClrCell(const CellsMatrix &cmtx, int cellx, int celly)
+        VH_ALWAYS_INLINE
+        void ClrCell(const CellsMatrix &cmtx, int cellx, int celly) noexcept
         {
             int n = cmtx.CellN(cellx, celly);
             VHBits::BitClr(arrPtr, n);
         }
 
-        VH_ALWAYS_INLINE void SetCell(const CellsMatrix &cmtx, int cellx, int celly)
+        VH_ALWAYS_INLINE void SetCell(const CellsMatrix &cmtx, int cellx, int celly) noexcept
         {
             int n = cmtx.CellN(cellx, celly);
             VHBits::BitSet(arrPtr, n);
         }
 
-        VH_ALWAYS_INLINE bool GetCell(const CellsMatrix &cmtx, int cellx, int celly) const
+        VH_ALWAYS_INLINE bool GetCell(const CellsMatrix &cmtx, int cellx, int celly) const noexcept
         {
             int n = cmtx.CellN(cellx, celly);
             return GetCell(n);
