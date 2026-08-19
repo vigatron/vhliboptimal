@@ -53,18 +53,26 @@
 
 #ifdef VHPLATFORM_PC
 #define VHLIB_OPTIMAL_PLATFORM_PC
+
+// GRID FAST IDX MODE
+#if !defined(__x86_64__)
+#define VHLIB_OPTIMAL_MODE_32
+#else
 #define VHLIB_OPTIMAL_MODE_64
 #endif
 
-#ifdef VHPLATFORM_OPI
-#define VHLIB_OPTIMAL_PLATFORM_OPI
-#define VHLIB_OPTIMAL_MODE_32
+
 #endif
 
-#ifdef VHPLATFORM_RPI
-#define VHLIB_OPTIMAL_PLATFORM_RPI
-#define VHLIB_OPTIMAL_MODE_32
-#endif
+// #ifdef VHPLATFORM_OPI
+// #define VHLIB_OPTIMAL_PLATFORM_OPI
+// #define VHLIB_OPTIMAL_MODE_32
+// #endif
+
+// #ifdef VHPLATFORM_RPI
+// #define VHLIB_OPTIMAL_PLATFORM_RPI
+// #define VHLIB_OPTIMAL_MODE_32
+// #endif
 
 #ifdef VHPLATFORM_STM32
 #define VHLIB_OPTIMAL_PLATFORM_EMBEDDED
@@ -76,12 +84,6 @@
 #define VHLIB_OPTIMAL_MODE_32
 #endif
 
-// Default is VHLIB_OPTIMAL_PLATFORM_PC if not specified
-
-// GRID FAST IDX MODE
-// #if defined(__x86_64__)
-// #else
-// #endif
 
 #include "cfg_cache.hpp"
 
