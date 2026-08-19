@@ -2,13 +2,13 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0-beta
+ * Revision      : 0.8.0
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/structs/vhliboptimalstructs.hpp
  * Content size  : 2456
- * Date / Time   : 16-08-2026 07:08:10
+ * Date / Time   : 19-08-2026 21:18:15
  * MD5           : fd2c5d9a7bc5c75bed73a90156eb0d49
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -97,9 +97,9 @@ struct PixelRGB {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/structs/vhliboptimalstructs.hpp
- * Revision         : 0.8.0-beta
+ * Revision         : 0.8.0
  * Content size     : 2456
- * Date / Time      : 16-08-2026 07:08:10
+ * Date / Time      : 19-08-2026 21:18:15
  * MD5              : fd2c5d9a7bc5c75bed73a90156eb0d49
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

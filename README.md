@@ -48,7 +48,7 @@ It uses an optimized grid-based approach: the image is divided into a configurab
 
 - **Language**: C++17 
 - **Target Platforms**: 
-  - **Desktop/OS**: Linux (Primary), Windows, macOS.
+  - **Desktop/OS**: Linux (Primary) / Windows & macOS (Cross-platform with minimal adjustments)
   - **Modern SBCs**:
     * Raspberry Pi (3/4/5)
     * Orange Pi (Zero/3/5)
