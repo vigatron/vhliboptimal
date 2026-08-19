@@ -40,7 +40,7 @@
 // * ESP32
 
 // === Linux Platform autodetect ===
-#if defined(__gnu_linux__)
+#if defined(__gnu_linux__) && !defined(VHPLATFORM_PC)
 #define VHPLATFORM_PC
 #endif
 
