@@ -1,33 +1,25 @@
 cmake_minimum_required(VERSION 3.16)
-project(vhliboptimal VERSION 0.7.5 LANGUAGES CXX)
+project(vhliboptimal VERSION 0.8.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
+
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/version.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/generated/version_vhliboptimal.h"
 )
 
-file(GLOB_RECURSE srcfiles
-    src/*
-    src/cmatrix/*
-    src/bitfield/*
-    src/figures/*
-    src/log/*
-)
+add_library(vhlib_optimal STATIC)
 
-add_library(vhlib_optimal STATIC ${srcfiles})
+target_sources(vhlib_optimal PRIVATE
+    src/bitfield/bitfield.cpp
+    src/figure/figure.cpp
+    src/log/lognostl.cpp
+    src/log/logstl.cpp
+    src/sys/sys.cpp
+    src/vhliboptimal.cpp
+)
 
 target_include_directories(vhlib_optimal PUBLIC
     src
-    src/cmatrix
-    src/bitfield
-    src/figures
-    src/log
     "${CMAKE_CURRENT_BINARY_DIR}/generated"
-)
-
-target_link_libraries(vhlib_optimal PUBLIC vhlib_platform)
-
-target_compile_definitions(vhlib_platform PUBLIC 
-#    VHLIB_OPTIMAL_FASTIDX=3
 )

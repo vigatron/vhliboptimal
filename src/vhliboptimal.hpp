@@ -1,14 +1,15 @@
 /* ======================================================================================
  * Library       : vhliboptimal
- * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.5-beta
+ * Description   : Lightweight C++17 library for fast object detection,
+ *                 counting, and bounding box extraction.
+ * Revision      : 0.8.0
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.hpp
- * Content size  : 2969
- * Date / Time   : 27-07-2026 18:49:23
- * MD5           : 89d0af5cc20dd740c3dd4998b2c1764a
+ * Content size  : 11295
+ * Date / Time   : 20-08-2026 05:00:12
+ * MD5           : 49faa6321ac81a89c3bf22340ed7c090
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -16,111 +17,483 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
-#include "vhplatform.hpp"
-#include "vhliboptimalstructs.hpp"
-#include "bitfield.hpp"
-#include "vhliboptimalfig.hpp"
+#include "version_vhliboptimal.h"
+#include "cfg/cfg.hpp"
+#include "structs/vhliboptimalstructs.hpp"
+#include "structs/vhliboptimalcallbacks.hpp"
+#include "bitfield/bitfield.hpp"
+#include "figure/figure.hpp"
+#include "mem/memorylayout.hpp"
 
 
-namespace vhliboptimal {
+namespace vhliboptimal
+{
 
+    constexpr int LOG_LEVEL_NONE = 0;
+    constexpr int LOG_LEVEL_BASE = 1;
+    constexpr int LOG_LEVEL_EXT = 2;
+    constexpr int LOG_LEVEL_MAX = 3;
 
-constexpr int LOG_LEVEL_NONE  = 0;
-constexpr int LOG_LEVEL_BASE  = 1;
-constexpr int LOG_LEVEL_EXT   = 2;
-constexpr int LOG_LEVEL_MAX   = 3;
-
-
-class VHLibOptimal {
+    class VHLibOptimal
+    {
 
     public:
-
         explicit VHLibOptimal();
 
+        static const char *VersionString()
+        {
+            return VHLIB_OPTIMAL_VERSION_STRING
+            #ifdef VHLIB_OPTIMAL_PREFIX
+            "-" VHLIB_OPTIMAL_PREFIX
+            #endif
+            ;
+        }
+
+        //
+        bool isInitialized() { return _initialized; }
+
+        //
         verr Setup(
-            const stConfig &            cfgparams,
-            CallbackGetSrcPxls          funcGetPixels,
-            CallbackBorder              funcBorder,
-            CallbackContent             funcContent
-        );
+            const stConfig &cfgparams,
+            const uint16_t gridw,
+            const uint16_t gridh,
+            const VHMemRegion &regGridSrc,
+            const VHMemRegion &regGridDst,
+            const VHMemRegion &regObjects,
+            const VHMemRegion &regSpans,
+            void *callbackparent,
+            CallbackBorder funcBorder,
+            CallbackContent funcContent,
+            CallbackBenchmark funcBenchmark);
 
-        verr Run(uint16_t srcimgid);
+        /**
+         * bitfieldSrc should be already filled !
+         */
+        verr Run();
 
-        const size_t                    GetObjectsCount     () const;
+        /**
+         *
+         */
+        void FrameReset()
+        {
+            _objCount = 0;
+            _spnCount = 0;
+        }
 
-        const VHOptimalFigure &         GetObject           (int idx) const;
+        /* ************** GLOBAL OBJECTS RELATED **************** */
 
-        const size_t                    GetSpansTotal       () const;
+        /**
+         * @brief Количество фигур
+         *
+         * @return общее количество
+         */
+        uint16_t ObjectsCount() const noexcept
+        {
+            return _objCount;
+        }
 
-        const CellsMatrix &             GetCMatrix          () const;
+        /**
+         * @brief Объект фигуры по индексу
+         */
+        VHOptimalFigure &Object(uint16_t pos)
+        {
+            asrts(pos < ObjectsCount(), 0, "VHLibOptimal::GetObject out of range");
+            return memlay.Obj(pos);
+        }
 
-        bool                            Border              (int objn) const;
-        bool                            ContentH            (int objn) const;
-        bool                            ContentV            (int objn) const;
+        /**
+         * Массив фигур
+         */
+        const VHOptimalFigure &Object(uint16_t pos) const
+        {
+            asrts(pos < ObjectsCount(), 0, "VHLibOptimal::GetObject out of range");
+            return memlay.Obj(pos);
+        }
 
-        void                            SetSortMode         (uint8_t mode);
+        /**
+         *
+         */
+        bool AddObject()
+        {
+            if (_objCount >= VHLIB_OPTIMAL_OBJS_MAX)
+                return false;
+            _objCount++;
+            return true;
+        }
+
+        /**
+         *
+         */
+        bool RemoveObject()
+        {
+            if (!_objCount)
+                return false;
+            _objCount--;
+            return true;
+        }
+
+        /* *************** GLOBAL SPANS RELATED ***************** */
+
+        /**
+         *
+         */
+        const uint32_t GlobalSpansCount() const noexcept { return _spnCount; }
+
+        /**
+         * Calculating thru objects
+         */
+        const size_t CalcSpansTotal() const;
+
+        /**
+         *
+         */
+        const spanword GetGlobalSpan(uint32_t pos) const
+        {
+            if (pos >= VHLIB_OPTIMAL_SPNS_MAX)
+                return 0;
+            return memlay.Spn(pos);
+        }
+
+        const CellsMatrix &GetCMatrix() const;
+
+        bool Border(int objn) const;
+
+        bool ContentH(int objn) const;
+
+        bool ContentV(int objn) const;
+
+        BitField &BitFieldSrc() noexcept { return bitfieldSrc; }
+
+        /**
+         * Forwarding Memory layout interface
+         */
+        VHMemoryLayout &MemoryLayout() noexcept { return memlay; }
+
+        /* *************** BITFIELD / BMP RELATED ***************** */
+
+        size_t MemBytesPerGrid() { return CFG_MEMSIZE_BYTES_PerGrid; }
+        size_t MemBytesPerObjs() { return CFG_MEMSIZE_BYTES_Objects; }
+        size_t MemBytesPerSpns() { return CFG_MEMSIZE_BYTES_Spans; }
+
+        /**
+         *
+         */
+        void BMPParserReset()
+        {
+            bmpParseStage = 0;
+            bmpParsePos = 0;
+            bmpLineY = 0;
+        }
+
+        /**
+         *
+         */
+        verr BMPParserByte(uint8_t v, uint8_t lvscale)
+        {
+
+            verr r;
+
+            switch (bmpParseStage)
+            {
+
+            case eBMPParserFileHeader:
+                r = BMPParserFileHeader(v);
+                break;
+
+            case eBMPParserInfoHeader:
+                r = BMPParserInfoHeader(v);
+                break;
+
+            case eBMPParserPalette:
+                r = BMPParserPalette(v);
+                break;
+
+            case eBMPParserData:
+                r = BMPParserData(v, lvscale);
+                break;
+
+            default:
+            {
+                r = verror(101);
+            }
+            break;
+            }
+
+            if (r)
+            {
+                BMPParserReset();
+            }
+
+            return r;
+        }
+
+        /**
+         *
+         */
+        void DumpBitfield(bool hexmode = false);
 
     private:
+        // Error codes
+        static constexpr int ERR_InvalidParams = 1;
+        static constexpr int ERR_PictureInitialization = 2;
 
-        const int                       ERR_InvalidParams = 1;
-        const int                       ERR_PictureInitialization = 2;
+        //
+        static constexpr uint8_t DEF_CELL_SIZE = 1;
+
+        //
+        bool _initialized;
+
+        //
+        VHMemoryLayout memlay;
 
         // Settings
-        stConfig                        cfg;
+        stConfig cfg;
 
-        // Callback: Source Image Content / Get Pixels
-        CallbackGetSrcPxls              callbackGetPixels   = nullptr;
+        //
+        uint16_t _objCount;
+
+        //
+        uint32_t _spnCount;
+
+        // =============== CALLBACKs RELATED =========================
+
+        //
+        void *callback_caller = nullptr;
 
         // Callback: Moving across object border
-        CallbackBorder                  callbackBorder      = nullptr;
+        CallbackBorder callbackBorder = nullptr;
 
         // Callback: Moving across object content ( Left > Right / Up > Down )
-        CallbackContent                 callbackContent     = nullptr;
+        CallbackContent callbackContent = nullptr;
+
+        // Callback: Benchmarks
+        CallbackBenchmark callbackBenchmark = nullptr;
+
+        // =============== MEMORY RELATED =========================
 
         // 2D Configuration
-        CellsMatrix                     cmatrix;
-
-        // Буффер для хранения строки изображения внешнего источника
-        std::vector<uint8_t>            buffLine;
+        CellsMatrix cmatrix;
 
         // Битовое поле фрагментов
-        BitField                        bitfieldSrc;
-        std::vector<uint8_t>            buffArrSrc;
+        BitField bitfieldSrc;
 
         // Битовое поле выбранного фрагмента
-        BitField                        bitfieldDst;
-        std::vector<uint8_t>            buffArrDst;
+        BitField bitfieldDst;
 
-        // Массив фигур
-        std::vector<VHOptimalFigure>    arrFigures;
-
-
-        uint8_t                         sortMode;
+        // =============== PRIVATE ROUTINES =========================
 
         verr CheckCfgParams();
 
-        verr InitialScanImage(uint16_t srcimgid);
+        bool ScanAndFindFigure();
 
-        bool FindFigure();
-
-        bool ConvertFigure();
-
-        bool CheckWhiteLevel(const std::vector<uint8_t> & arr, uint8_t whitelevel) const;
-
-        bool IsCellFilled(uint16_t srcimgid, uint16_t cellx, uint16_t celly, uint8_t whitelevel);
+        verr ConvertFigure();
 
         bool IsSortEnabled();
 
-};
+        // BMP Parser
+        enum enBMPParserPhase
+        {
+            eBMPParserFileHeader = 0,
+            eBMPParserInfoHeader,
+            eBMPParserPalette,
+            eBMPParserData
+        };
+
+        uint8_t bmpParseStage = 0;
+        uint16_t bmpParsePos = 0;
+        uint16_t bmpLineY = 0;
+        uint16_t bmpBytesPerLine = 0;
+
+        BMPFileHeader sBMPFileHDR;
+        BMPInfoHeader sBMPInfoHDR;
+
+        /**
+         *
+         */
+        verr BMPParserFileHeader(uint8_t v)
+        {
+
+            if (!bmpParsePos)
+            {
+                if (v != 'B')
+                    return verror(1);
+            }
+            else if (bmpParsePos == 1)
+            {
+                if (v != 'M')
+                    return verror(2);
+            }
+
+            ((uint8_t *)&sBMPFileHDR)[bmpParsePos++] = v;
+
+            if (bmpParsePos < sizeof(BMPFileHeader))
+            {
+                return vok;
+            }
+
+            bmpParseStage++;
+            bmpParsePos = 0;
+
+            return vok;
+        }
+
+        /**
+         *
+         */
+        verr BMPParserInfoHeader(uint8_t v)
+        {
+
+            ((uint8_t *)&sBMPInfoHDR)[bmpParsePos++] = v;
+
+            if (bmpParsePos < sizeof(BMPInfoHeader))
+            {
+                return vok;
+            }
+            else
+            {
+                if (!validate_bmp())
+                    return verror(1);
+            }
+
+            bmpParseStage++;
+            bmpParsePos = 0;
+
+            return vok;
+        }
+
+        /**
+         * palette ignored in B&W mode
+         */
+        verr BMPParserPalette(uint8_t v)
+        {
+            size_t sz = sizeof(BMPFileHeader) + sizeof(BMPInfoHeader);
+            bmpParsePos++;
+            while ((sz + bmpParsePos) < (sBMPFileHDR.offset_data))
+            {
+                return vok;
+            }
+
+            bmpParseStage++;
+            bmpParsePos = 0;
+
+            return vok;
+        }
+
+        /**
+         *
+         */
+        verr BMPParserData(uint8_t v, uint8_t lvscale)
+        {
+
+            const BMPInfoHeader &hdr = sBMPInfoHDR;
+
+            // Vertical UP/DU mode
+            bool flagup = hdr.height < 0;
+            uint16_t h = flagup ? (hdr.height * -1) : hdr.height;
+
+            uint16_t posx = bmpParsePos << 3;
+            uint16_t posy = flagup ? bmpLineY : (h - bmpLineY - 1);
+
+            // Check X-Y range
+            if (bmpLineY >= h)
+                return verror(2);
+
+            if (posx < hdr.width)
+            {
+
+                if (v & 0x80)
+                    setBitSrcBitfield(posx + 0, posy, lvscale);
+                if (v & 0x40)
+                    setBitSrcBitfield(posx + 1, posy, lvscale);
+                if (v & 0x20)
+                    setBitSrcBitfield(posx + 2, posy, lvscale);
+                if (v & 0x10)
+                    setBitSrcBitfield(posx + 3, posy, lvscale);
+
+                if (v & 0x08)
+                    setBitSrcBitfield(posx + 4, posy, lvscale);
+                if (v & 0x04)
+                    setBitSrcBitfield(posx + 5, posy, lvscale);
+                if (v & 0x02)
+                    setBitSrcBitfield(posx + 6, posy, lvscale);
+                if (v & 0x01)
+                    setBitSrcBitfield(posx + 7, posy, lvscale);
+            }
+
+            bmpParsePos++;
+            if (bmpParsePos >= bmpBytesPerLine)
+            {
+                bmpParsePos = 0;
+                bmpLineY++;
+                if (bmpLineY >= h)
+                    BMPParserReset();
+            }
+
+            return vok;
+        }
+
+        /**
+         *
+         */
+        bool validate_bmp()
+        {
+            BMPInfoHeader &hdr = sBMPInfoHDR;
+            bool b1 = hdr.planes == 1;
+            bool b2 = hdr.bit_count == 1;
+            bool b3 = hdr.compression == 0;
+            bool b4 = hdr.colors_used == 2;
+            bool b = b1 && b2 && b3 && b4;
+            if (!b)
+                return false;
+
+            if (!(hdr.width >= 8 && hdr.width <= 4096))
+                return false;
+
+            if (!(hdr.height >= 8 && hdr.height <= 4096))
+                return false;
+
+            uint8_t align = sizeof(uint32_t);
+            bmpBytesPerLine = hdr.width / CHAR_BIT;
+            uint8_t delta = bmpBytesPerLine % align;
+            if (delta)
+            {
+                bmpBytesPerLine &= ~(align - 1);
+                bmpBytesPerLine += align;
+            }
+
+            return true;
+        }
+
+        /**
+         *
+         */
+        void setBitSrcBitfield(uint16_t bmpx, uint16_t bmpy, uint8_t lvscale)
+        {
+
+            const CellsMatrix &cmtx = GetCMatrix();
+
+            // Scaller
+            uint16_t cx = bmpx >> lvscale;
+            uint16_t cy = bmpy >> lvscale;
+
+            if (cx >= cmtx.CellsX())
+                return;
+            if (cy >= cmtx.CellsY())
+                return;
+
+            // Set bit
+            bitfieldSrc.SetCell(GetCMatrix(), cx, cy);
+        }
+    };
 
 };
 
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.hpp
- * Revision         : 0.7.5-beta
- * Content size     : 2969
- * Date / Time      : 27-07-2026 18:49:23
- * MD5              : 89d0af5cc20dd740c3dd4998b2c1764a
+ * Revision         : 0.8.0
+ * Content size     : 11295
+ * Date / Time      : 20-08-2026 05:00:12
+ * MD5              : 49faa6321ac81a89c3bf22340ed7c090
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

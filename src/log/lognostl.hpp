@@ -1,14 +1,15 @@
 /* ======================================================================================
  * Library       : vhliboptimal
- * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.5-beta
+ * Description   : Lightweight C++17 library for fast object detection,
+ *                 counting, and bounding box extraction.
+ * Revision      : 0.8.0
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
- * File          : src/log/vhliboptimallog.hpp
- * Content size  : 2113
- * Date / Time   : 27-07-2026 18:49:23
- * MD5           : 16ab4fae17973e0e1599cf28f077c69b
+ * File          : src/log/lognostl.hpp
+ * Content size  : 1900
+ * Date / Time   : 20-08-2026 05:00:12
+ * MD5           : 79fe2a0137f4b98f31ff459f77f974ba
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -20,34 +21,16 @@
 
 namespace vhliboptimal {
 
-class VHLibOptimalLogger {
+
+class log {
 
     public:
 
-        // ------------------------------------------------
-
-        static void partout(const std::string & str);
-
         static void newlout();
-
-        static void lineout(const std::string & str);
-
-        // ------------------------------------------------
-
-        static std::string fmt(
-            const std::string & strparam,
-            int value);
-
-        static std::string fmt(
-            const std::string & strparam1,
-            int value,
-            const std::string & strparam2);
-
-        static std::string fmt(
-            int value1,
-            const std::string & strparam,
-            int value2);
-
+        static void print_param     (const char *msg, int val);
+        static void partout         (const char *msg);
+        static void partint         (const int val);
+        static void lineout         (const char *msg);
 
         // ------------------------------------------------
 
@@ -60,52 +43,56 @@ class VHLibOptimalLogger {
         static void DumpCellsHEX(
             const VHLibOptimal & obj,
             const CellsMatrix & cmatrix,
-            const std::vector<uint8_t> & arr,
+            const uint8_t * arrptr,
             const char *msg = nullptr);
 
         static void DumpCellsTXT(
             const VHLibOptimal & obj,
             const CellsMatrix & cmatrix,
-            const std::vector<uint8_t> & arr,
+            const uint8_t * arrptr,
             const char *msg = nullptr,
             const int cellMarker = -1 );
 
-        static void DumpCell(
-            const std::string & msg,
-            int celln,
-            int cellx, int celly,
-            int sx, int sy );
+        // static void DumpCell(
+        //     const std::string & msg,
+        //     int celln,
+        //     int cellx, int celly,
+        //     int sx, int sy );
 
         // ------------------------------------------------
 
         static void DumpSpan(
-            const stspan & spn,
-            const CellsMatrix & cmx,
+            const spanword spn,
+            const CellsMatrix & cmtx,
+            int cellsize,
             int spann);
 
         static void DumpFigureSpans(
-            const VHOptimalFigure & objfig,
-            const CellsMatrix & cmx );
+            const VHLibOptimal & detector,
+            const VHOptimalFigure & obj,
+            const CellsMatrix & cmtx,
+            int cellsize);
 
         // ------------------------------------------------
 
         static void DumpFigurePos(
-            const VHOptimalFigure & objfig,
+            const VHOptimalFigure & obj,
+            const CellsMatrix & cmtx,
             int showfigidx);
 
-
-        static void DumpFigures(const VHLibOptimal & obj);
+        static void DumpFigures(
+            const VHLibOptimal & obj,
+            const CellsMatrix & cmtx );
 
 };
 
 };
-
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
- * File             : src/log/vhliboptimallog.hpp
- * Revision         : 0.7.5-beta
- * Content size     : 2113
- * Date / Time      : 27-07-2026 18:49:23
- * MD5              : 16ab4fae17973e0e1599cf28f077c69b
+ * File             : src/log/lognostl.hpp
+ * Revision         : 0.8.0
+ * Content size     : 1900
+ * Date / Time      : 20-08-2026 05:00:12
+ * MD5              : 79fe2a0137f4b98f31ff459f77f974ba
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

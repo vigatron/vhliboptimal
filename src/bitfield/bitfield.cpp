@@ -1,20 +1,27 @@
 /* ======================================================================================
  * Library       : vhliboptimal
- * Description   : C++ library for shape contour detection and image outline recognition
- * Revision      : 0.7.5-beta
+ * Description   : Lightweight C++17 library for fast object detection,
+ *                 counting, and bounding box extraction.
+ * Revision      : 0.8.0
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/bitfield/bitfield.cpp
- * Content size  : 6189
- * Date / Time   : 27-07-2026 18:49:23
- * MD5           : 440af55d9009377603d59476881884f6
+ * Content size  : 5424
+ * Date / Time   : 20-08-2026 05:00:12
+ * MD5           : 75d0f5be3e130a75fb43ec9df837b344
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
  * Copyright     : © 2006–2026 Viktor Glebov
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #include "bitfield.hpp"
+
+#include <cstdio>
+#include <cstring>
+
+#include "structs/vhliboptimalstructs.hpp"
+
 
 using namespace vhliboptimal;
 
@@ -37,47 +44,30 @@ bool BitField::Setup(const CellsMatrix & cmtx, uint8_t * arrptr, uint32_t limbyt
 /**
  * 
  */
-void BitField::ClrCell(int celln) {
-    VHBits::BitClr(arrPtr, celln);
+void BitField::ClearArea(const CellsMatrix & cmtx) noexcept {
+    std::memset(arrPtr, 0, arrSizeInBytes);
+    ResetSearchIndex(cmtx);
 }
 
 /**
  * 
  */
-void BitField::SetCell(int celln) {
-    VHBits::BitSet(arrPtr, celln);
+void BitField::ClearBorder(const CellsMatrix & cmtx) noexcept {
+    uint16_t ex = cmtx.CellsX() - 1;
+    uint16_t ey = cmtx.CellsY() - 1;
+
+    for(uint16_t x=0; x <= ex;x++) {
+        ClrCell(cmtx, x, 0);
+        ClrCell(cmtx, x, ey);
+    }
+
+    for(uint16_t y=0; y <= ey;y++) {
+        ClrCell(cmtx,  0, y);
+        ClrCell(cmtx, ex, y);
+    }
+
 }
 
-/**
- * 
- */
-bool BitField::GetCell(int celln) const {
-    return VHBits::BitVal(arrPtr, celln);
-}
-
-/**
- *
- */
-void BitField::ClrCell(const CellsMatrix & cmtx, int cellx, int celly) {
-    int n = cmtx.CellN(cellx, celly);
-    VHBits::BitClr(arrPtr, n);
-}
-
-/**
- *
- */
-void BitField::SetCell(const CellsMatrix & cmtx, int cellx, int celly) {
-    int n = cmtx.CellN(cellx, celly);
-    VHBits::BitSet(arrPtr, n);
-}
-
-/**
- * 
- */
-bool BitField::GetCell(const CellsMatrix & cmtx, int cellx, int celly) const {
-    int n = cmtx.CellN(cellx, celly);
-    return GetCell(n);
-}
 
 /**
  * @brief Find non-empty cell of the map
@@ -90,13 +80,11 @@ const int BitField::FindEntryCell(const CellsMatrix & cmtx) {
     int idxstart = FastIdxNonZero();
     if(idxstart == -1) return r;
 
-    for(int i=idxstart; i < cmtx.CellsT(); i++) {
-        if(VHBits::BitVal(arrPtr, i)) {
-            return i;
-        }
-    }
+    #ifdef VHLIB_OPTIMAL_DEBUG
+    auto [dbgx, dbgy] = cmtx.CellXY(idxstart);
+    #endif
 
-    return r;
+    return idxstart;
 }
 
 /**
@@ -105,7 +93,6 @@ const int BitField::FindEntryCell(const CellsMatrix & cmtx) {
 const int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
 
     int wx = cmtx.CellsX();
-    int wy = cmtx.CellsY();
     int tryn;
 
     { tryn = n + 1;         if(GetCell(tryn)) return tryn; } // 6
@@ -129,7 +116,7 @@ const int BitField::FindPath(const CellsMatrix & cmtx, BitField & fldfig) {
     int idxstart = fldfig.FastIdxNonZero();
     if(idxstart == -1) return -1;
 
-    for(int i=idxstart;i<cmtx.CellsT();i++) {
+    for(uint32_t i=idxstart;i<cmtx.CellsT();i++) {
         if(fldfig.GetCell(i)) {
             int r = FindNearest(cmtx, i);
             if(r != -1) {
@@ -173,17 +160,14 @@ int BitField::ScanSpanLen(const CellsMatrix & cmtx, int startcell, int skipmax) 
 /**
  * 
  */
-void BitField::ClearSpan(const stspan & span)  {
-    for(size_t i=0; i < span.l; i++) {
-        ClrCell(span.n+i);
+void BitField::ClearSpan(const spanword word)  {
+    uint32_t spanid = get_span_id(word);
+    uint32_t spanln = get_span_len(word);
+    uint32_t end = spanid + spanln;
+    for(uint32_t i=spanid; i < end; i++) {
+        ClrCell(i);
     }
 }
-
-#if !defined(__x86_64__)
-#define VHLIB_OPTIMAL_MODE_32
-#else
-#define VHLIB_OPTIMAL_MODE_64
-#endif
 
 
 #if defined(VHLIB_OPTIMAL_MODE_32)
@@ -191,9 +175,9 @@ void BitField::ClearSpan(const stspan & span)  {
 /**
  * 
  */
-void BitField::ResetSearchIndex(const CellsMatrix & cmtx) {
-    curSearchWord    = cmtx.CellInnerFrom() / 32;
-    lastSearchsByte  = cmtx.CellInnerTo()   / 8;
+void BitField::ResetSearchIndex(const CellsMatrix & cmtx) noexcept {
+    curSearchWord    = cmtx.CellCornerTopLeft()     / 32;
+    lastSearchsByte  = cmtx.CellCornerBottomRight() / 8;
 }
 
 
@@ -210,18 +194,12 @@ int BitField::FastIdxNonZero() {
         uint32_t word = p32[i];
         if (word != 0) {
             curSearchWord = i;
-            // позиция первого установленного бита
-            int bitPos = __builtin_ctz(word);
-            size_t byteIndex = i * sizeof(uint32_t) + (bitPos / CHAR_BIT);
-            return static_cast<int>(byteIndex * CHAR_BIT);
-        }
-    }
+            #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+            word = __builtin_bswap32(word);
+            #endif
 
-    // Хвост (если размер массива не кратен 8)
-    const size_t processedBytes = numWords * sizeof(uint32_t);
-    for (size_t i = processedBytes; i < lastSearchsByte; ++i) {
-        if (arrPtr[i] != 0) {
-            return static_cast<int>(i * CHAR_BIT);
+            int bitPos = __builtin_clz(word);
+            return static_cast<int>((i << 5) + static_cast<size_t>(bitPos));
         }
     }
 
@@ -236,9 +214,9 @@ int BitField::FastIdxNonZero() {
 /**
  * 
  */
-void BitField::ResetSearchIndex(const CellsMatrix & cmtx) {
-    curSearchWord    = cmtx.CellInnerFrom() / 64;
-    lastSearchsByte  = cmtx.CellInnerTo()   /  8;
+void BitField::ResetSearchIndex(const CellsMatrix & cmtx) noexcept {
+    curSearchWord    = cmtx.CellCornerTopLeft()     / 64;
+    lastSearchsByte  = cmtx.CellCornerBottomRight() /  8;
 }
 
 /**
@@ -253,18 +231,12 @@ int BitField::FastIdxNonZero() {
         uint64_t word = p64[i];
         if (word != 0ULL) {
             curSearchWord = i;
-            // первый установленный бит в слове
-            int bitPos = __builtin_ctzll(word);
-            size_t byteIndex = i * sizeof(uint64_t) + (bitPos / CHAR_BIT);
-            return static_cast<int>(byteIndex * CHAR_BIT);
-        }
-    }
+            #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+            word = __builtin_bswap64(word);
+            #endif
 
-    // Хвост (если размер массива не кратен 8)
-    const size_t processedBytes = numWords * sizeof(uint64_t);
-    for (size_t i = processedBytes; i < lastSearchsByte; ++i) {
-        if (arrPtr[i] != 0) {
-            return static_cast<int>(i * CHAR_BIT);
+            int bitPos = __builtin_clzll(word);
+            return static_cast<int>((i << 6) + static_cast<size_t>(bitPos));
         }
     }
 
@@ -277,9 +249,9 @@ int BitField::FastIdxNonZero() {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/bitfield/bitfield.cpp
- * Revision         : 0.7.5-beta
- * Content size     : 6189
- * Date / Time      : 27-07-2026 18:49:23
- * MD5              : 440af55d9009377603d59476881884f6
+ * Revision         : 0.8.0
+ * Content size     : 5424
+ * Date / Time      : 20-08-2026 05:00:12
+ * MD5              : 75d0f5be3e130a75fb43ec9df837b344
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
