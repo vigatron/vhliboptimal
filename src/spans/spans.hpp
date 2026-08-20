@@ -8,7 +8,7 @@
  * License       : MIT
  * File          : src/spans/spans.hpp
  * Content size  : 1053
- * Date / Time   : 19-08-2026 21:18:15
+ * Date / Time   : 20-08-2026 05:00:12
  * MD5           : 8382f194320599c3133758a14fb6b08c
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -76,7 +76,7 @@ namespace vhliboptimal
  * File             : src/spans/spans.hpp
  * Revision         : 0.8.0
  * Content size     : 1053
- * Date / Time      : 19-08-2026 21:18:15
+ * Date / Time      : 20-08-2026 05:00:12
  * MD5              : 8382f194320599c3133758a14fb6b08c
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

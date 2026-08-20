@@ -8,7 +8,7 @@
  * License       : MIT
  * File          : src/log/lognostl.cpp
  * Content size  : 4875
- * Date / Time   : 19-08-2026 21:18:15
+ * Date / Time   : 20-08-2026 05:00:12
  * MD5           : a7ae8287d881cdc25f096bff17d69641
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -260,7 +260,7 @@ void log::DumpFigureSpans(
  * File             : src/log/lognostl.cpp
  * Revision         : 0.8.0
  * Content size     : 4875
- * Date / Time      : 19-08-2026 21:18:15
+ * Date / Time      : 20-08-2026 05:00:12
  * MD5              : a7ae8287d881cdc25f096bff17d69641
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

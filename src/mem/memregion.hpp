@@ -8,7 +8,7 @@
  * License       : MIT
  * File          : src/mem/memregion.hpp
  * Content size  : 1971
- * Date / Time   : 19-08-2026 21:18:15
+ * Date / Time   : 20-08-2026 05:00:12
  * MD5           : 3dd992fa0c858e65361ee229ccc34292
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -130,7 +130,7 @@ private:
  * File             : src/mem/memregion.hpp
  * Revision         : 0.8.0
  * Content size     : 1971
- * Date / Time      : 19-08-2026 21:18:15
+ * Date / Time      : 20-08-2026 05:00:12
  * MD5              : 3dd992fa0c858e65361ee229ccc34292
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
