@@ -1,17 +1,15 @@
 <head>
 
-  <title>vhliboptimal v0.8.0</title>
-
   <meta name="description" content="A lightweight, zero-dependency C++17 library for fast shape detection, object counting, and outer boundary estimation">
 
   <!-- Теги для Open Graph (используются Facebook, LinkedIn и часто подтягиваются Twitter) -->
-  <meta property="og:title" content="vhliboptimal">
+  <meta property="og:title" content="vhliboptimal v0.8.0">
   <meta property="og:description" content="A lightweight, zero-dependency C++17 library for fast shape detection, object counting, and outer boundary estimation">
   <meta property="og:image" content="https://raw.githubusercontent.com/vigatron/vhliboptimal/main/docs/xcard.jpg">
 
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="vhliboptimal">
+  <meta name="twitter:title" content="vhliboptimal v0.8.0">
   <meta name="twitter:description" content="A lightweight, zero-dependency C++17 library for fast shape detection, object counting, and outer boundary estimation">
   <meta name="twitter:image" content="https://raw.githubusercontent.com/vigatron/vhliboptimal/main/docs/xcard.jpg">
   <meta name="twitter:site" content="@vigatron2010"> 
