@@ -39,15 +39,14 @@
 // * STM32F4/F7/H7
 // * ESP32
 
-// === Linux Platform autodetect ===
-#if defined(__gnu_linux__) && !defined(VHPLATFORM_PC)
-#define VHPLATFORM_PC
-#endif
+// ===========================
+// =   Platform autodetect   =
+// ===========================
+// > ESP32 Platform autodetect
+// > STM32 Platform
+// > PC / SBC
 
-// === STM32 Platform autodetect ===
-#if defined(__ARM_ARCH_7EM__) && !defined(VHPLATFORM_STM32)
-#define VHPLATFORM_STM32
-#endif
+#include "cfg_detect.hpp"
 
 // ===========================
 
@@ -60,7 +59,6 @@
 #else
 #define VHLIB_OPTIMAL_MODE_64
 #endif
-
 
 #endif
 
@@ -83,7 +81,6 @@
 #define VHLIB_OPTIMAL_PLATFORM_EMBEDDED
 #define VHLIB_OPTIMAL_MODE_32
 #endif
-
 
 #include "cfg_cache.hpp"
 

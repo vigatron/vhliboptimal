@@ -1,3 +1,23 @@
+<head>
+
+  <title>vhliboptimal v0.8.0</title>
+
+  <meta name="description" content="A lightweight, zero-dependency C++17 library for fast shape detection, object counting, and outer boundary estimation">
+
+  <!-- Теги для Open Graph (используются Facebook, LinkedIn и часто подтягиваются Twitter) -->
+  <meta property="og:title" content="vhliboptimal">
+  <meta property="og:description" content="A lightweight, zero-dependency C++17 library for fast shape detection, object counting, and outer boundary estimation">
+  <meta property="og:image" content="https://raw.githubusercontent.com/vigatron/vhliboptimal/main/docs/xcard.jpg">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="vhliboptimal">
+  <meta name="twitter:description" content="A lightweight, zero-dependency C++17 library for fast shape detection, object counting, and outer boundary estimation">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/vigatron/vhliboptimal/main/docs/xcard.jpg">
+  <meta name="twitter:site" content="@vigatron2010"> 
+
+</head>
+
 # vhliboptimal
 
 ![Language](https://img.shields.io/badge/Language-C%2B%2B17-blue.svg)
@@ -85,7 +105,7 @@ It uses an optimized grid-based approach: the image is divided into a configurab
 
 
 ---
-### Road Signs Recognition Example
+### Road Signs Contour Extraction Example
 
 The examples below demonstrate how `vhliboptimal` is utilized within a real-world road sign recognition application. 
 
@@ -220,15 +240,16 @@ The library operates completely abstracted from raw graphic decoders or UI frame
 
 **Tested Platforms** 
 
-| Platform / Board             | CPU / MCU        | Arch      | Freq      |
-|------------------------------|------------------|-----------|-----------|
-| ASUS Vivobook                | Intel i5-1135G7  | x86_64    | 2.40 GHz  |
-| AMD Based Desktop            | AMD FX-8300      | x86_64    | 3.30 GHz  |
-| Orange Pi PC Plus            | ARM Cortex-A7    | ARMv7-A   | 1.20 GHz  |
-| Raspberry Pi Model B+ V1.2   | ARM1176JZF-S     | ARMv6     | 700 MHz   |
-| CMB32F407HDMIR3              | STM32F407        | Cortex-M4 | 168 MHz   |
-| WAVESHARE CORE7XXI           | STM32F746        | Cortex-M7 | 216 MHz   |
-| CMB32H750HDMIR1              | STM32H750        | Cortex-M7 | 480 MHz   |
+| Platform / Board             | CPU / MCU        | Arch       | Freq      |
+|------------------------------|------------------|------------|-----------|
+| ASUS Vivobook                | Intel i5-1135G7  | x86_64     | 2.40 GHz  |
+| AMD Based Desktop            | AMD FX-8300      | x86_64     | 3.30 GHz  |
+| Orange Pi PC Plus            | ARM Cortex-A7    | ARMv7-A    | 1.20 GHz  |
+| Raspberry Pi Model B+ V1.2   | ARM1176JZF-S     | ARMv6      | 700 MHz   |
+| CMB32F407HDMIR3              | STM32F407        | Cortex-M4  | 168 MHz   |
+| WAVESHARE CORE7XXI           | STM32F746        | Cortex-M7  | 216 MHz   |
+| CMB32H750HDMIR1              | STM32H750        | Cortex-M7  | 480 MHz   |
+| ESP32-WROOM-32D              | ESP32-D0WD       | Xtensa LX6 | 240 MHz   |
 
 
 **Benchmark project and test results**
