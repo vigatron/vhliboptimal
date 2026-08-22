@@ -3,13 +3,13 @@
   <meta name="description" content="A lightweight, zero-dependency C++17 library for fast shape detection, object counting, and outer boundary estimation">
 
   <!-- Теги для Open Graph (используются Facebook, LinkedIn и часто подтягиваются Twitter) -->
-  <meta property="og:title" content="vhliboptimal v0.8.0">
+  <meta property="og:title" content="vhliboptimal v0.8.1">
   <meta property="og:description" content="A lightweight, zero-dependency C++17 library for fast shape detection, object counting, and outer boundary estimation">
   <meta property="og:image" content="https://raw.githubusercontent.com/vigatron/vhliboptimal/main/docs/xcard.jpg">
 
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="vhliboptimal v0.8.0">
+  <meta name="twitter:title" content="vhliboptimal v0.8.1">
   <meta name="twitter:description" content="A lightweight, zero-dependency C++17 library for fast shape detection, object counting, and outer boundary estimation">
   <meta name="twitter:image" content="https://raw.githubusercontent.com/vigatron/vhliboptimal/main/docs/xcard.jpg">
   <meta name="twitter:site" content="@vigatron2010"> 
@@ -22,7 +22,7 @@
 ![CMake](https://img.shields.io/badge/Build-CMake-1f4f9c.svg)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Cross--platform-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-red.svg)
-![Version](https://img.shields.io/badge/Version-0.8.0-orange.svg)
+![Version](https://img.shields.io/badge/Version-0.8.1-orange.svg)
 ![Author](https://img.shields.io/badge/Author-Viktor%20Glebov%20(V01G04A81)-green.svg)
 
 ---
@@ -31,7 +31,7 @@
 |----------------------|-----------------------------------|
 | Project              | VHLibOptimal                      |
 | Description          | C++17 library for fast shape detection, object counting, and outer boundary estimation. |
-| Current Version      | 0.8.0 (2026)                      |
+| Current Version      | 0.8.1 (2026)                      |
 | Development started  | 2006                              |
 | Major C++17 rewrite  | started in early 2026             |
 | Author               | V01G04A81 / Viktor Glebov         |
@@ -42,11 +42,13 @@
 
 ***C++17 library for fast shape detection, object counting, and outer boundary estimation.***
 
-A lightweight, zero-dependency C++17 library focused exclusively on identifying discrete shapes, counting objects, and extracting their spatial coordinates and external dimensions using efficient bit-packed grid scanning. The core algorithm, originally developed in 2006, received a complete modern C++17 rewrite in 2026. This version brings a clean object-oriented interface for single-camera Single Board Computer setups while preserving two decades of embedded efficiency lessons.
+A lightweight, zero-dependency C++17 library focused exclusively on identifying discrete shapes, counting objects, and extracting their spatial coordinates and external dimensions using efficient bit-packed grid scanning. The core algorithm, originally developed in 2006, received a complete modern C++17 rewrite in 2026. This version introduces a clean object-oriented interface optimized for modern Single Board Computer applications while preserving design decisions refined through two decades of embedded development.
+
+
 
 ![img](docs/stereocam.jpg)
 
-*Historical reference: The 2016 FPGA-based stereo vision system that proved the algorithm's real-time viability on dual-camera setups.*
+*Historical reference: The 2016 FPGA-based stereo vision system that demonstrated the algorithm's real-time operation in a dual-camera pipeline.*
 
 
 ---
@@ -56,9 +58,9 @@ A lightweight, zero-dependency C++17 library focused exclusively on identifying 
 
 `vhliboptimal` is a high-performance C++ library for fast shape detection, object counting and outer boundary estimation.
 
-Originally developed in plain C (starting in 2006) for commercial embedded projects on ARM and AVR platforms. Later evolved through an FPGA-accelerated era (2016). It has been completely modernized in 2026 with a clean object-oriented C++17 interface while preserving its efficiency-focused philosophy.
+Originally developed in plain C (starting in 2006) for commercial embedded projects on ARM and AVR platforms. Later evolved into an FPGA-accelerated implementation (2016). It has been completely modernized in 2026 with a clean object-oriented C++17 interface while preserving its efficiency-focused philosophy.
 
-It uses an optimized grid-based approach: the image is divided into a configurable **Cells Matrix**, and connectivity is tracked using compact **BitFields**. This design delivers excellent performance with very low memory and CPU usage, making it ideal for embedded systems and real-time applications. Unlike general-purpose computer vision frameworks such as OpenCV, `vhliboptimal` focuses exclusively on shape extraction and therefore remains lightweight and easy to integrate. It excels at processing binary or high-contrast images and gracefully handles small gaps and noise thanks to tunable parameters.
+It uses an optimized grid-based approach: the image is divided into a configurable **Cells Matrix**, and connectivity is tracked using compact **BitFields**. This design delivers excellent performance with very low memory and CPU usage, making it ideal for embedded systems and real-time applications. Unlike full computer vision frameworks such as OpenCV, `vhliboptimal` focuses exclusively on shape extraction and therefore remains lightweight and easy to integrate. It excels at processing binary or high-contrast images and gracefully handles small gaps and noise thanks to tunable parameters.
 
 ---
 
@@ -73,7 +75,7 @@ It uses an optimized grid-based approach: the image is divided into a configurab
     * Jetson Nano
     * Rock Pi
     * ... and similar ARM Cortex-A/M based boards.
-  - **Modern CPU/MCUs**: STM32MP1 and other modern ARM Cortex-M/A cores with C++ compiler support.
+  - **Modern CPU/MCUs**: ARM Cortex-M and Cortex-A platforms (including STM32MP1 MPUs) with C++ compiler support.
     * STM32F4 / STM32F7 / STM32H7 (zero-allocation with FIXED_GRID)
     * ESP32 (zero-allocation with FIXED_GRID)
 - **Build System**: CMake 3.16+
@@ -231,23 +233,18 @@ The library operates completely abstracted from raw graphic decoders or UI frame
 ## Library tests and benchmark project
 
 
-| App / Library        | Version    |
-|----------------------|------------|
-| *vhliboptimal*       | ver 0.8.0  |
-| *vhliboptimal_test*  | ver 0.0.5  |
-
 **Tested Platforms** 
 
-| Platform / Board             | CPU / MCU        | Arch       | Freq      |
-|------------------------------|------------------|------------|-----------|
-| ASUS Vivobook                | Intel i5-1135G7  | x86_64     | 2.40 GHz  |
-| AMD Based Desktop            | AMD FX-8300      | x86_64     | 3.30 GHz  |
-| Orange Pi PC Plus            | ARM Cortex-A7    | ARMv7-A    | 1.20 GHz  |
-| Raspberry Pi Model B+ V1.2   | ARM1176JZF-S     | ARMv6      | 700 MHz   |
-| CMB32F407HDMIR3              | STM32F407        | Cortex-M4  | 168 MHz   |
-| WAVESHARE CORE7XXI           | STM32F746        | Cortex-M7  | 216 MHz   |
-| CMB32H750HDMIR1              | STM32H750        | Cortex-M7  | 480 MHz   |
-| ESP32-WROOM-32D              | ESP32-D0WD       | Xtensa LX6 | 240 MHz   |
+| Platform / Board                 | CPU / MCU        | Arch       | Freq      |
+|----------------------------------|------------------|------------|-----------|
+| ASUS Vivobook                    | Intel i5-1135G7  | x86_64     | 2.40 GHz  |
+| AMD Based Desktop                | AMD FX-8300      | x86_64     | 3.30 GHz  |
+| Orange Pi PC Plus                | ARM Cortex-A7    | ARMv7-A    | 1.20 GHz  |
+| Raspberry Pi Model B+ (Rev. 1.2) | ARM1176JZF-S     | ARMv6      | 700 MHz   |
+| CMB32F407HDMIR3                  | STM32F407        | Cortex-M4  | 168 MHz   |
+| WAVESHARE CORE7XXI               | STM32F746        | Cortex-M7  | 216 MHz   |
+| CMB32H750HDMIR1                  | STM32H750        | Cortex-M7  | 480 MHz   |
+| ESP32-WROOM-32D                  | ESP32-D0WD       | Xtensa LX6 | 240 MHz   |
 
 
 **Benchmark project and test results**
