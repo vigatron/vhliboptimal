@@ -21,5 +21,6 @@ target_sources(vhlib_optimal PRIVATE
 
 target_include_directories(vhlib_optimal PUBLIC
     src
+    "${CMAKE_CURRENT_BINARY_DIR}"
     "${CMAKE_CURRENT_BINARY_DIR}/generated"
 )

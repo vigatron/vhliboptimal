@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0
+ * Revision      : 0.8.1
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figure/figure.cpp
- * Content size  : 8875
- * Date / Time   : 20-08-2026 05:00:12
- * MD5           : c7b3792060bafea6ba31cb06e2cc01da
+ * Content size  : 8863
+ * Date / Time   : 22-08-2026 15:42:01
+ * MD5           : c1df3c122f6748e8a98587caf59c3e1d
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -147,7 +147,7 @@ const VHArea &VHOptimalFigure::Area() const
 /**
  *
  */
-const uint16_t VHOptimalFigure::Width() const
+uint16_t VHOptimalFigure::Width() const
 {
     return _area.cntx;
 }
@@ -155,7 +155,7 @@ const uint16_t VHOptimalFigure::Width() const
 /**
  *
  */
-const uint16_t VHOptimalFigure::Height() const
+uint16_t VHOptimalFigure::Height() const
 {
     return _area.cnty;
 }
@@ -390,9 +390,9 @@ void VHOptimalFigure::ContentV(
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/figure/figure.cpp
- * Revision         : 0.8.0
- * Content size     : 8875
- * Date / Time      : 20-08-2026 05:00:12
- * MD5              : c7b3792060bafea6ba31cb06e2cc01da
+ * Revision         : 0.8.1
+ * Content size     : 8863
+ * Date / Time      : 22-08-2026 15:42:01
+ * MD5              : c1df3c122f6748e8a98587caf59c3e1d
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

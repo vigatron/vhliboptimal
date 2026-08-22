@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0
+ * Revision      : 0.8.1
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/cmatrix/cmatrix.hpp
- * Content size  : 4995
- * Date / Time   : 20-08-2026 05:00:12
- * MD5           : 0873eecdc469e88a4743504a7e397cdc
+ * Content size  : 5137
+ * Date / Time   : 22-08-2026 15:42:01
+ * MD5           : 61b2930db830c07f791c2ef8cbe423be
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -144,17 +144,17 @@ namespace vhliboptimal
 
 #ifdef VHLIB_OPTIMAL_GRID_FIXED
 
-        inline constexpr size_t CellsX() const noexcept
+        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellsX() const noexcept
         {
             return fixedw;
         }
 
-        inline constexpr size_t CellsY() const noexcept
+        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellsY() const noexcept
         {
             return fixedh;
         }
 
-        inline constexpr size_t CellsT() const noexcept
+        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellsT() const noexcept
         {
             return fixedt;
         }
@@ -162,13 +162,13 @@ namespace vhliboptimal
         /**
          *
          */
-        inline constexpr size_t CellN(size_t x, size_t y) const noexcept
+        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellN(size_t x, size_t y) const noexcept
         {
             return (y << VHLIB_OPTIMAL_GRID_LX) + x;
         }
 
         //
-        inline constexpr Point CellXY(size_t n) const noexcept
+        VHLIB_OPTIMAL_FASTFUNC constexpr Point CellXY(size_t n) const noexcept
         {
             return Point{
                 static_cast<uint16_t>(n & fixedm),
@@ -178,20 +178,20 @@ namespace vhliboptimal
 #endif
 
         // Подсчет размера в байтах
-        inline constexpr size_t BitMaskSizeBytes() const noexcept
+        VHLIB_OPTIMAL_FASTFUNC constexpr size_t BitMaskSizeBytes() const noexcept
         {
             size_t arrsz = (CellsT() / CHAR_BIT) + ((CellsT() % CHAR_BIT) ? 1 : 0);
             return arrsz;
         }
 
         // Стартовый индекс поиска
-        constexpr size_t CellCornerTopLeft() const noexcept
+        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellCornerTopLeft() const noexcept
         {
             return CellsX() + 1;
         }
 
         //! Конечный индекс поиска
-        constexpr size_t CellCornerBottomRight() const noexcept
+        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellCornerBottomRight() const noexcept
         {
             return CellsT() - CellsX() - 2;
         }
@@ -241,9 +241,9 @@ namespace vhliboptimal
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/cmatrix/cmatrix.hpp
- * Revision         : 0.8.0
- * Content size     : 4995
- * Date / Time      : 20-08-2026 05:00:12
- * MD5              : 0873eecdc469e88a4743504a7e397cdc
+ * Revision         : 0.8.1
+ * Content size     : 5137
+ * Date / Time      : 22-08-2026 15:42:01
+ * MD5              : 61b2930db830c07f791c2ef8cbe423be
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

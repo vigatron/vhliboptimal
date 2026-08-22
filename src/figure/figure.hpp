@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0
+ * Revision      : 0.8.1
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figure/figure.hpp
- * Content size  : 3173
- * Date / Time   : 20-08-2026 05:00:12
- * MD5           : 53d38e6ce4489fe002ea81bd611de78a
+ * Content size  : 3148
+ * Date / Time   : 22-08-2026 15:42:01
+ * MD5           : c624bdfe7d08486b2c0e7025b5f80313
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -73,12 +73,12 @@ namespace vhliboptimal
         /**
          * @brief Количество участков фигуры
          */
-        const uint16_t SpansCount() const { return _spansCount; }
+        uint16_t SpansCount() const { return _spansCount; }
 
         /**
          *
          */
-        const uint32_t StartSpanIDX() const { return _startIDX; }
+        uint32_t StartSpanIDX() const { return _startIDX; }
 
         /**
          *
@@ -88,13 +88,12 @@ namespace vhliboptimal
         /**
          *
          */
-        const uint16_t Width() const;
+        uint16_t Width() const;
 
         /**
          *
          */
-        const uint16_t Height() const;
-
+        uint16_t Height() const;
 
         /**
          * 
@@ -162,9 +161,9 @@ namespace vhliboptimal
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/figure/figure.hpp
- * Revision         : 0.8.0
- * Content size     : 3173
- * Date / Time      : 20-08-2026 05:00:12
- * MD5              : 53d38e6ce4489fe002ea81bd611de78a
+ * Revision         : 0.8.1
+ * Content size     : 3148
+ * Date / Time      : 22-08-2026 15:42:01
+ * MD5              : c624bdfe7d08486b2c0e7025b5f80313
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

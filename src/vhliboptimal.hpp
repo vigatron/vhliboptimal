@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0
+ * Revision      : 0.8.1
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.hpp
- * Content size  : 11295
- * Date / Time   : 20-08-2026 05:00:12
- * MD5           : 49faa6321ac81a89c3bf22340ed7c090
+ * Content size  : 11429
+ * Date / Time   : 22-08-2026 15:42:01
+ * MD5           : 4baf3355bed24f8ec27ea90ceb3a2d06
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -17,7 +17,7 @@
  * ========================[ BEGIN FILE CONTENT ]====================================== */
 #pragma once
 
-#include "version_vhliboptimal.h"
+#include "generated/version_vhliboptimal.h"
 #include "cfg/cfg.hpp"
 #include "structs/vhliboptimalstructs.hpp"
 #include "structs/vhliboptimalcallbacks.hpp"
@@ -137,17 +137,19 @@ namespace vhliboptimal
         /**
          *
          */
-        const uint32_t GlobalSpansCount() const noexcept { return _spnCount; }
+        VHLIB_OPTIMAL_FASTFUNC
+        uint32_t GlobalSpansCount() const noexcept { return _spnCount; }
 
         /**
          * Calculating thru objects
          */
-        const size_t CalcSpansTotal() const;
+        size_t CalcSpansTotal() const;
 
         /**
          *
          */
-        const spanword GetGlobalSpan(uint32_t pos) const
+        VHLIB_OPTIMAL_FASTFUNC
+        spanword GetGlobalSpan(uint32_t pos) const
         {
             if (pos >= VHLIB_OPTIMAL_SPNS_MAX)
                 return 0;
@@ -188,7 +190,7 @@ namespace vhliboptimal
         /**
          *
          */
-        verr BMPParserByte(uint8_t v, uint8_t lvscale)
+        verr BMPParserByte(uint8_t v, uint8_t lvscale) noexcept
         {
 
             verr r;
@@ -284,8 +286,10 @@ namespace vhliboptimal
 
         verr CheckCfgParams();
 
+        VHLIB_OPTIMAL_FASTFUNC
         bool ScanAndFindFigure();
 
+        VHLIB_OPTIMAL_FASTFUNC
         verr ConvertFigure();
 
         bool IsSortEnabled();
@@ -382,7 +386,7 @@ namespace vhliboptimal
         /**
          *
          */
-        verr BMPParserData(uint8_t v, uint8_t lvscale)
+        verr BMPParserData(uint8_t v, uint8_t lvscale) noexcept
         {
 
             const BMPInfoHeader &hdr = sBMPInfoHDR;
@@ -491,9 +495,9 @@ namespace vhliboptimal
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.hpp
- * Revision         : 0.8.0
- * Content size     : 11295
- * Date / Time      : 20-08-2026 05:00:12
- * MD5              : 49faa6321ac81a89c3bf22340ed7c090
+ * Revision         : 0.8.1
+ * Content size     : 11429
+ * Date / Time      : 22-08-2026 15:42:01
+ * MD5              : 4baf3355bed24f8ec27ea90ceb3a2d06
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
