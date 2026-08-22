@@ -2,14 +2,14 @@
  * Library       : vhliboptimal
  * Description   : Lightweight C++17 library for fast object detection,
  *                 counting, and bounding box extraction.
- * Revision      : 0.8.0
+ * Revision      : 0.8.1
  * Source        : https://github.com/vigatron/vhliboptimal
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/bitfield/bitfield.cpp
- * Content size  : 5424
- * Date / Time   : 20-08-2026 05:00:12
- * MD5           : 75d0f5be3e130a75fb43ec9df837b344
+ * Content size  : 5406
+ * Date / Time   : 22-08-2026 15:42:01
+ * MD5           : 94acd65d6fd39cf6af130329c83fa77f
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -72,7 +72,7 @@ void BitField::ClearBorder(const CellsMatrix & cmtx) noexcept {
 /**
  * @brief Find non-empty cell of the map
  */
-const int BitField::FindEntryCell(const CellsMatrix & cmtx) {
+int BitField::FindEntryCell(const CellsMatrix & cmtx) {
 
     int r = -1;
 
@@ -90,7 +90,7 @@ const int BitField::FindEntryCell(const CellsMatrix & cmtx) {
 /**
  * @brief Поиск соседних ячеек
  */
-const int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
+int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
 
     int wx = cmtx.CellsX();
     int tryn;
@@ -110,7 +110,7 @@ const int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
 /**
  * @brief Проход по фигуре fldfig : Поиск ответвлений
  */
-const int BitField::FindPath(const CellsMatrix & cmtx, BitField & fldfig) {
+int BitField::FindPath(const CellsMatrix & cmtx, BitField & fldfig) {
 
     // Fast Entry point
     int idxstart = fldfig.FastIdxNonZero();
@@ -249,9 +249,9 @@ int BitField::FastIdxNonZero() {
 /* ========================[  END FILE CONTENT  ]========================
  * Library          : vhliboptimal
  * File             : src/bitfield/bitfield.cpp
- * Revision         : 0.8.0
- * Content size     : 5424
- * Date / Time      : 20-08-2026 05:00:12
- * MD5              : 75d0f5be3e130a75fb43ec9df837b344
+ * Revision         : 0.8.1
+ * Content size     : 5406
+ * Date / Time      : 22-08-2026 15:42:01
+ * MD5              : 94acd65d6fd39cf6af130329c83fa77f
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
