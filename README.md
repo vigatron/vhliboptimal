@@ -224,9 +224,10 @@ The library operates completely abstracted from raw graphic decoders or UI frame
 
 
 > **⚠️ Best Practices for Optimal Results**  
-> The algorithm was originally proven on pristine, uncompressed RAW video streams. When using modern compressed sources (e.g., MJPEG/MP4 webcams on SBCs), compression artifacts and blurring can degrade contour accuracy.  
-> 
-> **Recommendation:** For best results, apply a lightweight pre-processing step (e.g., hardware-accelerated thresholding, sharpening, or edge-enhancement) before passing the frame to `vhliboptimal`, or tune `minColorVal` and `spccnt` to be more tolerant of digital noise.  
+The algorithm was originally developed and validated for live, uncompressed video streams captured directly from a camera. For optimal contour accuracy, feed vhliboptimal with the native, uncompressed camera frames whenever possible. Modern camera pipelines often introduce JPEG/MJPEG compression, scaling, denoising, sharpening, or other ISP processing before the frame reaches the application. These operations can introduce blocking artifacts, ringing, blur, and loss of fine edge information, which may reduce contour accuracy.  
+
+
+> **Recommendation:** For the best results, use a direct, uncompressed camera stream and perform only the minimum required preprocessing before passing the frame to `vhliboptimal`. If an uncompressed stream is not available, lightweight preprocessing such as hardware-accelerated thresholding or edge enhancement may help compensate for compression and image-processing artifacts.  
 
 
 ---
