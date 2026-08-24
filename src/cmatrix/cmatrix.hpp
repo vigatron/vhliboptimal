@@ -7,9 +7,9 @@
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/cmatrix/cmatrix.hpp
- * Content size  : 5137
- * Date / Time   : 22-08-2026 15:42:01
- * MD5           : 61b2930db830c07f791c2ef8cbe423be
+ * Content size  : 5310
+ * Date / Time   : 24-08-2026 16:26:25
+ * MD5           : c2195f45986cf22d90414bbc1e82e526
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -251,8 +251,8 @@ namespace vhliboptimal
  * Library          : vhliboptimal
  * File             : src/cmatrix/cmatrix.hpp
  * Revision         : 0.8.1
- * Content size     : 5137
- * Date / Time      : 22-08-2026 15:42:01
- * MD5              : 61b2930db830c07f791c2ef8cbe423be
+ * Content size     : 5310
+ * Date / Time      : 24-08-2026 16:26:25
+ * MD5              : c2195f45986cf22d90414bbc1e82e526
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

@@ -7,9 +7,9 @@
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/bitfield/bitfield.cpp
- * Content size  : 5406
- * Date / Time   : 22-08-2026 15:42:01
- * MD5           : 94acd65d6fd39cf6af130329c83fa77f
+ * Content size  : 5459
+ * Date / Time   : 24-08-2026 16:26:25
+ * MD5           : 30ab39475f78134e4bcb488b867c0df3
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -72,7 +72,7 @@ void BitField::ClearBorder(const CellsMatrix & cmtx) noexcept {
 /**
  * @brief Find non-empty cell of the map
  */
-int BitField::FindEntryCell(const CellsMatrix & cmtx) {
+int BitField::FindEntryCell(const CellsMatrix & cmtx) noexcept {
 
     int r = -1;
 
@@ -90,7 +90,7 @@ int BitField::FindEntryCell(const CellsMatrix & cmtx) {
 /**
  * @brief Поиск соседних ячеек
  */
-int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
+int BitField::FindNearest(const CellsMatrix & cmtx, int n) const noexcept {
 
     int wx = cmtx.CellsX();
     int tryn;
@@ -110,7 +110,7 @@ int BitField::FindNearest(const CellsMatrix & cmtx, int n) const {
 /**
  * @brief Проход по фигуре fldfig : Поиск ответвлений
  */
-int BitField::FindPath(const CellsMatrix & cmtx, BitField & fldfig) {
+int BitField::FindPath(const CellsMatrix & cmtx, BitField & fldfig) noexcept {
 
     // Fast Entry point
     int idxstart = fldfig.FastIdxNonZero();
@@ -130,7 +130,7 @@ int BitField::FindPath(const CellsMatrix & cmtx, BitField & fldfig) {
 /**
  * Вычисление длинны учитывая пропуски ( SPACER )
  */
-int BitField::ScanSpanLen(const CellsMatrix & cmtx, int startcell, int skipmax) const {
+int BitField::ScanSpanLen(const CellsMatrix & cmtx, int startcell, int skipmax) const noexcept {
 
     // вычисляем координаты ячейки по номеру
     auto [cx, cy] = cmtx.CellXY(startcell);
@@ -160,7 +160,7 @@ int BitField::ScanSpanLen(const CellsMatrix & cmtx, int startcell, int skipmax) 
 /**
  * 
  */
-void BitField::ClearSpan(const spanword word)  {
+void BitField::ClearSpan(const spanword word) noexcept {
     uint32_t spanid = get_span_id(word);
     uint32_t spanln = get_span_len(word);
     uint32_t end = spanid + spanln;
@@ -222,7 +222,7 @@ void BitField::ResetSearchIndex(const CellsMatrix & cmtx) noexcept {
 /**
  * @brief Optimization: fast search entry index
  */
-int BitField::FastIdxNonZero() {
+int BitField::FastIdxNonZero() noexcept {
     const uint64_t* p64 = reinterpret_cast<const uint64_t*>(arrPtr);
     const size_t numWords = lastSearchsByte / sizeof(uint64_t);
 
@@ -250,8 +250,8 @@ int BitField::FastIdxNonZero() {
  * Library          : vhliboptimal
  * File             : src/bitfield/bitfield.cpp
  * Revision         : 0.8.1
- * Content size     : 5406
- * Date / Time      : 22-08-2026 15:42:01
- * MD5              : 94acd65d6fd39cf6af130329c83fa77f
+ * Content size     : 5459
+ * Date / Time      : 24-08-2026 16:26:25
+ * MD5              : 30ab39475f78134e4bcb488b867c0df3
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

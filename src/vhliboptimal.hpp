@@ -7,9 +7,9 @@
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/vhliboptimal.hpp
- * Content size  : 11429
- * Date / Time   : 22-08-2026 15:42:01
- * MD5           : 4baf3355bed24f8ec27ea90ceb3a2d06
+ * Content size  : 11849
+ * Date / Time   : 24-08-2026 16:26:25
+ * MD5           : 4a1676c7335f33f90df2a7414940c1bf
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -511,8 +511,8 @@ namespace vhliboptimal
  * Library          : vhliboptimal
  * File             : src/vhliboptimal.hpp
  * Revision         : 0.8.1
- * Content size     : 11429
- * Date / Time      : 22-08-2026 15:42:01
- * MD5              : 4baf3355bed24f8ec27ea90ceb3a2d06
+ * Content size     : 11849
+ * Date / Time      : 24-08-2026 16:26:25
+ * MD5              : 4a1676c7335f33f90df2a7414940c1bf
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

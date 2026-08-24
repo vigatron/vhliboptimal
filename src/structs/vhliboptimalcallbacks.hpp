@@ -8,7 +8,7 @@
  * License       : MIT
  * File          : src/structs/vhliboptimalcallbacks.hpp
  * Content size  : 1484
- * Date / Time   : 22-08-2026 15:42:01
+ * Date / Time   : 24-08-2026 16:26:25
  * MD5           : 163c999a33cada330882535ee8ab9b37
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -80,7 +80,7 @@ typedef void (*CallbackBenchmark)(
  * File             : src/structs/vhliboptimalcallbacks.hpp
  * Revision         : 0.8.1
  * Content size     : 1484
- * Date / Time      : 22-08-2026 15:42:01
+ * Date / Time      : 24-08-2026 16:26:25
  * MD5              : 163c999a33cada330882535ee8ab9b37
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

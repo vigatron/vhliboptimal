@@ -7,9 +7,9 @@
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/bitfield/bitfield.hpp
- * Content size  : 2399
- * Date / Time   : 22-08-2026 15:42:01
- * MD5           : 76f95948af935b6da5b95dcd9872221a
+ * Content size  : 2484
+ * Date / Time   : 24-08-2026 16:26:25
+ * MD5           : 70196ed18cab14506ae3b14d18311d1f
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -113,8 +113,8 @@ namespace vhliboptimal
  * Library          : vhliboptimal
  * File             : src/bitfield/bitfield.hpp
  * Revision         : 0.8.1
- * Content size     : 2399
- * Date / Time      : 22-08-2026 15:42:01
- * MD5              : 76f95948af935b6da5b95dcd9872221a
+ * Content size     : 2484
+ * Date / Time      : 24-08-2026 16:26:25
+ * MD5              : 70196ed18cab14506ae3b14d18311d1f
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

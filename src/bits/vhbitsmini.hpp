@@ -7,9 +7,9 @@
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/bits/vhbitsmini.hpp
- * Content size  : 1294
- * Date / Time   : 22-08-2026 15:42:01
- * MD5           : 42584952efd7fc590e94a52712491f7c
+ * Content size  : 1409
+ * Date / Time   : 24-08-2026 16:26:25
+ * MD5           : 2bb478f51e5d8afd8cae957458367cd1
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -64,8 +64,8 @@ public:
  * Library          : vhliboptimal
  * File             : src/bits/vhbitsmini.hpp
  * Revision         : 0.8.1
- * Content size     : 1294
- * Date / Time      : 22-08-2026 15:42:01
- * MD5              : 42584952efd7fc590e94a52712491f7c
+ * Content size     : 1409
+ * Date / Time      : 24-08-2026 16:26:25
+ * MD5              : 2bb478f51e5d8afd8cae957458367cd1
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
