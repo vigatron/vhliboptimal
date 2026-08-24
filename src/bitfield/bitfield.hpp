@@ -29,67 +29,67 @@ namespace vhliboptimal
     public:
         bool Setup(const CellsMatrix &cmtx, uint8_t *arrptr, uint32_t limbytes);
 
-        VHLIB_OPTIMAL_FASTFUNC
+        // VHLIB_OPTIMAL_FASTFUNC
         void ClearArea(const CellsMatrix &cmtx) noexcept;
 
-        VHLIB_OPTIMAL_FASTFUNC
+        // VHLIB_OPTIMAL_FASTFUNC
         void ClearBorder(const CellsMatrix &cmtx) noexcept;
 
-        VHLIB_OPTIMAL_FASTFUNC
+        // VH_ALWAYS_INLINE
         void ClrCell(int celln) noexcept
         {
             VHBits::BitClr(arrPtr, celln);
         }
 
-        VHLIB_OPTIMAL_FASTFUNC
+        // VH_ALWAYS_INLINE
         void SetCell(int celln) noexcept
         {
             VHBits::BitSet(arrPtr, celln);
         }
 
-        VHLIB_OPTIMAL_FASTFUNC
+        // VH_ALWAYS_INLINE
         bool GetCell(int celln) const noexcept
         {
             return VHBits::BitVal(arrPtr, celln);
         };
 
-        VHLIB_OPTIMAL_FASTFUNC
+        // VH_ALWAYS_INLINE
         void ClrCell(const CellsMatrix &cmtx, int cellx, int celly) noexcept
         {
             int n = cmtx.CellN(cellx, celly);
             VHBits::BitClr(arrPtr, n);
         }
 
-        VHLIB_OPTIMAL_FASTFUNC
+        // VH_ALWAYS_INLINE
         void SetCell(const CellsMatrix &cmtx, int cellx, int celly) noexcept
         {
             int n = cmtx.CellN(cellx, celly);
             VHBits::BitSet(arrPtr, n);
         }
 
-        VHLIB_OPTIMAL_FASTFUNC
+        // VH_ALWAYS_INLINE
         bool GetCell(const CellsMatrix &cmtx, int cellx, int celly) const noexcept
         {
             int n = cmtx.CellN(cellx, celly);
             return GetCell(n);
         }
 
-        VHLIB_OPTIMAL_FASTFUNC
-        int FindEntryCell(const CellsMatrix &cmtx);
+        // VHLIB_OPTIMAL_FASTFUNC
+        int FindEntryCell(const CellsMatrix &cmtx) noexcept;
 
-        VHLIB_OPTIMAL_FASTFUNC
-        int FindNearest(const CellsMatrix &cmtx, int n) const;
+        // VHLIB_OPTIMAL_FASTFUNC
+        int FindNearest(const CellsMatrix &cmtx, int n) const noexcept;
 
-        VHLIB_OPTIMAL_FASTFUNC
-        int FindPath(const CellsMatrix &cmtx, BitField &fldfig);
+        // VHLIB_OPTIMAL_FASTFUNC
+        int FindPath(const CellsMatrix &cmtx, BitField &fldfig) noexcept;
 
-        VHLIB_OPTIMAL_FASTFUNC
-        int ScanSpanLen(const CellsMatrix &cmtx, int startcell, int skipmax) const;
+        // VHLIB_OPTIMAL_FASTFUNC
+        int ScanSpanLen(const CellsMatrix &cmtx, int startcell, int skipmax) const noexcept;
 
-        VHLIB_OPTIMAL_FASTFUNC
-        void ClearSpan(const spanword word);
+        // VHLIB_OPTIMAL_FASTFUNC
+        void ClearSpan(const spanword word) noexcept;
 
-        VHLIB_OPTIMAL_FASTFUNC
+        // VH_ALWAYS_INLINE
         void ResetSearchIndex(const CellsMatrix &cmtx) noexcept;
 
     private:
@@ -102,8 +102,9 @@ namespace vhliboptimal
         size_t lastSearchsByte;
 
         // Оптимизация под uint32_t / uint64_t
-        VHLIB_OPTIMAL_FASTFUNC
-        int FastIdxNonZero();
+        // VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
+        int FastIdxNonZero() noexcept;
     };
 
 };

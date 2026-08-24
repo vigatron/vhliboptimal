@@ -35,18 +35,25 @@ public:
     //     return { v / 8, static_cast<uint8_t>(v % 8) };
     // }
 
-    VH_ALWAYS_INLINE static void BitClr(uint8_t * __restrict ptr, size_t n) noexcept {
+    // VH_ALWAYS_INLINE
+    // VHLIB_OPTIMAL_FASTFUNC
+    static void BitClr(uint8_t * __restrict ptr, size_t n) noexcept {
         // Вместо вычитания в splidx и сдвига (1 << bitIdx), 
         // мы инвертируем маску сразу на этапе сдвига: 0x80 >> (n % 8)
         ptr[n / 8] &= static_cast<uint8_t>(~(0x80 >> (n % 8)));
     }
 
-    VH_ALWAYS_INLINE static void BitSet(uint8_t * __restrict ptr, size_t n) noexcept {
+    // VH_ALWAYS_INLINE
+    // VHLIB_OPTIMAL_FASTFUNC
+    static void BitSet(uint8_t * __restrict ptr, size_t n) noexcept {
         // Старший бит (0x80) сдвигаем вправо на остаток от деления
         ptr[n / 8] |= static_cast<uint8_t>(0x80 >> (n % 8));
     }
 
-    [[nodiscard]] VH_ALWAYS_INLINE static bool BitVal(const uint8_t * __restrict ptr, size_t n) noexcept {
+    [[nodiscard]]
+    // VH_ALWAYS_INLINE
+    // VHLIB_OPTIMAL_FASTFUNC
+    static bool BitVal(const uint8_t * __restrict ptr, size_t n) noexcept {
         return (ptr[n / 8] & (0x80 >> (n % 8))) != 0;
     }
 

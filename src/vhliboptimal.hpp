@@ -69,6 +69,7 @@ namespace vhliboptimal
         /**
          * bitfieldSrc should be already filled !
          */
+        // VHLIB_OPTIMAL_FASTFUNC
         verr Run();
 
         /**
@@ -87,6 +88,7 @@ namespace vhliboptimal
          *
          * @return общее количество
          */
+        VH_ALWAYS_INLINE
         uint16_t ObjectsCount() const noexcept
         {
             return _objCount;
@@ -95,6 +97,7 @@ namespace vhliboptimal
         /**
          * @brief Объект фигуры по индексу
          */
+        VH_ALWAYS_INLINE
         VHOptimalFigure &Object(uint16_t pos)
         {
             asrts(pos < ObjectsCount(), 0, "VHLibOptimal::GetObject out of range");
@@ -104,6 +107,7 @@ namespace vhliboptimal
         /**
          * Массив фигур
          */
+        VH_ALWAYS_INLINE
         const VHOptimalFigure &Object(uint16_t pos) const
         {
             asrts(pos < ObjectsCount(), 0, "VHLibOptimal::GetObject out of range");
@@ -113,6 +117,7 @@ namespace vhliboptimal
         /**
          *
          */
+        VH_ALWAYS_INLINE
         bool AddObject()
         {
             if (_objCount >= VHLIB_OPTIMAL_OBJS_MAX)
@@ -124,6 +129,7 @@ namespace vhliboptimal
         /**
          *
          */
+        VH_ALWAYS_INLINE
         bool RemoveObject()
         {
             if (!_objCount)
@@ -137,7 +143,7 @@ namespace vhliboptimal
         /**
          *
          */
-        VHLIB_OPTIMAL_FASTFUNC
+        VH_ALWAYS_INLINE
         uint32_t GlobalSpansCount() const noexcept { return _spnCount; }
 
         /**
@@ -148,7 +154,7 @@ namespace vhliboptimal
         /**
          *
          */
-        VHLIB_OPTIMAL_FASTFUNC
+        VH_ALWAYS_INLINE
         spanword GetGlobalSpan(uint32_t pos) const
         {
             if (pos >= VHLIB_OPTIMAL_SPNS_MAX)
@@ -156,7 +162,8 @@ namespace vhliboptimal
             return memlay.Spn(pos);
         }
 
-        const CellsMatrix &GetCMatrix() const;
+        
+        const CellsMatrix & GetCMatrix() const;
 
         bool Border(int objn) const;
 
@@ -164,6 +171,8 @@ namespace vhliboptimal
 
         bool ContentV(int objn) const;
 
+        VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
         BitField &BitFieldSrc() noexcept { return bitfieldSrc; }
 
         /**
@@ -190,6 +199,8 @@ namespace vhliboptimal
         /**
          *
          */
+        VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
         verr BMPParserByte(uint8_t v, uint8_t lvscale) noexcept
         {
 
@@ -286,12 +297,13 @@ namespace vhliboptimal
 
         verr CheckCfgParams();
 
-        VHLIB_OPTIMAL_FASTFUNC
+        // VHLIB_OPTIMAL_FASTFUNC
         bool ScanAndFindFigure();
 
-        VHLIB_OPTIMAL_FASTFUNC
+        VH_ALWAYS_INLINE
         verr ConvertFigure();
 
+        VH_ALWAYS_INLINE
         bool IsSortEnabled();
 
         // BMP Parser
@@ -386,6 +398,8 @@ namespace vhliboptimal
         /**
          *
          */
+        // VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
         verr BMPParserData(uint8_t v, uint8_t lvscale) noexcept
         {
 
@@ -471,9 +485,10 @@ namespace vhliboptimal
         /**
          *
          */
+        // VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
         void setBitSrcBitfield(uint16_t bmpx, uint16_t bmpy, uint8_t lvscale)
         {
-
             const CellsMatrix &cmtx = GetCMatrix();
 
             // Scaller

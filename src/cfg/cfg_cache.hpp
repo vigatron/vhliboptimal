@@ -27,7 +27,9 @@
 #ifdef VHLIB_OPTIMAL_USE_ICACHE
 static const char _vhlib_optimal_icache[] = VHLIB_OPTIMAL_USE_ICACHE;
 static_assert(sizeof(_vhlib_optimal_icache) > 1, "ICACHE section is empty");
-#define VHLIB_OPTIMAL_FASTFUNC __attribute__((section(VHLIB_OPTIMAL_USE_ICACHE)))
+#define VHLIB_OPTIMAL_FASTFUNC __attribute__((section(VHLIB_OPTIMAL_USE_ICACHE), noinline))
+// #define VHLIB_OPTIMAL_FASTFUNC __attribute__((section(VHLIB_OPTIMAL_USE_ICACHE)))
+
 #endif
 
 #ifdef VHLIB_OPTIMAL_USE_DCACHE

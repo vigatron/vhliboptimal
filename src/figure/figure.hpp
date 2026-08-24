@@ -57,6 +57,8 @@ namespace vhliboptimal
         /**
          *
          */
+        // VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
         verr Scan(
             BitField &bfld,
             const CellsMatrix &cmtx,
@@ -73,16 +75,19 @@ namespace vhliboptimal
         /**
          * @brief Количество участков фигуры
          */
+        VH_ALWAYS_INLINE
         uint16_t SpansCount() const { return _spansCount; }
 
         /**
          *
          */
+        VH_ALWAYS_INLINE
         uint32_t StartSpanIDX() const { return _startIDX; }
 
         /**
          *
          */
+        VH_ALWAYS_INLINE
         const VHArea &Area() const;
 
         /**

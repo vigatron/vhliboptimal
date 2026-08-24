@@ -144,31 +144,37 @@ namespace vhliboptimal
 
 #ifdef VHLIB_OPTIMAL_GRID_FIXED
 
-        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellsX() const noexcept
+        // VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
+        constexpr size_t CellsX() const noexcept
         {
             return fixedw;
         }
 
-        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellsY() const noexcept
+        // VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
+        constexpr size_t CellsY() const noexcept
         {
             return fixedh;
         }
 
-        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellsT() const noexcept
+        // VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
+        constexpr size_t CellsT() const noexcept
         {
             return fixedt;
         }
 
-        /**
-         *
-         */
-        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellN(size_t x, size_t y) const noexcept
+        // VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
+        constexpr size_t CellN(size_t x, size_t y) const noexcept
         {
             return (y << VHLIB_OPTIMAL_GRID_LX) + x;
         }
 
-        //
-        VHLIB_OPTIMAL_FASTFUNC constexpr Point CellXY(size_t n) const noexcept
+        // VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
+        constexpr Point CellXY(size_t n) const noexcept
         {
             return Point{
                 static_cast<uint16_t>(n & fixedm),
@@ -178,20 +184,23 @@ namespace vhliboptimal
 #endif
 
         // Подсчет размера в байтах
-        VHLIB_OPTIMAL_FASTFUNC constexpr size_t BitMaskSizeBytes() const noexcept
+        VHLIB_OPTIMAL_FASTFUNC
+        constexpr size_t BitMaskSizeBytes() const noexcept
         {
             size_t arrsz = (CellsT() / CHAR_BIT) + ((CellsT() % CHAR_BIT) ? 1 : 0);
             return arrsz;
         }
 
         // Стартовый индекс поиска
-        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellCornerTopLeft() const noexcept
+        VHLIB_OPTIMAL_FASTFUNC
+        constexpr size_t CellCornerTopLeft() const noexcept
         {
             return CellsX() + 1;
         }
 
         //! Конечный индекс поиска
-        VHLIB_OPTIMAL_FASTFUNC constexpr size_t CellCornerBottomRight() const noexcept
+        VHLIB_OPTIMAL_FASTFUNC
+        constexpr size_t CellCornerBottomRight() const noexcept
         {
             return CellsT() - CellsX() - 2;
         }
