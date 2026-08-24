@@ -8,7 +8,7 @@
  * License       : MIT
  * File          : src/figure/figure.cpp
  * Content size  : 8863
- * Date / Time   : 22-08-2026 15:42:01
+ * Date / Time   : 24-08-2026 16:26:25
  * MD5           : c1df3c122f6748e8a98587caf59c3e1d
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -392,7 +392,7 @@ void VHOptimalFigure::ContentV(
  * File             : src/figure/figure.cpp
  * Revision         : 0.8.1
  * Content size     : 8863
- * Date / Time      : 22-08-2026 15:42:01
+ * Date / Time      : 24-08-2026 16:26:25
  * MD5              : c1df3c122f6748e8a98587caf59c3e1d
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

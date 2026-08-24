@@ -8,7 +8,7 @@
  * License       : MIT
  * File          : src/platform/platform.hpp
  * Content size  : 463
- * Date / Time   : 22-08-2026 15:42:01
+ * Date / Time   : 24-08-2026 16:26:25
  * MD5           : bc551f84b3d29024117c72bcab53e907
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -47,7 +47,7 @@ namespace vhliboptimal
  * File             : src/platform/platform.hpp
  * Revision         : 0.8.1
  * Content size     : 463
- * Date / Time      : 22-08-2026 15:42:01
+ * Date / Time      : 24-08-2026 16:26:25
  * MD5              : bc551f84b3d29024117c72bcab53e907
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

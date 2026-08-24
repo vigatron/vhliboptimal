@@ -7,9 +7,9 @@
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/figure/figure.hpp
- * Content size  : 3148
- * Date / Time   : 22-08-2026 15:42:01
- * MD5           : c624bdfe7d08486b2c0e7025b5f80313
+ * Content size  : 3285
+ * Date / Time   : 24-08-2026 16:26:25
+ * MD5           : c9a1a28e15b1fb1cdda2aa656a8b6cd7
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -57,6 +57,8 @@ namespace vhliboptimal
         /**
          *
          */
+        // VH_ALWAYS_INLINE
+        // VHLIB_OPTIMAL_FASTFUNC
         verr Scan(
             BitField &bfld,
             const CellsMatrix &cmtx,
@@ -73,16 +75,19 @@ namespace vhliboptimal
         /**
          * @brief Количество участков фигуры
          */
+        VH_ALWAYS_INLINE
         uint16_t SpansCount() const { return _spansCount; }
 
         /**
          *
          */
+        VH_ALWAYS_INLINE
         uint32_t StartSpanIDX() const { return _startIDX; }
 
         /**
          *
          */
+        VH_ALWAYS_INLINE
         const VHArea &Area() const;
 
         /**
@@ -162,8 +167,8 @@ namespace vhliboptimal
  * Library          : vhliboptimal
  * File             : src/figure/figure.hpp
  * Revision         : 0.8.1
- * Content size     : 3148
- * Date / Time      : 22-08-2026 15:42:01
- * MD5              : c624bdfe7d08486b2c0e7025b5f80313
+ * Content size     : 3285
+ * Date / Time      : 24-08-2026 16:26:25
+ * MD5              : c9a1a28e15b1fb1cdda2aa656a8b6cd7
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

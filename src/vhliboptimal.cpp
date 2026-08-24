@@ -8,7 +8,7 @@
  * License       : MIT
  * File          : src/vhliboptimal.cpp
  * Content size  : 7719
- * Date / Time   : 22-08-2026 15:42:01
+ * Date / Time   : 24-08-2026 16:26:25
  * MD5           : 72c3401068d7da00a12514e6f3e297a3
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -371,7 +371,7 @@ void VHLibOptimal::DumpBitfield(bool hexmode)
  * File             : src/vhliboptimal.cpp
  * Revision         : 0.8.1
  * Content size     : 7719
- * Date / Time      : 22-08-2026 15:42:01
+ * Date / Time      : 24-08-2026 16:26:25
  * MD5              : 72c3401068d7da00a12514e6f3e297a3
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

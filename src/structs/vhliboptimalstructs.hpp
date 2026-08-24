@@ -8,7 +8,7 @@
  * License       : MIT
  * File          : src/structs/vhliboptimalstructs.hpp
  * Content size  : 2456
- * Date / Time   : 22-08-2026 15:42:01
+ * Date / Time   : 24-08-2026 16:26:25
  * MD5           : fd2c5d9a7bc5c75bed73a90156eb0d49
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
@@ -99,7 +99,7 @@ struct PixelRGB {
  * File             : src/structs/vhliboptimalstructs.hpp
  * Revision         : 0.8.1
  * Content size     : 2456
- * Date / Time      : 22-08-2026 15:42:01
+ * Date / Time      : 24-08-2026 16:26:25
  * MD5              : fd2c5d9a7bc5c75bed73a90156eb0d49
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */

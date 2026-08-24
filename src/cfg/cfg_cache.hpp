@@ -7,9 +7,9 @@
  * Disclaimer    : Provided "AS IS", without warranty.
  * License       : MIT
  * File          : src/cfg/cfg_cache.hpp
- * Content size  : 1070
- * Date / Time   : 22-08-2026 15:42:01
- * MD5           : 6531c87b3233b248e3c1020a8d92fd67
+ * Content size  : 1166
+ * Date / Time   : 24-08-2026 16:26:25
+ * MD5           : a2f7bcea90bb7f4477d84d7f72906f53
  * Notes         : MD5 = file content without header/footer
  * Encoding      : UTF-8
  * Author        : Viktor Glebov / V01G04A81
@@ -27,7 +27,9 @@
 #ifdef VHLIB_OPTIMAL_USE_ICACHE
 static const char _vhlib_optimal_icache[] = VHLIB_OPTIMAL_USE_ICACHE;
 static_assert(sizeof(_vhlib_optimal_icache) > 1, "ICACHE section is empty");
-#define VHLIB_OPTIMAL_FASTFUNC __attribute__((section(VHLIB_OPTIMAL_USE_ICACHE)))
+#define VHLIB_OPTIMAL_FASTFUNC __attribute__((section(VHLIB_OPTIMAL_USE_ICACHE), noinline))
+// #define VHLIB_OPTIMAL_FASTFUNC __attribute__((section(VHLIB_OPTIMAL_USE_ICACHE)))
+
 #endif
 
 #ifdef VHLIB_OPTIMAL_USE_DCACHE
@@ -65,8 +67,8 @@ static_assert(sizeof(_vhlib_optimal_dcache) > 1, "DCACHE section is empty");
  * Library          : vhliboptimal
  * File             : src/cfg/cfg_cache.hpp
  * Revision         : 0.8.1
- * Content size     : 1070
- * Date / Time      : 22-08-2026 15:42:01
- * MD5              : 6531c87b3233b248e3c1020a8d92fd67
+ * Content size     : 1166
+ * Date / Time      : 24-08-2026 16:26:25
+ * MD5              : a2f7bcea90bb7f4477d84d7f72906f53
  * Copyright        : © 2006–2026 Viktor Glebov
  * ====================================================================== */
